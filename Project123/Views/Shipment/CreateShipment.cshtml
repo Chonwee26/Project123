@@ -15,14 +15,72 @@
             max-width: 200px;
             margin: 10px;
         }
+
+        #reader {
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            background-color: white;
+        }
+
+        #qr-shaded-region {
+            border-color: rgba(0, 0, 0, 0) !important;
+        }
+
+        #btnCloseMd {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #b4b4b4;
+            z-index: 99999;
+            cursor: pointer;
+        }
+
+        #btnSelectImg {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #b4b4b4;
+            z-index: 99999;
+            cursor: pointer;
+        }
+
+        #qr-reader__dashboard {
+            display: none;
+        }
     </style>
-} <div class="container-fluid">
+}
+<div id="mdlScanBarcode" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="dv-scan-barcode">
+                    <div id="qr-reader" style="width: 100%; height: 100%;"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-disabled fw-bold" data-dismiss="modal" id="btnCloseMd">ย้อนกลับ</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-disabled" data-dismiss="modal" id="btnSelectImg"><i class="fa-solid fa-image" style="font-size:24px;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn-scan-barcode">Scan Barcode</button>
+<input class="form-control" id="Skuean" />
+<!--เดี๋ยวมาทำต่อ กด ปุ่มสร้าง qrcode แล้วเด้ง modal-->
+<div class="container-fluid">
     <div class="text-center">
 
         <!-- Get a Placeholder image initially,
          this will change according to the
          data entered later -->
-        <img src="https://chart.googleapis.com/chart?cht=qr&chl=Hello+World&chs=160x160&chld=L|0"
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Example"
              class="qr-code img-thumbnail img-responsive" />
     </div>
 
@@ -183,7 +241,7 @@
                             <div class="col-12" id="dvTable" style="display:none">
                                 <table id="tblDataTable" class="table table-bordered">
                                     <thead>
-                                        <tr>
+                                        <tr class="text-center">
                                             <th>หมายเลขออเดอร์</th>
                                             <th>ชื่อ</th>
                                             <th>เบอร์โทรศัพท์</th>
@@ -219,6 +277,7 @@
 
 @section Scripts{
     <script src="~/lib/dataTables/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="text/javascript">
         var dataTable
@@ -267,7 +326,7 @@
                     processData: false,
                     contentType: false,
                     success: function (data) {
-                    
+
                         debugger
                         // Handle extracted data
                         displayResult(data[0].symbol[0].data);
@@ -284,8 +343,60 @@
             // Display extracted data in the "result" div
             $('#result').html(JSON.stringify(data, null, 2));
         }
-      
 
+
+        $('#btnCloseMd').click(function () {
+            $('#html5-qrcode-button-camera-stop').trigger('click');
+            $('#qr-reader').empty();
+            $("#mdlScanBarcode").modal('hide');
+        });
+
+        var typeSelectImg = false;
+        $('#btnSelectImg').click(function () {
+            $('#html5-qrcode-button-camera-stop').trigger('click');
+            setTimeout(
+                function () {
+                    $('#html5-qrcode-anchor-scan-type-change').trigger('click');
+                    if (typeSelectImg) {
+                        $('#html5-qrcode-button-camera-start').trigger('click');
+                        $('#btnSelectImg').html('<i class="fa-solid fa-image" style="font-size:24px;"></i>');
+                        typeSelect = false;
+                    }
+                    else {
+                        $('#html5-qrcode-button-file-selection').trigger('click');
+                        $('#btnSelectImg').html('<i class="fa-solid fa-expand" style="font-size: 24px;"></i>');
+                        typeSelectImg = true;
+                    }
+                }, 200);
+        });
+
+        $(document).on("click", ".btn-scan-barcode", function () {
+            var status = false;
+            var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", {
+                fps: 10,
+                qrbox: 250,
+                videoConstraints: {
+                    facingMode: "environment", // Use "environment" for back camera
+                    aspectRatio: 1.7777778
+                },
+            });
+
+            const onScanSuccess = (decodedText, decodedResult) => {
+                if (decodedText != '' && !status) {
+                    $('#Skuean').val(decodedText).trigger('change');
+                    $("#mdlScanBarcode").modal('hide');
+                    status = true;
+                }
+                html5QrcodeScanner.clear();
+            }
+            setTimeout(
+                function () {
+                    html5QrcodeScanner.render(onScanSuccess);
+                    $('#html5-qrcode-button-camera-permission').trigger('click');
+                }, 500);
+
+            $("#mdlScanBarcode").modal('show');
+        });
 
 
 
@@ -384,7 +495,7 @@
 
                 columns: [
                     {
-                        data: 'OrderNumber', className: 'text-left', orderable: false,
+                        data: 'OrderNumber', className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
 
@@ -409,7 +520,7 @@
 
                     },
                     {
-                        data: 'Storage', className: 'text-right', orderable: false,
+                        data: 'Storage', className: 'text-left', orderable: false,
 
                         render: function (data, type, row) {
 
@@ -418,7 +529,7 @@
 
                     },
                     {
-                        data: 'ShipmentStatus', className: 'text-right', orderable: false,
+                        data: 'ShipmentStatus', className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
 
@@ -427,7 +538,7 @@
 
                     }
                     ,{
-                        data: 'ShipDate', className: 'text-right', orderable: false,
+                        data: 'ShipDate', className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
 

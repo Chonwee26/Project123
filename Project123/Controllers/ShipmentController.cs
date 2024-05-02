@@ -2,6 +2,7 @@
 using Project123.Data;
 using Project123.Models;
 using Project123.Controllers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project123.Controllers
 {
@@ -40,9 +41,24 @@ namespace Project123.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult SearchShipment(Shipmentmodel ShipmentData)
         {
-            _db.Shipment.Add(ShipmentData);
+         //using (var db = _db)
+         //   {
+         //       string sqlQuery = "SELECT * FROM Shipment WHERE";
 
-            return View();
+
+         //       if (!string.IsNullOrEmpty(ShipmentData.OrderNumber))
+         //       {
+         //           sqlQuery += $"ShipmentId = '{ShipmentData.OrderNumber}'  ";
+         //       }
+
+         //       var searchResults = db.Shipment.FromSqlRaw(sqlQuery).ToList();
+
+
+
+
+         //   }
+         //   return Ok(searchResults);
+           return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
