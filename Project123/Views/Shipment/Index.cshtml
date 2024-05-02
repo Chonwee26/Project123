@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Project123.Models.Shipmentmodel> 
+
+
+@{
+    ViewData["Title"] = "หน้าแรก";
+}
+
+<h1 class="text-center"></h1>
+
+@*<p>ShipmentId @Model.ShipmentId</p>;
+<p>FullNmae @Model.FullName</p>;
+<p>MobileNumber @Model.MobileNumber</p>;*@
+
+@foreach (var logis in Model)
+{
+   
+    <p>ShipmentId @logis.ShipmentId</p>;
+    <p>FullName @logis.FullName</p>;
+    <p>MobileNumber @logis.MobileNumber</p>;
+    <hr />
+}
+<script>
+
+    console.log("hello")
+</script>

@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+    <div class="container mt-5">
+        <div class="row">
+
+            <form id="frmCreateShipment">
+                <div class="col-12">
+
+
+                    <h1 class=" d-flex justify-content-center">- Shipment info -</h1>
+                    <hr />
+                    @*first*@
+                    <div class="row pb-3">
+                        <div class="col-12">
+                            <h6>ชื่อ-สกุล</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtCreateFullName" name="FullName" />
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <h6>หมายเลขโทรศัพท์</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtCreateMobileNumber" name="MobileNumber" />
+                            </div>
+                        </div>
+                    </div>
+                    @*end first*@
+                    @* Start second*@
+                    <div class="row pb-3">
+                        <div class="col-12">
+                            <h6>สถานที่เก็บสินค้า</h6>
+                            <div class="input-group">
+                                <select class="form-select select2 select2-select" id="ddlCreateStorage" name="Storage" required>
+                                    <option selected value="">---ทั้งหมด---</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                            <h6>สถานะขนส่ง</h6>
+                            <div class="input-group">
+                                <select class="form-select select2 select2-select" id="ddlCreateShipmentStatus" name="ShipmentStatus" required>
+                                    <option selected value="">---ทั้งหมด---</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+
+                            <h6>วันที่ส่ง</h6>
+                            <div class="input-group">
+                                <input type="date" class="form-control datetimepicker" id="txtShipDate" name="ShipDate">
+                            </div>
+                        </div>
+
+
+
+                        <div class="  col-4 p-3 d-flex  justify-content-end ">
+
+                            <button type="button" id="btnCancel" class="btn btn-secondary mx-2 px-4 ">ยกเลิก</button>
+                            <button type="submit" id="btnCreateShipment" class="btn btn-primary mx-2 px-4 ">ยืนยัน</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+

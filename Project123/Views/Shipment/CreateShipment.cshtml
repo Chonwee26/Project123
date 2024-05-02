@@ -1,0 +1,502 @@
+﻿
+
+@model Shipmentmodel;
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+
+@section Styles{
+
+    <!-- Css -->
+    <link href="~/lib/dataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .qr-code {
+            max-width: 200px;
+            margin: 10px;
+        }
+    </style>
+} <div class="container-fluid">
+    <div class="text-center">
+
+        <!-- Get a Placeholder image initially,
+         this will change according to the
+         data entered later -->
+        <img src="https://chart.googleapis.com/chart?cht=qr&chl=Hello+World&chs=160x160&chld=L|0"
+             class="qr-code img-thumbnail img-responsive" />
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-2"
+                   for="content">
+                Content:
+            </label>
+            <div class="col-sm-10">
+
+                <!-- Input box to enter the
+                    required data -->
+                <input type="text" size="60"
+                       maxlength="60" class="form-control"
+                       id="content" placeholder="Enter content" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+
+                <!-- Button to generate QR Code for
+                 the entered data -->
+                <button type="button" class="btn btn-default" id="generate">
+                    Generate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form id="qrForm" enctype="multipart/form-data" action="https://api.qrserver.com/v1/read-qr-code/" method="POST">
+    <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+    Choose QR code image to read/scan: <input name="file" type="file" />
+    <input type="submit" value="Read QR code" />
+</form>
+<div id="result"></div>
+@*
+    <h1 class="text-center">ข้อมูลการจัดส่ง</h1>
+
+        <form method="POST" asp-controller="Shipment" asp-action="CreateShipmentAjax">
+        <div class="form-group">
+            <label asp-for="ShipDate">ShipDate</label>
+            <input type="date" asp-for="ShipDate" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FullName">FullName</label>
+            <input type="text" asp-for="FullName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="MobileNumber">MobileNumber</label>
+            <input type="text" asp-for="MobileNumber" class="form-control" />
+        </div>
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>*@
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
+        <button class="nav-link active" id="searchTab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Search</button>
+        <button class="nav-link" id="createTab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Create</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+        <div class="container mt-5">
+
+            <div class="row">
+
+                <form id="frmSearchShipment">
+                    <div class="col-12">
+
+
+                        <h1 class=" d-flex justify-content-center">- Shipment info -</h1>
+                        <hr />
+                        @*first*@
+                        <div class="row pb-3">
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                                <h6>หมายเลขออเดอร์</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtOrderNumber" name="OrderNumber" />
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                                <h6>ชื่อ-สกุล</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtSearchFullName" name="FullName" />
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                                <h6>หมายเลขโทรศัพท์</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtSearchMobileNumber" name="MobileNumber" />
+                                </div>
+                            </div>
+                        </div>
+                        @*end first*@
+                        @* Start second*@
+                        <div class="row pb-3">
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+
+                                <h6>สถานที่เก็บสินค้า</h6>
+                                <div class="input-group">
+                                    <select class="form-select select2 select2-select" id="ddlSearchStorage" name="Storage" required>
+                                        <option selected value="">---ทั้งหมด---</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                                <h6>สถานะขนส่ง</h6>
+                                <div class="input-group">
+                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus" required>
+                                        <option selected value="">---ทั้งหมด---</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+
+                                <h6>วันที่ส่ง</h6>
+                                <div class="input-group">
+
+                                    <input type="date" class="form-control datetimepicker" id="txtSearchShipDateFR" name="ShipDateFR">
+                                    <span class="input-group-text">ถึง</span>
+                                    <input type="date" class="form-control datetimepicker" id="txtSearchShipDateTO" name="ShipDateTO">
+                                </div>
+                            </div>
+
+
+
+                            <div class="  col-8 p-3 d-flex   ">
+
+                                <button type="button" id="btnCreate" class="btn btn-success mx-2 px-4 ">สร้าง</button>
+
+                            </div>
+
+                            <div class="  col-4 p-3 d-flex  justify-content-end ">
+
+                                <button type="button" id="btnReset" class="btn btn-secondary mx-2 px-4 ">ล้าง</button>
+                                <button type="submit" id="btnSearch" class="btn btn-primary mx-2 px-4 ">ค้นหา</button>
+                            </div>
+
+
+                            <hr />
+
+                            @* end second *@
+
+                            <div class="col-12" id="dvTable" style="display:none">
+                                <table id="tblDataTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>หมายเลขออเดอร์</th>
+                                            <th>ชื่อ</th>
+                                            <th>เบอร์โทรศัพท์</th>
+                                            <th>ที่เก็บสินค้า</th>
+                                            <th>สถานะสินค้า</th>
+                                            <th>วันจัดส่ง</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <partial name="_LogisticView" />
+    </div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+    <script src="~/lib/dataTables/js/jquery.dataTables.js"></script>
+
+    <script type="text/javascript">
+        var dataTable
+        var newShipment = [];
+
+        $(document).ready(function () {
+            bindingTable();
+
+            // Function to HTML encode the text
+            // This creates a new hidden element,
+            // inserts the given text into it
+            // and outputs it out as HTML
+            function htmlEncode(value) {
+                return $('<div/>').text(value).html();
+            }
+
+            $(function () {
+                // Specify an onclick function
+                // for the generate button
+                $('#generate').click(function () {
+                    // Generate the link that would be
+                    // used to generate the QR Code
+                    // with the given data
+                    var content = htmlEncode($('#content').val());
+
+
+                    var finalURL =
+                        'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+
+                        content;
+
+                    // Replace the src of the image with
+                    // the QR code image
+                    $('.qr-code').attr('src', finalURL);
+                });
+            });
+
+            $('#qrForm').submit(function (event) {
+                debugger
+                event.preventDefault(); // Prevent form submission
+
+                var formData = new FormData($(this)[0]); // Get form data
+                $.ajax({
+                    url: 'https://api.qrserver.com/v1/read-qr-code/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                    
+                        debugger
+                        // Handle extracted data
+                        displayResult(data[0].symbol[0].data);
+                        $('#txtOrderNumber').val(data[0].symbol[0].data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+
+        function displayResult(data) {
+            // Display extracted data in the "result" div
+            $('#result').html(JSON.stringify(data, null, 2));
+        }
+      
+
+
+
+
+
+        $('#frmSearchShipment').validate({
+            rules: {
+
+            },
+            messages: {
+
+            },
+            errorPlacement: function (error, element) {
+
+            },
+
+
+            submitHandler: function (form) {
+                var frmSearch = $('#frmSearchShipment').serialize();
+
+                  $.ajax
+      ({
+          type: 'POST',
+          url: '@Url.Action("SearchLogistic", "Logistic")',
+          data: frmSearch,
+          dataType: "json",
+          success: function (result) {
+              debugger
+              bindingTable(result.data);
+
+          }
+      });
+            }
+
+        });
+
+        $('#frmCreateShipment').validate({
+            rules: {
+
+            },
+            messages: {
+
+            },
+            errorPlacement: function (error, element) {
+
+            },
+
+
+            submitHandler: function (form) {
+                debugger
+                ////var frmData = $('#frmCreateShipment').serializeArray();
+                //frmData.push({ name: 'additionalKey1', value: value1 });
+                //frmData.push({ name: 'additionalKey2', value: value2 });
+                //// Add more key-value pairs as needed
+
+                //// Convert the data object to a query string
+                //var serializedData = $.param(frmData);
+
+                var frmCreate = $('#frmCreateShipment').serializeArray();
+                const currentTime = new Date($.now());
+                frmCreate.push({ name: 'CreateDate', value: currentTime })
+                //if ($('#ddlCreateShipmentStatus').val() == '') {
+                //    $('#ddlCreateShipmentStatus').val('');
+                //}
+
+                var serializedCreate = $.param(frmCreate);
+                $.ajax
+                    ({
+                        type: 'POST',
+                        url: '@Url.Action("CreateShipmentAjax1", "Shipment")',
+                        data: serializedCreate,
+                        dataType: "json",
+                        success: function (result) {
+                            debugger
+                            bindingTable(result.data);
+
+                        }
+                    });
+
+            }
+        });
+
+
+
+
+
+        function bindingTable(newShipment) {
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: newShipment,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
+
+                columns: [
+                    {
+                        data: 'OrderNumber', className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.OrderNumber ;
+                        }
+                    },
+                    {
+                        data: 'FullName', className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.FullName;
+                        }
+
+                    },
+                    {
+                        data: 'MobileNumber', className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.MobileNumber;
+                        }
+
+                    },
+                    {
+                        data: 'Storage', className: 'text-right', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.Storage;
+                        }
+
+                    },
+                    {
+                        data: 'ShipmentStatus', className: 'text-right', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipmentStatus;
+                        }
+
+                    }
+                    ,{
+                        data: 'ShipDate', className: 'text-right', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipDate;
+                        }
+
+                    }
+
+                ]
+
+
+            });
+
+        }
+
+        $('#btnCreate').click(function () {
+            $(".nav button#createTab").tab('show');
+        });
+
+        $('#btnCreateShipment').click(function () {
+            $(".nav button#searchTab").tab('show');
+
+            var Name = $('#txtName').val();
+            var Tel = $('#txtTel').val();
+            var Origin = $('#txtOrigin').val();
+            var ShipDate = $('#txtDate').val();
+
+            // Add the new row to the DataTable
+            bindingTable(newShipment);
+        });
+        $('#btnCancel').click(function () {
+            $(".nav button#searchTab").tab('show');
+        });
+
+        // Reset Button Action
+        $('#btnReset').click(function () {
+            // Clear the DataTable
+            dataTable.clear().draw();
+        });
+
+        //datetimepicker
+        $('#txtSearchShipmentDateFR').datetimepicker({
+            format: 'd/m/Y',
+            formatDate: 'd/m/Y',
+            onShow: function (ct) {
+                this.setOptions({
+                    maxDate: $('#txtSearchShipmentDateTO').val() ? $('#txtSearchShipmentDateTO').val() : false
+                })
+            },
+            timepicker: false,
+        });
+        $('#txtSearchShipmentDateTO').datetimepicker({
+            format: 'd/m/Y',
+            formatDate: 'd/m/Y',
+            onShow: function (ct) {
+                this.setOptions({
+                    maxDate: $('#txtSearchShipmentDateFR').val() ? $('#txtSearchShipmentDateFR').val() : false
+                })
+            },
+            timepicker: false,
+        });
+        $('#txtCreateShipmentDate').datetimepicker({
+            format: 'd/m/Y',
+            formatDate: 'd/m/Y',
+            timepicker: false,
+        });
+
+
+    </script>
+}
+
+
