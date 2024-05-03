@@ -49,76 +49,120 @@
         #qr-reader__dashboard {
             display: none;
         }
+        .btn-delete {
+            cursor: pointer;
+        }
     </style>
+
+
+    <!-- Modal Create -->
+    <div class="modal fade" id="createQrCodeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create QR Code</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--เดี๋ยวมาทำต่อ กด ปุ่มสร้าง qrcode แล้วเด้ง modal-->
+                    <div class="container-fluid">
+                        <div class="text-center">
+
+                            <!-- Get a Placeholder image initially,
+                                 this will change according to the
+                                 data entered later -->
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Example"
+                                 class="qr-code img-thumbnail img-responsive" />
+                        </div>
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2"
+                                       for="content">
+                                    Content:
+                                </label>
+                                <div class="col-sm-10">
+
+                                    <!-- Input box to enter the
+                                    required data -->
+                                    <input type="text" size="60"
+                                           maxlength="60" class="form-control"
+                                           id="content" placeholder="Enter content" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+
+                                    <!-- Button to generate QR Code for
+                                    the entered data -->
+                                    <button type="button" class="btn btn-secondary  mt-3" id="generate">
+                                        Generate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 }
-<div id="mdlScanBarcode" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-fullscreen" role="document">
+
+<!-- ModalSearch -->
+<div class="modal fade" id="searchQrCodeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-body p-0">
-                <div class="dv-scan-barcode">
-                    <div id="qr-reader" style="width: 100%; height: 100%;"></div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        <button type="button" class="btn btn-disabled fw-bold" data-dismiss="modal" id="btnCloseMd">ย้อนกลับ</button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-disabled" data-dismiss="modal" id="btnSelectImg"><i class="fa-solid fa-image" style="font-size:24px;"></i></button>
-                    </div>
-                </div>
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Search QR Code</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="modal-body">
+                <!--Scan Qr code-->
+                <div id="mdlScanBarcode" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-fullscreen" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body p-0">
+                                <div class="dv-scan-barcode">
+                                    <div id="qr-reader" style="width: 100%; height: 100%;"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" class="btn btn-disabled fw-bold" data-dismiss="modal" id="btnCloseMd">ย้อนกลับ</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn btn-disabled" data-dismiss="modal" id="btnSelectImg"><i class="fa-solid fa-image" style="font-size:24px;"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-scan-barcode">Scan Barcode</button>
+                <input class="form-control" id="Skuean" />
 
-<button class="btn-scan-barcode">Scan Barcode</button>
-<input class="form-control" id="Skuean" />
-<!--เดี๋ยวมาทำต่อ กด ปุ่มสร้าง qrcode แล้วเด้ง modal-->
-<div class="container-fluid">
-    <div class="text-center">
 
-        <!-- Get a Placeholder image initially,
-         this will change according to the
-         data entered later -->
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Example"
-             class="qr-code img-thumbnail img-responsive" />
-    </div>
 
-    <div class="form-horizontal">
-        <div class="form-group">
-            <label class="control-label col-sm-2"
-                   for="content">
-                Content:
-            </label>
-            <div class="col-sm-10">
+                <form id="qrForm" enctype="multipart/form-data" action="https://api.qrserver.com/v1/read-qr-code/" method="POST">
+                    <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+                    Choose QR code image to read/scan: <input name="file" type="file" />
+                    <input type="submit" value="Read QR code" />
+                </form>
+                <div id="result"></div>
 
-                <!-- Input box to enter the
-                    required data -->
-                <input type="text" size="60"
-                       maxlength="60" class="form-control"
-                       id="content" placeholder="Enter content" />
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
-                <!-- Button to generate QR Code for
-                 the entered data -->
-                <button type="button" class="btn btn-default" id="generate">
-                    Generate
-                </button>
             </div>
         </div>
     </div>
 </div>
 
 
-<form id="qrForm" enctype="multipart/form-data" action="https://api.qrserver.com/v1/read-qr-code/" method="POST">
-    <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
-    Choose QR code image to read/scan: <input name="file" type="file" />
-    <input type="submit" value="Read QR code" />
-</form>
-<div id="result"></div>
 @*
     <h1 class="text-center">ข้อมูลการจัดส่ง</h1>
 
@@ -189,7 +233,7 @@
 
                                 <h6>สถานที่เก็บสินค้า</h6>
                                 <div class="input-group">
-                                    <select class="form-select select2 select2-select" id="ddlSearchStorage" name="Storage" required>
+                                    <select class="form-select select2 select2-select" id="ddlSearchStorage" name="Storage" >
                                         <option selected value="">---ทั้งหมด---</option>
                                         <option value="1">One</option>
                                         <option value="2">Two</option>
@@ -200,7 +244,7 @@
                             <div class="col-12 col-sm-12 col-md-6 col-lg-4">
                                 <h6>สถานะขนส่ง</h6>
                                 <div class="input-group">
-                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus" required>
+                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus" >
                                         <option selected value="">---ทั้งหมด---</option>
                                         <option value="1">One</option>
                                         <option value="2">Two</option>
@@ -224,6 +268,10 @@
                             <div class="  col-8 p-3 d-flex   ">
 
                                 <button type="button" id="btnCreate" class="btn btn-success mx-2 px-4 ">สร้าง</button>
+                                <!-- Button trigger modal -->
+                                <button type="button" id="btnCreateQrCode" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    สร้าง Qrcode
+                                </button>
 
                             </div>
 
@@ -231,6 +279,9 @@
 
                                 <button type="button" id="btnReset" class="btn btn-secondary mx-2 px-4 ">ล้าง</button>
                                 <button type="submit" id="btnSearch" class="btn btn-primary mx-2 px-4 ">ค้นหา</button>
+                                <button type="button" id="btnSearchQrCode" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    ค้นหาด้วย Qrcode
+                                </button>
                             </div>
 
 
@@ -248,6 +299,8 @@
                                             <th>ที่เก็บสินค้า</th>
                                             <th>สถานะสินค้า</th>
                                             <th>วันจัดส่ง</th>
+                                            <th>ลบสินค้า</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -284,7 +337,7 @@
         var newShipment = [];
 
         $(document).ready(function () {
-            bindingTable();
+          /*  bindingTable();*/
 
             // Function to HTML encode the text
             // This creates a new hidden element,
@@ -315,7 +368,7 @@
             });
 
             $('#qrForm').submit(function (event) {
-                debugger
+
                 event.preventDefault(); // Prevent form submission
 
                 var formData = new FormData($(this)[0]); // Get form data
@@ -327,7 +380,7 @@
                     contentType: false,
                     success: function (data) {
 
-                        debugger
+
                         // Handle extracted data
                         displayResult(data[0].symbol[0].data);
                         $('#txtOrderNumber').val(data[0].symbol[0].data);
@@ -414,18 +467,32 @@
 
 
             submitHandler: function (form) {
+
                 var frmSearch = $('#frmSearchShipment').serialize();
+                var frmSearch1 = {
+                    OrderNumber: $('#txtOrderNumber').val()
+                }
 
                   $.ajax
       ({
           type: 'POST',
-          url: '@Url.Action("SearchLogistic", "Logistic")',
+          url: '@Url.Action("SearchShipment", "Shipment")',
           data: frmSearch,
           dataType: "json",
           success: function (result) {
-              debugger
-              bindingTable(result.data);
+              if (result.Message == "S") {
+                  debugger
+                  bindingTable(result.Data);
+              }
+              else {
+                  SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+              }
 
+
+
+          },
+          error: function (request, status, error) {
+              SweetAlert('error', error);
           }
       });
             }
@@ -445,7 +512,7 @@
 
 
             submitHandler: function (form) {
-                debugger
+
                 ////var frmData = $('#frmCreateShipment').serializeArray();
                 //frmData.push({ name: 'additionalKey1', value: value1 });
                 //frmData.push({ name: 'additionalKey2', value: value2 });
@@ -470,7 +537,8 @@
                         dataType: "json",
                         success: function (result) {
                             debugger
-                            bindingTable(result.data);
+
+                            bindingTable(result);
 
                         }
                     });
@@ -482,92 +550,21 @@
 
 
 
-        function bindingTable(newShipment) {
-            $('#dvTable').show();
-            // Initialize DataTable
-            dataTable = $('#tblDataTable').DataTable({
-                destroy: true, //ล้างข้อมูลก่อนหน้า
-                data: newShipment,
-                searching: true,
-                lengthchange: false,
-                scrollx: true,
-                info: false,
 
-                columns: [
-                    {
-                        data: 'OrderNumber', className: 'text-center', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.OrderNumber ;
-                        }
-                    },
-                    {
-                        data: 'FullName', className: 'text-left', orderable: false,
-                        render: function (data, type, row) {
-
-                            return data.FullName;
-                        }
-
-                    },
-                    {
-                        data: 'MobileNumber', className: 'text-center', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.MobileNumber;
-                        }
-
-                    },
-                    {
-                        data: 'Storage', className: 'text-left', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.Storage;
-                        }
-
-                    },
-                    {
-                        data: 'ShipmentStatus', className: 'text-center', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.ShipmentStatus;
-                        }
-
-                    }
-                    ,{
-                        data: 'ShipDate', className: 'text-center', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.ShipDate;
-                        }
-
-                    }
-
-                ]
-
-
-            });
-
-        }
 
         $('#btnCreate').click(function () {
             $(".nav button#createTab").tab('show');
         });
 
+        $('#btnCreateQrCode').click(function () {
+            $('#createQrCodeModal').modal('show');
+        });
+        $('#btnSearchQrCode').click(function () {
+            $('#searchQrCodeModal').modal('show');
+        });
+
         $('#btnCreateShipment').click(function () {
-            $(".nav button#searchTab").tab('show');
 
-            var Name = $('#txtName').val();
-            var Tel = $('#txtTel').val();
-            var Origin = $('#txtOrigin').val();
-            var ShipDate = $('#txtDate').val();
-
-            // Add the new row to the DataTable
-            bindingTable(newShipment);
         });
         $('#btnCancel').click(function () {
             $(".nav button#searchTab").tab('show');
@@ -577,6 +574,34 @@
         $('#btnReset').click(function () {
             // Clear the DataTable
             dataTable.clear().draw();
+        });
+
+        $('#tblDataTable').on('click', '.btn-delete', function () {
+
+            var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
+            debugger
+                        $.ajax
+({
+    type: 'POST',
+    url: '@Url.Action("DeleteShipment", "Shipment")',
+    data: rowData,
+    dataType: "json",
+    success: function (result) {
+        debugger
+        if (result.Status == "S") {
+            SweetAlert('success', result.Message);
+        }
+        else {
+            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+        }
+
+
+
+    },
+    error: function (request, status, error) {
+        SweetAlert('error', error);
+    }
+});
         });
 
         //datetimepicker
@@ -606,7 +631,100 @@
             timepicker: false,
         });
 
+        function bindingTable(newShipment) {
+            debugger
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: newShipment,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
 
+                columns: [
+
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+                            debugger
+
+                            return data.OrderNumber;
+                        }
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+                            debugger
+                            return data.FullName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.MobileNumber;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.Storage;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipmentStatus;
+
+                        }
+
+                    }
+                    , {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipDate;
+
+                        }
+
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                    },
+                    //{
+                    //    data: 'CreateDate', classNmae: 'text-left', orderable: false,
+                    //    render: function (data, type, row) {
+
+                    //      /*  return data.CreateDate;*/
+                    //        return data;
+                    //    }
+                    //}
+
+                ]
+
+
+            });
+
+        }
     </script>
 }
 

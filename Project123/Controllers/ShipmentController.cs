@@ -3,17 +3,27 @@ using Project123.Data;
 using Project123.Models;
 using Project123.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace Project123.Controllers
 {
 
     public class ShipmentController : Controller
     {
+
+
+
         private readonly ApplicationDBContext _db;
-        public ShipmentController(ApplicationDBContext db)
+        private readonly string connectionString;
+
+        public ShipmentController(ApplicationDBContext db, IConfiguration configuration)
         {
             _db = db;
+            connectionString = configuration.GetConnectionString("DefaultConnection");
         }
+
 
         public IActionResult Index()
         {
@@ -38,27 +48,52 @@ namespace Project123.Controllers
 
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       
         public IActionResult SearchShipment(Shipmentmodel ShipmentData)
         {
-         //using (var db = _db)
-         //   {
-         //       string sqlQuery = "SELECT * FROM Shipment WHERE";
+            try
+            {
+                Shipmentmodel shipping = new Shipmentmodel();
+                shipping.OrderNumber = ShipmentData.OrderNumber;
+                // Execute the SQL query
+                var queryResult = _db.Shipment
+                    .Where(s => s.OrderNumber == shipping.OrderNumber)
+                    .ToList();
+                if (queryResult == null || queryResult.Count == 0)
+                {
 
+                    var response = new
+                    {
+                        Message = "E"
+                    };
+                    return Json(response);
+                }
+                else
+                {
+                    var response = new
+                    {
+                        Message = "S",
+                        Data = queryResult
+                    };
+                    return Json(response);
 
-         //       if (!string.IsNullOrEmpty(ShipmentData.OrderNumber))
-         //       {
-         //           sqlQuery += $"ShipmentId = '{ShipmentData.OrderNumber}'  ";
-         //       }
+                }
+                // Send data to view
+               
+            }
+           
+            catch (Exception ex)
+            {
 
-         //       var searchResults = db.Shipment.FromSqlRaw(sqlQuery).ToList();
-
-
-
-
-         //   }
-         //   return Ok(searchResults);
-           return View();
+                // Log the exception or handle it as needed
+                // Return message indicating an error occurred
+                var response = new
+                {
+                    Message = "E" // "E" indicating an error
+                };
+                return Json(response);
+            }
+        
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -67,7 +102,7 @@ namespace Project123.Controllers
 
             _db.Shipment.Add(ShipmentData);
             _db.SaveChanges();
-            return RedirectToAction("Index");
+            return Json(ShipmentData);
 
 
         }
@@ -79,7 +114,7 @@ namespace Project123.Controllers
                 _db.Shipment.Add(ShipmentData);
 
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json(ShipmentData) ;
             }
             catch (Exception ex)
             {
@@ -88,7 +123,7 @@ namespace Project123.Controllers
                 // For example, you can return an error message to the user
                 Console.WriteLine(ex.Message);
                 ModelState.AddModelError("", "An error occurred while saving the shipment data.");
-                return View(ShipmentData); // or return a partial view with an error message
+                return Json(ShipmentData); // or return a partial view with an error message
 
 
             }
@@ -96,6 +131,51 @@ namespace Project123.Controllers
 
 
         }
+
+
+        public IActionResult DeleteShipment(Shipmentmodel ShipmentData, string Username)
+        {
+            object? response = null; // Declare response variable outside try block
+
+            string sqlDeleteDoc = @" DELETE FROM Shipment WHERE ShipmentId = @ShipmentId";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sqlDeleteDoc, connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.Clear();
+                        command.Parameters.AddWithValue("@ShipmentId", ShipmentData.ShipmentId); 
+                        command.ExecuteNonQuery();
+                        response = new
+                        {
+                            Status = "S",
+                            Message = "Delete shipment success! : " + ShipmentData.ShipmentId,
+                            Data = ShipmentData
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response = new
+                    {
+                        Status = "E",
+                        Message = ex.Message // Include exception message in response
+                    };
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return Json(response);
+        }
+
+
 
 
         public IActionResult CreateShipment()

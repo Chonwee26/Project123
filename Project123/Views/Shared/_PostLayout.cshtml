@@ -16,6 +16,50 @@
 
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
+
+    <style>
+
+        .btn-swal-primary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00B0F0 !important;
+            border-color: #00B0F0 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-secondary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #8E8E8E !important;
+            border-color: #8E8E8E !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-success {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00BF2A !important;
+            border-color: #00BF2A !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-danger {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #DE0000 !important;
+            border-color: #DE0000 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+    </style>
 </head>
 <body>
     <header>
@@ -69,6 +113,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
+    <script>
+
+
+        function SweetAlert(type, message, title) {
+            if (title == undefined) {
+                switch (type) {
+                    case "error":
+                        title = 'error'
+                        break;
+                    case "warning":
+                        title = 'warning'
+                        break;
+                    default:
+                        title = 'success'
+                }
+            }
+            if (type == "success") {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                });
+            }
+            $(".swal2-confirm").addClass('btn-swal-primary');
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
