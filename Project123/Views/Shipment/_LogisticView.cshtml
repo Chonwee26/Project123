@@ -31,46 +31,45 @@
                     </div>
                     @*end first*@
                     @* Start second*@
-                    <div class="row pb-3">
-                        <div class="col-12">
-                            <h6>สถานที่เก็บสินค้า</h6>
-                            <div class="input-group">
+                <div class="row pb-3">
+                    <div class="col-12 col-sm-12 col-md-6">
+                        <h6>สถานที่เก็บสินค้า</h6>
+                        <div class="input-group">
+                            <div class="col-12">
                                 <select class="form-select select2 select2-select" id="ddlCreateStorage" name="Storage" required>
-                                    <option selected value="">---ทั้งหมด---</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                            <h6>สถานะขนส่ง</h6>
-                            <div class="input-group">
-                                <select class="form-select select2 select2-select" id="ddlCreateShipmentStatus" name="ShipmentStatus" required>
-                                    <option selected value="">---ทั้งหมด---</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-
-                            <h6>วันที่ส่ง</h6>
-                            <div class="input-group">
-                                <input type="date" class="form-control datetimepicker" id="txtShipDate" name="ShipDate">
-                            </div>
-                        </div>
-
-
-
-                        <div class="  col-4 p-3 d-flex  justify-content-end ">
-
-                            <button type="button" id="btnCancel" class="btn btn-secondary mx-2 px-4 ">ยกเลิก</button>
-                            <button type="submit" id="btnCreateShipment" class="btn btn-primary mx-2 px-4 ">ยืนยัน</button>
-                        </div>
-
                     </div>
+                    <div class="col-12 col-sm-12 col-md-6">
+                        <h6>สถานะขนส่ง</h6>
+                        <div class="input-group">
+                            <select class="form-select select2 select2-select" id="ddlCreateShipmentStatus" name="ShipmentStatus" required>
+                            
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-6">
+
+                        <h6>วันที่ส่ง</h6>
+                        <div class="input-group">
+                            <div class="input555">
+                                <input type="text" class="form-control datetimepicker" id="txtShipDate" name="ShipDate"> 
+                                <i class="fa-regular fa-calendar input-icon-addon"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    <div class="  col-12 col-sm-12 col-md-6  pt-2 d-flex mt-2 justify-content-end ">
+
+                        <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 ">ยกเลิก</button>
+                        <button type="submit" id="btnCreateShipment" class="btn btn-primary m-2 px-4 ">ยืนยัน</button>
+                    </div>
+
+                </div>
                 </div>
             </form>
         </div>

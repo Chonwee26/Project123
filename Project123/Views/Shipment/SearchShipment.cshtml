@@ -1,0 +1,169 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+
+@section Styles{
+    <style type="text/css">
+        body {
+            background-color: #f9fbfd;
+        }
+
+        container {
+            background-color: black;
+        }
+
+        .card {
+            background-color: white;
+        }
+
+        #liveChat {
+            height: 40px;
+            width: 100px;
+            display: flex;
+            position: sticky;
+            justify-content: flex-end;
+            align-content: flex-end;
+        }
+
+
+        .carousel-item img {
+            height: 500px; /* Adjust the height as needed */
+            object-fit: cover; /* Ensure the image covers the fixed height */
+        }
+
+        #carouselExampleCaptions {
+            margin: 0; /* Reset margin for the carousel container */
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="~/picture/thailand.jpg" class="d-block w-100" alt="">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>First slide label</h5>
+                        <p>Some representative placeholder content for the first slide.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="~/picture/Japan-2107x1406.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Second slide label</h5>
+                        <p>Some representative placeholder content for the second slide.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="~/picture/iceland.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="col-9 offset-3 mt-4">
+    <h1 class="">เช็คเลขพัสดุ Chowii Express</h1>
+
+    <div class="col-12">
+        <div class="row">
+            <div class="col-8">
+                <input type="text" id="txtOrderNumber" class="form-control" name="OrderNumber" />
+            </div>
+            <div class="col-3">
+                <button type="submit" class=" d-flex btn-primary" id="btnSearch">Tracking</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="card mt-4 py-4">
+    <div class="row">
+        <div class="content col-6">
+            <label id="idPost"></label>
+        </div>
+
+        <div class="arriveDate">
+
+            <label></label>
+        </div>
+
+    </div>
+
+</div>
+<button class="btn-outline-primary" id="liveChat">Live Chat</button>
+
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        $('#liveChat').click(function () {
+            var liveChat = $('#liveChat');
+            liveChat.toggle();
+
+        });
+        $('#btnSearch').click(function () {
+    
+
+
+
+            var frmSearch = $('#frmSearchShipment').serialize();
+            var frmSearch1 = {
+                OrderNumber: $('#txtOrderNumber').val()
+            }
+
+            $.ajax
+                ({
+                    type: 'POST',
+                    url: '@Url.Action("SearchShipment", "Shipment")',
+                    data: frmSearch1,
+                    dataType: "json",
+                    success: function (result) {
+                        debugger
+                        alert("หมายเลขของคุณคือ " + result.Data.OrderNumber);
+                        if (result.Message == "S") {
+                            debugger
+                            bindingTable(result.Data);
+                        }
+                        else {
+                            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                        }
+
+
+
+                    },
+                    error: function (request, status, error) {
+                        SweetAlert('error', error);
+                    }
+                });
+        });
+
+ 
+    
+    </script>
+}

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project123.Models
 {
-    public class Shipmentmodel
+    public class ShipmentModel
     {
       
 
@@ -25,7 +25,7 @@ namespace Project123.Models
         public string CreateDate { get; set; }
 
         // Constructor to initialize properties
-        public Shipmentmodel()
+        public ShipmentModel()
         {
             // Initialize properties to empty strings instead of null
             OrderNumber = "";

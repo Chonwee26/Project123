@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project123.Data;
 
@@ -11,9 +12,10 @@ using Project123.Data;
 namespace Project123.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240508040652_addShipmentLocation1")]
+    partial class addShipmentLocation1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,19 +26,19 @@ namespace Project123.Migrations
 
             modelBuilder.Entity("Project123.Models.ShipmentLocationModel", b =>
                 {
-                    b.Property<string>("ShipmentItemID")
+                    b.Property<string>("StorageID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ShipmentItemText")
+                    b.Property<string>("StorageName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ShipmentItemID");
+                    b.HasKey("StorageID");
 
-                    b.ToTable("ShipmentLocationModel");
+                    b.ToTable("ShipmentLocation");
                 });
 
-            modelBuilder.Entity("Project123.Models.ShipmentModel", b =>
+            modelBuilder.Entity("Project123.Models.Shipmentmodel", b =>
                 {
                     b.Property<int>("ShipmentId")
                         .ValueGeneratedOnAdd()

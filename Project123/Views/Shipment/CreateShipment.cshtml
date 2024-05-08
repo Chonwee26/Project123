@@ -1,6 +1,6 @@
 ﻿
 
-@model Shipmentmodel;
+@model ShipmentModel;
 @{
     Layout = "~/Views/Shared/_PostLayout.cshtml";
 }
@@ -11,6 +11,150 @@
     <link href="~/lib/dataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
 
     <style type="text/css">
+
+
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: #0054FF !important;
+            color: white;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[aria-selected]:hover {
+            background-color: #00B0F0;
+            color: #fff;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #0054FF !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice,
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove,
+        .selectgroup-input:checked + .selectgroup-button {
+            color: #00A0DA;
+            border-color: #00A0DA;
+            background-color: rgba(167,239,239,.15);
+        }
+
+        .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple {
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #d0d4dd;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border: 1px solid #1572e8;
+            outline: 0;
+        }
+
+        .select2-container {
+            width: 100% !important;
+            vertical-align: middle;
+        }
+
+        .select2-dropdown {
+            z-index: 13000;
+        }
+
+        /*style select2 multiple*/
+        .select2-container .select2-selection--multiple {
+            min-height: 38px;
+        }
+
+        /* ถ้าปิดตรงนี้ ตรงที่พิม Select 2 จะไม่เห็นกรอบ */
+        .select2-container--default .select2-dropdown .select2-search__field:focus, .select2-container--default .select2-search--inline .select2-search__field:focus {
+            /*border: 0;*/
+        }
+
+        .select2-container .select2-search--inline .select2-search__field {
+            height: 26px;
+        }
+        /*end style select2 multiple*/
+
+        /* select2 style testing */
+        .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ebedf2;
+        }
+
+        .select2-selection__rendered {
+            height: 28px !important;
+            padding: 7px;
+            line-height: 1.5 !important;
+            font-size: 14px;
+            padding: .25rem .5rem !important;
+            font-size: .875rem !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #000;
+        }
+
+        .select2-dropdown {
+            background-color: white;
+            border: 1px solid #ebedf2;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            left: -100000px;
+            width: 100%;
+            font-size: 14px;
+            z-index: 1051;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[aria-selected]:hover {
+            background-color: #00B0F0;
+            color: #fff;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #00B0F0;
+        }
+
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: #00B0F0;
+            color: white;
+        }
+
+        .select2-results__option--selectable {
+            color: #000;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 26px;
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 20px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            margin-top: 1px;
+            margin-right: 8px;
+            color: #888888;
+        }
+        /* end select2 style */
+
+        .datetimepicker {
+            width:297px!important;
+        }
+     
+        .input555 {
+            position: relative;
+        }
+          
+
+
+
+            .input555 i {
+                position: absolute;
+                right: 15px; 
+                top: 50%;
+                transform: translateY(-50%);
+            }
         .qr-code {
             max-width: 200px;
             margin: 10px;
@@ -78,8 +222,8 @@
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <label class="control-label col-sm-2"
-                                       for="content">
-                                    Content:
+                                       for="OrderNumber">
+                                    หมายเลขออเดอร์:
                                 </label>
                                 <div class="col-sm-10">
 
@@ -204,7 +348,7 @@
                         <hr />
                         @*first*@
                         <div class="row pb-3">
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                            <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>หมายเลขออเดอร์</h6>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="txtOrderNumber" name="OrderNumber" />
@@ -212,56 +356,57 @@
                             </div>
 
 
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                            <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>ชื่อ-สกุล</h6>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="txtSearchFullName" name="FullName" />
                                 </div>
                             </div>
-
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>หมายเลขโทรศัพท์</h6>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="txtSearchMobileNumber" name="MobileNumber" />
                                 </div>
                             </div>
+                            <div class="col-12 col-sm-12 col-md-6 ">
+
+                                <h6>วันที่ส่ง</h6>
+                                <div class="input-group">
+                                    <div class="input555">
+                                        <input type="text" class="form-control datetimepicker" id="txtSearchShipDateFR" name="ShipDateFR">
+                                        <i class="fa-regular fa-calendar input-icon-addon"></i>
+                                    </div>
+                                    <span class="input-group-text">ถึง</span>
+                                    <div class="input555">
+                                        <input type="text" class="form-control datetimepicker" id="txtSearchShipDateTO" name="ShipDateTO">
+                                        <i class="fa-regular fa-calendar input-icon-addon"></i>
+                                    </div>
+                                </div>
+                            </div>                         
                         </div>
                         @*end first*@
                         @* Start second*@
                         <div class="row pb-3">
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                            <div class="col-12 col-sm-12 col-md-6 ">
 
                                 <h6>สถานที่เก็บสินค้า</h6>
                                 <div class="input-group">
-                                    <select class="form-select select2 select2-select" id="ddlSearchStorage" name="Storage" >
-                                        <option selected value="">---ทั้งหมด---</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select class="form-select select2 select2-select" id="ddlSearchStorage" style="width:100%" name="Storage">
+                                       
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                            <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>สถานะขนส่ง</h6>
                                 <div class="input-group">
-                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus" >
-                                        <option selected value="">---ทั้งหมด---</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus"  name="ShipmentStatus">
+                                      
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-6 col-lg-4">
 
-                                <h6>วันที่ส่ง</h6>
-                                <div class="input-group">
-
-                                    <input type="date" class="form-control datetimepicker" id="txtSearchShipDateFR" name="ShipDateFR">
-                                    <span class="input-group-text">ถึง</span>
-                                    <input type="date" class="form-control datetimepicker" id="txtSearchShipDateTO" name="ShipDateTO">
-                                </div>
-                            </div>
 
 
 
@@ -290,7 +435,7 @@
                             @* end second *@
 
                             <div class="col-12" id="dvTable" style="display:none">
-                                <table id="tblDataTable" class="table table-bordered">
+                                <table id="tblDataTable" class="table table-bordered" width="100%">
                                     <thead>
                                         <tr class="text-center">
                                             <th>หมายเลขออเดอร์</th>
@@ -315,7 +460,6 @@
             </div>
         </div>
 
-
     </div>
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <partial name="_LogisticView" />
@@ -337,60 +481,157 @@
         var newShipment = [];
 
         $(document).ready(function () {
-          /*  bindingTable();*/
 
-            // Function to HTML encode the text
-            // This creates a new hidden element,
-            // inserts the given text into it
-            // and outputs it out as HTML
-            function htmlEncode(value) {
-                return $('<div/>').text(value).html();
-            }
-
-            $(function () {
-                // Specify an onclick function
-                // for the generate button
-                $('#generate').click(function () {
-                    // Generate the link that would be
-                    // used to generate the QR Code
-                    // with the given data
-                    var content = htmlEncode($('#content').val());
+            $('#ddlSearchStorage').on('select2:select', function () {
 
 
-                    var finalURL =
-                        'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+
-                        content;
-
-                    // Replace the src of the image with
-                    // the QR code image
-                    $('.qr-code').attr('src', finalURL);
-                });
             });
+            getShipmentStatus('','#ddlSearchShipmentStatus');
+            getShipmentLocation('','#ddlSearchStorage');
 
-            $('#qrForm').submit(function (event) {
+        });
 
-                event.preventDefault(); // Prevent form submission
 
-                var formData = new FormData($(this)[0]); // Get form data
-                $.ajax({
-                    url: 'https://api.qrserver.com/v1/read-qr-code/',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
+        $('.select2').select2({
+            width: 'resolve'
+
+        });
+
+        // Function to HTML encode the text
+        // This creates a new hidden element,
+        // inserts the given text into it
+        // and outputs it out as HTML
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        $(function () {
+
+            // Specify an onclick function
+            // for the generate button
+
+            $('#generate').click(function () {
+                // Generate the link that would be
+                // used to generate the QR Code
+                // with the given data
+
+                var content = htmlEncode($('#content').val());
+
+                var finalURL =
+                    'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' +
+                    content;
+
+                // Replace the src of the image with
+                // the QR code image
+                $('.qr-code').attr('src', finalURL);
+            });
+        });
+
+        $('#qrForm').submit(function (event) {
+
+            event.preventDefault(); // Prevent form submission
+
+            var formData = new FormData($(this)[0]); // Get form data
+            $.ajax({
+                url: 'https://api.qrserver.com/v1/read-qr-code/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    debugger
+                    if (data.length > 0) {
+
 
 
                         // Handle extracted data
                         displayResult(data[0].symbol[0].data);
                         $('#txtOrderNumber').val(data[0].symbol[0].data);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error:', error);
+                        $('#btnSearch').click();
                     }
-                });
+                    else {
+                        SweetAlert('error', 'ไม่มีข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
             });
         });
+
+        // ----------- Hide select arrow -----------
+        $(document).on('select2:select', '.select2', function (e) {
+            $(this).parent().find('.select2-container--default .select2-selection--single .select2-selection__arrow').hide();
+        });
+
+        $(document).on('change', '.select2', function (e) {
+            if ($(this).val() == "" || $(this).val() == null) {
+                $(this).parent().find('.select2-container--default .select2-selection--single .select2-selection__arrow').show();
+            } else {
+                $(this).parent().find('.select2-container--default .select2-selection--single .select2-selection__arrow').hide();
+            }
+        });
+
+            function getShipmentStatus(id,elementId) {
+        id = id == null ? "" : id
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetShipmentStatus","Shipment")',
+            datatype: 'json',
+            success: function (result) {
+                debugger
+                $(elementId).html('');
+                $(elementId).select2({
+                    placeholder:'--- ทั้งหมด ---',
+                    allowClear: true,
+                    data: $.map(result.Data, function (item) {
+                        return {
+                            id: item.ShipmentItemID,
+                            text: item.ShipmentItemText
+                        };
+                    })
+                });
+                if (id != '') {
+                    $(elementId).val(id).change();
+                }
+                else {
+                    $(elementId).val(null).change();
+                }
+            }
+        });
+    }
+
+        function getShipmentLocation(id,elementId) {
+            id = id == null ? "" : id
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetShipmentLocation","Shipment")',
+                datatype: 'json',
+                success: function (result) {
+                    debugger
+                    $(elementId).html('');
+                    $(elementId).select2({
+                        placeholder:'--- ทั้งหมด ---',
+                        allowClear: true,
+                        data: $.map(result.Data, function (item) {
+                            return {
+                                id: item.ShipmentItemID,
+                                text: item.ShipmentItemText
+                            };
+                        })
+                    });
+                    if (id != '') {
+                        $(elementId).val(id).change();
+                    }
+                    else {
+                        $(elementId).val(null).change();
+                    }
+                }
+            });
+        }
 
         function displayResult(data) {
             // Display extracted data in the "result" div
@@ -467,8 +708,18 @@
 
 
             submitHandler: function (form) {
+                var inputDate = $('#txtSearchShipDateFR').val();
+                var formattedDate = "";
 
+                // Check if inputDate is a valid date in the format DD/MM/YYYY
+                if (moment(inputDate, 'DD/MM/YYYY', true).isValid()) {
+                    // If valid, format the date as YYYY-MM-DD
+                    formattedDate = moment(inputDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+                    inputDate = formattedDate;
+                }
+                debugger
                 var frmSearch = $('#frmSearchShipment').serialize();
+                debugger
                 var frmSearch1 = {
                     OrderNumber: $('#txtOrderNumber').val()
                 }
@@ -476,13 +727,16 @@
                   $.ajax
       ({
           type: 'POST',
-          url: '@Url.Action("SearchShipment", "Shipment")',
+          url: '@Url.Action("SearchShipmentAll", "Shipment")',
           data: frmSearch,
           dataType: "json",
           success: function (result) {
               if (result.Message == "S") {
                   debugger
-                  bindingTable(result.Data);
+
+                  $('#tblDataTable').dataTable().empty();
+                  bindingTableAll(result.Data);
+              /*    bindingTable(result.Data);*/
               }
               else {
                   SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
@@ -523,26 +777,49 @@
 
                 var frmCreate = $('#frmCreateShipment').serializeArray();
                 const currentTime = new Date($.now());
+                debugger
                 frmCreate.push({ name: 'CreateDate', value: currentTime })
                 //if ($('#ddlCreateShipmentStatus').val() == '') {
                 //    $('#ddlCreateShipmentStatus').val('');
                 //}
 
                 var serializedCreate = $.param(frmCreate);
-                $.ajax
-                    ({
-                        type: 'POST',
-                        url: '@Url.Action("CreateShipmentAjax1", "Shipment")',
-                        data: serializedCreate,
-                        dataType: "json",
-                        success: function (result) {
-                            debugger
 
-                            bindingTable(result);
-
-                        }
-                    });
-
+                Swal.fire({
+                    icon: "question",
+                    title: "ยืนยันสร้างShipment",
+                    text: $('#txtFullName').val(),
+                    showCancelButton: true,
+                    confirmButtonText: "ยืนยัน",
+                    cancelButtonText: "ยกเลิก",
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax
+                            ({
+                                type: 'POST',
+                                url: '@Url.Action("CreateShipmentAjax1", "Shipment")',
+                                data: serializedCreate,
+                                dataType: "json",
+                                success: function (result) {
+                                    if (result.Status = "S") {
+                                        SweetAlert('success', result.Message);
+                                        $(".nav button#searchTab").tab('show');
+                                        $('#txtOrderNumber').val(result.Data.OrderNumber);
+                                        $('#btnSearch').click();
+                                    }
+                                    else {
+                                        SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    SweetAlert('error', error);
+                                }
+                            });
+                    }
+                });
+                $(".swal2-confirm").addClass('btn-swal-success');
+                $(".swal2-cancel").addClass('btn-swal-secondary');
             }
         });
 
@@ -554,6 +831,9 @@
 
         $('#btnCreate').click(function () {
             $(".nav button#createTab").tab('show');
+            clearSearchValue();
+            getShipmentLocation('', '#ddlCreateStorage');
+            getShipmentStatus('', '#ddlCreateShipmentStatus');
         });
 
         $('#btnCreateQrCode').click(function () {
@@ -561,6 +841,8 @@
         });
         $('#btnSearchQrCode').click(function () {
             $('#searchQrCodeModal').modal('show');
+            $('#qrForm')[0].reset();
+            $('#result').empty();
         });
 
         $('#btnCreateShipment').click(function () {
@@ -573,59 +855,62 @@
         // Reset Button Action
         $('#btnReset').click(function () {
             // Clear the DataTable
-            dataTable.clear().draw();
+            clearSearchValue();
+            
+            $('#tblDataTable').DataTable().clear().draw();
         });
 
         $('#tblDataTable').on('click', '.btn-delete', function () {
 
             var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
             debugger
-                        $.ajax
-({
-    type: 'POST',
-    url: '@Url.Action("DeleteShipment", "Shipment")',
-    data: rowData,
-    dataType: "json",
-    success: function (result) {
-        debugger
-        if (result.Status == "S") {
-            SweetAlert('success', result.Message);
-        }
-        else {
-            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
-        }
+            $.ajax
+                ({
+                    type: 'POST',
+                    url: '@Url.Action("DeleteShipment", "Shipment")',
+                    data: rowData,
+                    dataType: "json",
+                    success: function (result) {
+                        debugger
+                        if (result.Status == "S") {
+                            SweetAlert('success', result.Message);
+                            $('#btnSearch').click();
+                        }
+                        else {
+                            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                        }
 
 
 
-    },
-    error: function (request, status, error) {
-        SweetAlert('error', error);
-    }
-});
+                    },
+                    error: function (request, status, error) {
+                        SweetAlert('error', error);
+                    }
+                });
         });
 
-        //datetimepicker
-        $('#txtSearchShipmentDateFR').datetimepicker({
+        $('#txtSearchShipDateFR').datetimepicker({
             format: 'd/m/Y',
             formatDate: 'd/m/Y',
             onShow: function (ct) {
                 this.setOptions({
-                    maxDate: $('#txtSearchShipmentDateTO').val() ? $('#txtSearchShipmentDateTO').val() : false
+                    maxDate: $('#txtSearchShipDateTO').val() ? $('#txtSearchShipDateTO').val() : false
                 })
             },
             timepicker: false,
         });
-        $('#txtSearchShipmentDateTO').datetimepicker({
+        $('#txtSearchShipDateTO').datetimepicker({
             format: 'd/m/Y',
             formatDate: 'd/m/Y',
             onShow: function (ct) {
                 this.setOptions({
-                    maxDate: $('#txtSearchShipmentDateFR').val() ? $('#txtSearchShipmentDateFR').val() : false
+                    maxDate: $('#txtSearchShipDateFR').val() ? $('#txtSearchShipDateFR').val() : false
                 })
             },
             timepicker: false,
         });
-        $('#txtCreateShipmentDate').datetimepicker({
+
+        $('#txtShipDate').datetimepicker({
             format: 'd/m/Y',
             formatDate: 'd/m/Y',
             timepicker: false,
@@ -678,6 +963,115 @@
 
                         render: function (data, type, row) {
 
+                            return data.Storage;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipmentStatus;
+
+                        }
+
+                    }
+                    , {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipDate;
+
+                        }
+
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                    },
+                    //{
+                    //    data: 'CreateDate', classNmae: 'text-left', orderable: false,
+                    //    render: function (data, type, row) {
+
+                    //      /*  return data.CreateDate;*/
+                    //        return data;
+                    //    }
+                    //}
+
+                ]
+
+
+            });
+
+        }
+
+        function clearSearchValue() {
+            $('#frmSearchShipment')[0].reset();
+
+            $('#ddlSearchShipmentStatus').val('').trigger('change');
+            $('#ddlSearchStorage').val('').trigger('change');
+            debugger
+
+
+        }
+
+        function clearCreateValue() {
+            $('#frmCreateShipment')[0].reset();
+        }
+
+        function bindingTableAll(newShipment) {
+         debugger
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: newShipment,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
+
+                columns: [
+
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+                            debugger
+
+                            return data.OrderNumber;
+                        }
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+                            debugger
+                            return data.FullName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.MobileNumber;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+                            debugger
                             return data.Storage;
 
                         }

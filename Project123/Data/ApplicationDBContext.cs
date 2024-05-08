@@ -12,6 +12,8 @@ namespace Project123.Data
         }
 
         // DbSet for each of your model classes
-        public DbSet<Shipmentmodel> Shipment { get; set; }
+        public DbSet<ShipmentModel> Shipment { get; set; }
+        public DbSet<ShipmentLocationModel> ShipmentLocation { get; set; }
+        public DbSet<ShipmentLocationModel> ShipmentStatus { get; set; }
     }
 }
