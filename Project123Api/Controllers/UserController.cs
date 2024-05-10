@@ -2,6 +2,7 @@
 using Project123Api.Models;
 using Project123Api.Database;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project123Api.Controllers
@@ -51,20 +52,37 @@ namespace Project123Api.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] dataModel userObj)
+        public IActionResult Put(int id, [FromBody] dataModel userObj)
         {
             var user = _dbContext.Tb_User.Find(id);
-            user.Name = userObj.Name;
-            _dbContext.SaveChanges();
+            if (user == null)
+            {
+                return NotFound("Cant't update user.");
+            }
+            else
+            {
+                user.Name = userObj.Name;
+                user.Age = userObj.Age;
+                _dbContext.SaveChanges();
+            }         
+            return Ok("Update User Success");
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
             var user = _dbContext.Tb_User.Find(id);
-            _dbContext.Tb_User.Remove(user);
-            _dbContext.SaveChanges();
+            if (user == null)
+            {
+                return NotFound("Can't delete user.");
+            }
+            else
+            {
+                _dbContext.Tb_User.Remove(user);
+                _dbContext.SaveChanges();
+            }
+          return Ok("Delete Success");
         }
     }
 }
