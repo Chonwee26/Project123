@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project123Api.Models;
-using Project123Api.Database;
+//using Project123Api.Models;
+using Project123.Dto;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Project123Api.Repositories;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project123Api.Controllers

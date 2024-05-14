@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project123.Models;
+//using Project123.Models;
+using Project123.Dto;
 using System.Diagnostics;
 
 namespace Project123.Controllers
@@ -23,10 +24,6 @@ namespace Project123.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+     
     }
 }

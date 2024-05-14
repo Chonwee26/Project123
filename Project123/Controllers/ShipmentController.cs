@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project123.Data;
-using Project123.Models;
+//using Project123.Models;
+using Project123.Dto;
 using Project123.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
@@ -457,9 +458,11 @@ namespace Project123.Controllers
                         foreach (DataRow row in dtResult.Rows)
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel();
+                        
                             model.ShipmentItemID = row["ShipmentItemID"].ToString();
                             model.ShipmentItemText = row["ShipmentItemText"].ToString();
                             statusList.Add(model);
+                            
                         }
                     }
 

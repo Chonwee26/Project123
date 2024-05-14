@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+@section Styles{
+    <style type="text/css">
+
+        .imgShow {
+            border-radius: 10%;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <select id="languageSelector">
+            <option value="en">English</option>
+            <option value="th">ไทย (Thai)</option>
+        </select>
+        <div class="col-6 d-flex flex-row justify-content-center align-items-center">
+            <img src="~/picture/Japan-2107x1406.jpg" class="imgShow" width="500" height="500" />
+        </div>
+        <div class="col-6 d-flex flex-column justify-content-center align-items-center">
+            @*<h3 id="loginTitle">Log in</h3>
+            <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+            <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+            <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>*@
+            <h3 id="loginTitle"data-i18n="login.title">Log in</h3>
+            <div class="form-group mb-4">
+                <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+            </div>
+
+            <div class="form-group mb-4">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+            </div>
+
+            <div class="form-group mb-4">
+                <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>
+                <a href="#">Forgot Password?</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <!-- i18n plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.i18n/1.0.9/jquery.i18n.min.js" integrity="sha512-EkS8Kq86l7dHt/dOBniHgtYvAScDqFw/lIPX5VCwaVKsufs0pY44I2cguqZ45QaFOGGwVd3T1nXvVJYIEjRsjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+       
+    </script>
+}
+

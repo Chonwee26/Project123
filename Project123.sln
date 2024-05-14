@@ -5,7 +5,9 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project123", "Project123\Project123.csproj", "{CD40E871-EE8C-4438-9C17-D06C1BA995D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project123Api", "Project123Api\Project123Api.csproj", "{C6213DF5-E694-483B-80FD-AAEFEDA7A991}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project123Api", "Project123Api\Project123Api.csproj", "{C6213DF5-E694-483B-80FD-AAEFEDA7A991}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project123.Dto", "Project123.Dto\Project123.Dto.csproj", "{9DB3F979-FE59-4D22-A698-332650ADA018}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C6213DF5-E694-483B-80FD-AAEFEDA7A991}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6213DF5-E694-483B-80FD-AAEFEDA7A991}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6213DF5-E694-483B-80FD-AAEFEDA7A991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB3F979-FE59-4D22-A698-332650ADA018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB3F979-FE59-4D22-A698-332650ADA018}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB3F979-FE59-4D22-A698-332650ADA018}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB3F979-FE59-4D22-A698-332650ADA018}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+@section Styles{
+    <style type="text/css">
+
+        .imgShow {
+            border-radius: 10%;
+        }
+    </style>
+}
+
+<div class="container d-flex justify-content-center">
+    <div class="row">
+        <div class="col-6 d-flex flex-row justify-content-center align-items-center">
+            <img src="~/picture/Japan-2107x1406.jpg" class="imgShow" width="500" height="500" />
+        </div>
+        <div class="col-6 d-flex flex-column justify-content-center align-items-center px-5">
+
+            <h3>Sign Up</h3>
+            <div class="form-group mb-4">
+                <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+            </div>
+
+            <div class="form-group mb-4">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+            </div>
+            <div class="form-group mb-4">
+                <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Confirm your Password" />
+            </div>
+
+            <div class="form-group mb-4">
+                <button type="submit" class="btn btn-primary" id="btnSignUp">Sign Up</button>
+              
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+
+    </script>
+}
+

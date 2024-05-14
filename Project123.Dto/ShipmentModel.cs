@@ -1,24 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Project123.Models
+namespace Project123.Dto
 {
     public class ShipmentModel
     {
-      
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShipmentId { get; set; }
-       
-      
         public string? OrderNumber { get; set; }
-    
         public string? FullName { get; set; }
         public string? MobileNumber { get; set; }
         public string? Storage { get; set; }
         public int? ShipmentStatus { get; set; }
-        
         public string ShipDate { get; set; }
         public string? ShipDateFR { get; set; }
         public string? ShipDateTO { get; set; }
@@ -38,8 +32,6 @@ namespace Project123.Models
             ShipDateTO = "";
             CreateDate = "";
         }
-
     }
-
 }
 
