@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ApacheTech.Common.DependencyInjection" Version="2.1.2" />
     <PackageReference Include="AspNetCore.Authentication.Plugin" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.29" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.24" />
@@ -26,6 +27,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 	  <ProjectReference Include="..\Project123.Dto\Project123.Dto.csproj" />
 	  <ProjectReference Include="..\Project123Api\Project123Api.csproj" />
   </ItemGroup>

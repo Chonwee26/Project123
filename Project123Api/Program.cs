@@ -16,17 +16,21 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using Project123Api.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Project123 API", Version = "v1" });
 });
-
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
 
@@ -65,7 +69,6 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
 
 app.UseEndpoints(endpoints =>
 {

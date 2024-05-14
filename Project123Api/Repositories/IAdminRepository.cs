@@ -1,53 +1,61 @@
-﻿//using AuthenticationPlugin;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Project123.Dto;
-//using System.ComponentModel.Design;
-//using System.Data;
-//using System.Data.SqlClient;
-//using static System.Collections.Specialized.BitVector32;
+﻿using AuthenticationPlugin;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Project123.Dto;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
+namespace Project123Api.Repositories
+{
+   
+    public interface IAdminRepository
+    {
+        Task<ResponseModel> CreateUser(dataModel userData);
+    }
 
-//namespace Project123Api.Repositories
-//{
-//    public interface IAdminRepository
-//    {
-//        Task<ResponseModel> CreateUser(AdminModel UserData);
-//        Task<ResponseModel> CreateUser(dataModel userData);
-//    }
-//    public class AdminRepository : DataDbContext, IAdminRepository
+    public class AdminRepository : IAdminRepository
+    {
+        private readonly IConfiguration _configuration;
 
-//    {
-     
-//        public async Task<ResponseModel> CreateUser(dataModel UserData)
-//        {
-//            ResponseModel response = new ResponseModel();
-//            string sqlCreateUser = @"INSERT INTO Tb_User (Name, Age) VALUES (@Name , @Age)";
+        public AdminRepository(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
-//            using (SqlConnection connection = new SqlConnection(connectionString))
-//            {
-//                connection.Open();
+        public async Task<ResponseModel> CreateUser(dataModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlCreateUser = @"INSERT INTO Tb_User (Name, Age,RecordDate) VALUES (@Name, @Age, @RecordDate)";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
-//                try
-//                {
-//                    SqlCommand command = connection.CreateCommand();
-//                    command.Parameters.AddWithValue("@Name", UserData.Name);
-//                    command.Parameters.AddWithValue("@Age", UserData.Age);
-//                    response.Status = "S";
-//                    response.Message = UserData.Name;
-//                }
-//                catch (Exception ex)
-//                {
-//                    response.Status = "E";
-//                    response.Message = ex.Message;
-//                }
-//                finally
-//                {
-//                    connection.Close();
-//                }
-//            }
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlCreateUser, connection);
+                    command.Parameters.AddWithValue("@Name", UserData.Name);
+                    command.Parameters.AddWithValue("@Age", UserData.Age);
+                    command.Parameters.AddWithValue("@RecordDate", UserData.RecordDate);
+                    await command.ExecuteNonQueryAsync();
 
-//            return await Task.FromResult(response);
-//        }
-//    }
-//}
+                    response.Status = "S";
+                    response.Message = "User created successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(response);
+        }
+    }
+}

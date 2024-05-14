@@ -14,22 +14,22 @@ using Project123Api.Repositories;
 
 namespace Project123Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
  
     public class AdminController : BaseController      
     {
-        //private readonly IAdminRepository _adminRepo;
+        private readonly IAdminRepository _adminRepo;
         private DataDbContext _dbContext;
         private IConfiguration _configuration;
         private readonly AuthService _auth;
 
-        public AdminController(DataDbContext dbContext, IConfiguration configuration/*,IAdminRepository adminRepository */)
+        public AdminController(DataDbContext dbContext, IConfiguration configuration, IAdminRepository adminRepository)
         {
             _configuration = configuration;
             _dbContext = dbContext;
             _auth = new AuthService(_configuration);
-            //_adminRepo = adminRepository;
+            _adminRepo = adminRepository;
         }    
 
         [HttpPost("Login")]
@@ -83,22 +83,22 @@ namespace Project123Api.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-    //     [HttpPost("[action]")]
-    //public async Task<ResponseModel> CreateUser(dataModel UserData)
-    //{
-    //    ResponseModel response = new ResponseModel();
+        [HttpPost("[action]")]
+        public async Task<ResponseModel> CreateUser(dataModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
 
-    //    try
-    //    {      
-    //        response = await _adminRepo.CreateUser(UserData);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        response.Message = ex.Message;
-    //        response.Status = "E";
-    //    }
+            try
+                            {
+                response = await _adminRepo.CreateUser(UserData);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
 
-    //    return response;
-    //}
+            return response;
+        }
     }
 }

@@ -21,21 +21,30 @@
         <div class="col-6 d-flex flex-column justify-content-center align-items-center px-5">
 
             <h3>Sign Up</h3>
-            <div class="form-group mb-4">
-                <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
-            </div>
 
-            <div class="form-group mb-4">
-                <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
-            </div>
-            <div class="form-group mb-4">
-                <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Confirm your Password" />
-            </div>
+            <form id="frmRegister">
+                <div class="form-group mb-4">
+                    <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+                </div>
 
-            <div class="form-group mb-4">
-                <button type="submit" class="btn btn-primary" id="btnSignUp">Sign Up</button>
-              
-            </div>
+                <div class="form-group mb-4">
+                    <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+                </div>
+                <div class="form-group mb-4">
+                    <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Confirm your Password" />
+                </div>
+                <div class="form-group mb-4">
+                    <input type="text" class="form-control" id="txtName" name="Name" placeholder="Your Name" />
+                </div>
+                <div class="form-group mb-4">
+                    <input type="text" class="form-control" id="txtAge" name="Age" placeholder="Your Age" />
+                </div>
+
+                <div class="form-group mb-4">
+                    <button type="button" class="btn btn-primary" id="btnSignUp">Sign Up</button>
+
+                </div>
+            </form>
         </div>
 
     </div>
@@ -46,7 +55,43 @@
 @section Scripts{
     <script type="text/javascript">
 
+        $(document).ready(function () {
 
+
+
+
+        });
+
+        $('#btnSignUp').click(function () {
+
+        debugger
+
+            var formData = {
+                Name: $('#txtName').val(),
+                Age: $('#txtAge').val()
+            };
+            $.ajax({
+                url: '@Url.Action("CreateUser", "Admin")' ,
+                type: 'POST',
+                data: formData,            
+                success: function (data) {
+                    debugger
+                    if (data.length > 0) {
+
+
+
+
+                    }
+                    else {
+                        SweetAlert('error', 'ไม่มีข้อมูล');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+      
     </script>
 }
 
