@@ -14,7 +14,7 @@ using Project123Api.Repositories;
 
 namespace Project123Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
  
     public class AdminController : BaseController      

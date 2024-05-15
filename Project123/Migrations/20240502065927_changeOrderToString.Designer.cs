@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Project123.Data;
+using Project123Api.Repositories;
+//using Project123.Data;
 
 #nullable disable
 
 namespace Project123.Migrations
 {
-    [DbContext(typeof(ApplicationDBContext))]
+    [DbContext(typeof(DataDbContext))]
     [Migration("20240502065927_changeOrderToString")]
     partial class changeOrderToString
     {

@@ -66,55 +66,71 @@
 
 
         $('#frmRegister').validate({
-      rules: {
+            rules: {
 
-      },
-      messages: {
+            },
+            messages: {
 
-      },
-      errorPlacement: function (error, element) {
+            },
+            errorPlacement: function (error, element) {
 
-      },
+            },
 
 
             submitHandler: function (form) {
-          debugger
-          var formData = {
-              Name: $('#txtName').val(),
-              Age: $('#txtAge').val()
-          };
-          
-            $.ajax
-({
-    type: 'POST',
-    url: '@Url.Action("CreateUser", "Admin")',
-    data: formData,
-    dataType: "json",
-    success: function (result) {
-        debugger
-        if (result.Message == "S") {
-            debugger
+                debugger
 
-          
-            bindingTableAll(result.Data);
-        /*    bindingTable(result.Data);*/
-        }
-        else {
-            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
-        }
+                Swal.fire({
+                    icon: "question",
+                    title: "ยืนยันสร้างUser",
+                    text: $('#txtName').val(),
+                    showCancelButton: true,
+                    confirmButtonText: "ยืนยัน",
+                    cancelButtonText: "ยกเลิก",
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var formData = {
+                            Name: $('#txtName').val(),
+                            Age: $('#txtAge').val()
+                        };
+                        $.ajax
+                            ({
+                                type: 'POST',
+                                url: '/Admin/CreateUser',
+                                data: formData,
+
+                                dataType: 'json',
+                                success: function (result) {
+                                    debugger
+                                    if (result.status == "S") {
+                                        debugger
+
+
+                                        SweetAlert('success', result.messages);
+                                        /*    bindingTable(result.Data);*/
+                                    }
+                                    else {
+                                        SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                    }
 
 
 
-    },
-    error: function (request, status, error) {
-        debugger
-        SweetAlert('error', error);
-        
-    }
-});
-      }
+                                },
+                                error: function (request, status, error) {
+                                    debugger
+                                    SweetAlert('error', error);
 
-  });
+                                }
+                            });
+                     
+                    }
+                });
+                $(".swal2-confirm").addClass('btn-swal-success');
+                $(".swal2-cancel").addClass('btn-swal-secondary');
+            }
+
+        });
 
     </script>
 }

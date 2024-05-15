@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
 using System.Text.Json.Serialization;
-using Project123.Data;
+//using Project123.Data;
+using Project123Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,9 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options => {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
-builder.Services.AddDbContext<ApplicationDBContext>(options =>
+builder.Services.AddDbContext<DataDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
@@ -45,8 +47,21 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Shipment}/{action=SearchShipment}/{id?}");
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Shipment}/{action=SearchShipment}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    // Web routes
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Shipment}/{action=SearchShipment}/{id?}");
+
+    // API routes
+    endpoints.MapControllerRoute(
+        name: "api",
+        pattern: "api/{controller}/{action}/{id?}");
+});
 
 app.Run();

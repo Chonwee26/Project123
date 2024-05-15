@@ -13,7 +13,9 @@ namespace Project123.Controllers
     {
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly IAuthenticationService _authenSvc;
-        private ResponseModel response;
+        private new ResponseModel response;
+
+      
 
         //public AdminController(IHttpClientFactory clientFactory, IAuthenticationService authenticationService)
         //{
@@ -47,19 +49,15 @@ namespace Project123.Controllers
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:7061/");
-                   // Set a timeout for the request
-                    UserData = new dataModel
-                    {
-                        Name = "peemapi5",
-                        Age = "23" // Assuming age is an integer
-                    };
+                 
+                 
 
                     try
                     {
                         string requestJson = JsonConvert.SerializeObject(UserData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("Admin/CreateUser", httpContent);
+                        var responseResult = await client.PostAsync("api/Admin/CreateUser", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             var responseString = await responseResult.Content.ReadAsStringAsync();
@@ -88,7 +86,7 @@ namespace Project123.Controllers
                 }
             }
 
-            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
 

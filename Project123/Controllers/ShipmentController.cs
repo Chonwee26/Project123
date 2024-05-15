@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project123.Data;
+//using Project123.Data;
 //using Project123.Models;
 using Project123.Dto;
 using Project123.Controllers;
@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Text;
 using Microsoft.Extensions.Primitives;
 using Project123.Migrations;
+using Project123Api.Repositories;
 
 namespace Project123.Controllers
 {
@@ -20,10 +21,10 @@ namespace Project123.Controllers
 
 
 
-        private readonly ApplicationDBContext _db;
+        private readonly DataDbContext _db;
         private readonly string connectionString;
 
-        public ShipmentController(ApplicationDBContext db, IConfiguration configuration)
+        public ShipmentController(DataDbContext db, IConfiguration configuration)
         {
             _db = db;
             connectionString = configuration.GetConnectionString("DefaultConnection");
