@@ -10,7 +10,7 @@ namespace Project123.Data
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
-         
+
         }
 
         // DbSet for each of your model classes

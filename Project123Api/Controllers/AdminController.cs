@@ -91,6 +91,28 @@ namespace Project123Api.Controllers
             try
                             {
                 response = await _adminRepo.CreateUser(UserData);
+                response.Status = "S";
+                response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+        [HttpPost("[action]")]
+        public ResponseModel Hello(dataModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response.Status = "S";
+                response.Message = "Success" + UserData;
+
             }
             catch (Exception ex)
             {

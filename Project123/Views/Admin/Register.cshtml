@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group mb-4">
-                    <button type="button" class="btn btn-primary" id="btnSignUp">Sign Up</button>
+                    <button type="submit" class="btn btn-primary" id="btnSignUp">Sign Up</button>
 
                 </div>
             </form>
@@ -62,36 +62,60 @@
 
         });
 
-        $('#btnSignUp').click(function () {
+    
 
+
+        $('#frmRegister').validate({
+      rules: {
+
+      },
+      messages: {
+
+      },
+      errorPlacement: function (error, element) {
+
+      },
+
+
+            submitHandler: function (form) {
+          debugger
+          var formData = {
+              Name: $('#txtName').val(),
+              Age: $('#txtAge').val()
+          };
+          
+            $.ajax
+({
+    type: 'POST',
+    url: '@Url.Action("CreateUser", "Admin")',
+    data: formData,
+    dataType: "json",
+    success: function (result) {
         debugger
+        if (result.Message == "S") {
+            debugger
 
-            var formData = {
-                Name: $('#txtName').val(),
-                Age: $('#txtAge').val()
-            };
-            $.ajax({
-                url: '@Url.Action("CreateUser", "Admin")' ,
-                type: 'POST',
-                data: formData,            
-                success: function (data) {
-                    debugger
-                    if (data.length > 0) {
+          
+            bindingTableAll(result.Data);
+        /*    bindingTable(result.Data);*/
+        }
+        else {
+            SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+        }
 
 
 
+    },
+    error: function (request, status, error) {
+        debugger
+        SweetAlert('error', error);
+        
+    }
+});
+      }
 
-                    }
-                    else {
-                        SweetAlert('error', 'ไม่มีข้อมูล');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        });
-      
+  });
+
     </script>
 }
 
