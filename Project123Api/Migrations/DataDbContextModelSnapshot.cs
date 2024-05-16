@@ -48,7 +48,7 @@ namespace Project123Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tb_Admin");
+                    b.ToTable("Tb_Admin", (string)null);
                 });
 
             modelBuilder.Entity("Project123Api.Models.dataModel", b =>
@@ -72,7 +72,7 @@ namespace Project123Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tb_User");
+                    b.ToTable("Tb_User", (string)null);
                 });
 #pragma warning restore 612, 618
         }

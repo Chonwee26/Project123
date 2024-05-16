@@ -6,7 +6,7 @@ namespace Project123.Dto
     public class ShipmentModel
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShipmentId { get; set; }
         public string? OrderNumber { get; set; }
         public string? FullName { get; set; }

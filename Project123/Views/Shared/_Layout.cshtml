@@ -5,45 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Project123</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Project123.styles.css" asp-append-version="true" />
+    <link href="~/lib/dataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Noto Sans Thai' rel='stylesheet'>
+
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
+
+    <style>
+
+        .btn-swal-primary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00B0F0 !important;
+            border-color: #00B0F0 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-secondary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #8E8E8E !important;
+            border-color: #8E8E8E !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-success {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00BF2A !important;
+            border-color: #00BF2A !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-danger {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #DE0000 !important;
+            border-color: #DE0000 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Project123</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+      
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Chowii</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Project123 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+                            <li class="nav-item">
+                                <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="LoginPage">Login </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="Register">Register </a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        
+    </header>
+
+    @*<div class="container">
+        <main role="main" class="pb-3">*@
+    @RenderBody()
+    @*</main>
+        </div>*@
+
+    @*  <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2023 - Resume - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>  *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
+    <script src="~/lib/datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+
+
+        function SweetAlert(type, message, title) {
+            if (title == undefined) {
+                switch (type) {
+                    case "error":
+                        title = 'error'
+                        break;
+                    case "warning":
+                        title = 'warning'
+                        break;
+                    default:
+                        title = 'success'
+                }
+            }
+            if (type == "success") {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                });
+            }
+            $(".swal2-confirm").addClass('btn-swal-primary');
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

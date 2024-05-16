@@ -1,0 +1,121 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <style type="text/css">
+
+        .imgShow {
+            border-radius: 10%;
+        }
+    </style>
+}
+<form id="frmLogin">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-6 d-flex flex-row justify-content-center align-items-center pt-5">
+                <img src="~/picture/Japan-2107x1406.jpg" class="imgShow" width="500" height="500" />
+            </div>
+
+            <div class="col-6 d-flex flex-column justify-content-center align-items-center">
+                @*<h3 id="loginTitle">Log in</h3>
+                    <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+                    <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+                    <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>*@
+                <h3 id="loginTitle" data-i18n="login.title">Log in</h3>
+                <div class="form-group mb-4">
+                    <input type="email" class="form-control" id="txtEmail" placeholder="Enter your Email" />
+                </div>
+
+                <div class="form-group mb-4">
+                    <input type="password" class="form-control" id="txtPassword" placeholder="Enter your Password" />
+                </div>
+
+                <div class="form-group mb-4">
+                    <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+
+@section Scripts{
+    <!-- i18n plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.i18n/1.0.9/jquery.i18n.min.js" integrity="sha512-EkS8Kq86l7dHt/dOBniHgtYvAScDqFw/lIPX5VCwaVKsufs0pY44I2cguqZ45QaFOGGwVd3T1nXvVJYIEjRsjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+
+        //$('.Layout').hide();
+
+        $('#frmLogin').validate({
+            rules: {
+
+            },
+            messages: {
+
+            },
+            errorPlacement: function (error, element) {
+
+            },
+
+
+            submitHandler: function (form) {
+                debugger
+                var userName = $('#txtEmail').val();
+
+          
+                        var formData = {
+                            Email: $('#txtEmail').val(),
+                            Password: $('#txtPassword').val()
+                        };
+                $.ajax
+                    ({
+                        type: 'POST',
+                        url: '/Admin/Login',
+                        data: formData,
+
+                        dataType: 'json',
+                        success: function (result) {
+                            debugger
+                            if (result.status == "S") {
+                                debugger
+
+
+                                SweetAlert('success', userName);
+                                window.location.href = "https://localhost:7166/Shipment/CreateShipment";
+                                /*    bindingTable(result.Data);*/
+                            }
+                            else {
+                                SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                            }
+
+
+
+                        },
+                        error: function (request, status, error) {
+                            debugger
+                            SweetAlert('error', error);
+
+                        }
+
+
+                    });
+          
+                $(".swal2-confirm").addClass('btn-swal-success');
+                $(".swal2-cancel").addClass('btn-swal-secondary');
+            }
+
+        });
+    </script>
+}
+

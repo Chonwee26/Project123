@@ -2,7 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    Layout = "~/Views/Shared/_PostLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles{
     <style type="text/css">
@@ -15,7 +15,7 @@
 
 <div class="container d-flex justify-content-center">
     <div class="row">
-        <div class="col-6 d-flex flex-row justify-content-center align-items-center">
+        <div class="col-6 d-flex flex-row justify-content-center align-items-center pt-5">
             <img src="~/picture/Japan-2107x1406.jpg" class="imgShow" width="500" height="500" />
         </div>
         <div class="col-6 d-flex flex-column justify-content-center align-items-center px-5">
@@ -79,6 +79,7 @@
 
             submitHandler: function (form) {
                 debugger
+                var userName = $('#txtName').val();
 
                 Swal.fire({
                     icon: "question",
@@ -107,7 +108,8 @@
                                         debugger
 
 
-                                        SweetAlert('success', result.messages);
+                                        SweetAlert('success', userName);
+                                   
                                         /*    bindingTable(result.Data);*/
                                     }
                                     else {

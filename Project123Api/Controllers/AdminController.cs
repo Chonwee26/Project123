@@ -32,8 +32,8 @@ namespace Project123Api.Controllers
             _adminRepo = adminRepository;
         }    
 
-        [HttpPost("Login")]
-        public IActionResult Login([FromBody]  AdminModel admin)
+        [HttpPost("Login1")]
+        public  IActionResult Login1([FromBody]  AdminModel admin)
          {
             var adminEmail = _dbContext.Tb_Admin.FirstOrDefault(a => a.Email == admin.Email);
 
@@ -62,7 +62,11 @@ namespace Project123Api.Controllers
                 creation_Time = token.ValidFrom,
                 user_id = adminEmail.Id,
             });
+   
+           
         }
+
+
 
         [HttpPost("Register")]
         public IActionResult Register([FromBody] AdminModel admin) 
@@ -91,8 +95,8 @@ namespace Project123Api.Controllers
             try
                             {
                 response = await _adminRepo.CreateUser(UserData);
-                response.Status = "S";
-                response.Message = "User created successfully.";
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
             }
             catch (Exception ex)
             {
@@ -102,6 +106,51 @@ namespace Project123Api.Controllers
 
             return response;
         }
+
+
+
+           [HttpPost("[action]")]
+        public async Task<ResponseModel> SearchUser(dataModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+                            {
+                response = await _adminRepo.SearchUser(UserData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+
+
+
+        //[HttpPost("[action]")]
+        //public async Task<AdminModel> Login(AdminModel UserData)
+        //{
+        //    ResponseModel response = new ResponseModel();
+        //    AdminModel admin = null; 
+        //    try
+        //    {
+        //        response = await _adminRepo.Login(UserData);
+        //        //response.Status = "S";
+        //        //response.Message = "User created successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.Status = "E";
+        //    }
+
+        //    return response;
+        //}
 
         [HttpPost("[action]")]
         public ResponseModel Hello(dataModel UserData)

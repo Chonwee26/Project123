@@ -16,7 +16,7 @@ using Project123Api.Repositories;
 namespace Project123.Controllers
 {
 
-    public class ShipmentController : Controller
+    public class ShipmentController : BaseController
     {
 
 
@@ -103,7 +103,8 @@ namespace Project123.Controllers
                 // Return message indicating an error occurred
                 var response = new
                 {
-                    Message = "E" // "E" indicating an error
+                    Message = "E" ,// "E" indicating an error
+                      Status = ex.Message
                 };
                 return Json(response);
             }
@@ -337,7 +338,8 @@ namespace Project123.Controllers
                 // Return message indicating an error occurred
                 var response = new
                 {
-                    Message = "E" // "E" indicating an error
+                    Message = "E", // "E" indicating an error
+                    Status = ex.Message
                 };
                 return Json(response);
             }
@@ -382,6 +384,38 @@ namespace Project123.Controllers
 
 
 
+        }
+
+
+        public async Task<IActionResult> GetShipmentLocationAjax()
+        {
+            List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        var response = await client.GetAsync("/api/Test/GetShipmentLocation");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            storageList = await response.Content.ReadAsAsync<List<ShipmentLocationModel>>();
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+
+                return Json(new { success = this.response.Success, message = this.response.Message, Data = storageList });
+            }
         }
 
         public IActionResult GetShipmentLocation()

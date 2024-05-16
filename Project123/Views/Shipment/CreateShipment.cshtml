@@ -487,7 +487,8 @@
 
             });
             getShipmentStatus('','#ddlSearchShipmentStatus');
-            getShipmentLocation('','#ddlSearchStorage');
+            //getShipmentLocation('','#ddlSearchStorage');
+            getShipmentLocationAjax('','#ddlSearchStorage');
 
         });
 
@@ -633,6 +634,36 @@
             });
         }
 
+         function getShipmentLocationAjax(id,elementId) {
+     id = id == null ? "" : id
+
+     $.ajax({
+         type: 'POST',
+         url: '@Url.Action("GetShipmentLocationAjax","Shipment")',
+         datatype: 'json',
+         success: function (result) {
+             debugger
+             $(elementId).html('');
+             $(elementId).select2({
+                 placeholder:'--- ทั้งหมด ---',
+                 allowClear: true,
+                 data: $.map(result.Data, function (item) {
+                     return {
+                         id: item.ShipmentItemID,
+                         text: item.ShipmentItemText
+                     };
+                 })
+             });
+             if (id != '') {
+                 $(elementId).val(id).change();
+             }
+             else {
+                 $(elementId).val(null).change();
+             }
+         }
+     });
+ }
+
         function displayResult(data) {
             // Display extracted data in the "result" div
             $('#result').html(JSON.stringify(data, null, 2));
@@ -770,20 +801,21 @@
                 ////var frmData = $('#frmCreateShipment').serializeArray();
                 //frmData.push({ name: 'additionalKey1', value: value1 });
                 //frmData.push({ name: 'additionalKey2', value: value2 });
-                //// Add more key-value pairs as needed
-
+                //// Add more key-val frmCreate.change()
                 //// Convert the data object to a query string
                 //var serializedData = $.param(frmData);
-
+             /*   moment($('#txtShipDate').val(), 'DD/MM/YYYY').format('YYYY-MM-DD');*/
                 var frmCreate = $('#frmCreateShipment').serializeArray();
                 const currentTime = new Date($.now());
                 debugger
-                frmCreate.push({ name: 'CreateDate', value: currentTime })
+                frmCreate.a
+                frmCreate.push({ name: 'CreateDate', value: currentTime });
                 //if ($('#ddlCreateShipmentStatus').val() == '') {
                 //    $('#ddlCreateShipmentStatus').val('');
                 //}
 
                 var serializedCreate = $.param(frmCreate);
+                debugger
 
                 Swal.fire({
                     icon: "question",
@@ -856,7 +888,7 @@
         $('#btnReset').click(function () {
             // Clear the DataTable
             clearSearchValue();
-            
+
             $('#tblDataTable').DataTable().clear().draw();
         });
 

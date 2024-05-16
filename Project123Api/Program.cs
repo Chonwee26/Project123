@@ -35,8 +35,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

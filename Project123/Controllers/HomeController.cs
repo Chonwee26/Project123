@@ -19,6 +19,12 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult ExportExcel()
+        {
+            return View();
+        }
+
+
         public IActionResult Privacy()
         {
             return View();
