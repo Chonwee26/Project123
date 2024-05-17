@@ -486,9 +486,10 @@
 
 
             });
-            getShipmentStatus('','#ddlSearchShipmentStatus');
+            //getShipmentStatus('','#ddlSearchShipmentStatus');
+            getShipmentStatusAsync('','#ddlSearchShipmentStatus');
             //getShipmentLocation('','#ddlSearchStorage');
-            getShipmentLocationAjax('','#ddlSearchStorage');
+            getShipmentLocationAsync('','#ddlSearchStorage');
 
         });
 
@@ -602,7 +603,36 @@
                 }
             }
         });
+    }          function getShipmentStatusAsync(id,elementId) {
+        id = id == null ? "" : id
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetShipmentStatusAsync","Test")',
+            datatype: 'json',
+            success: function (result) {
+                debugger
+                $(elementId).html('');
+                $(elementId).select2({
+                    placeholder:'--- ทั้งหมด ---',
+                    allowClear: true,
+                    data: $.map(result.Data, function (item) {
+                        return {
+                            id: item.ShipmentItemID,
+                            text: item.ShipmentItemText
+                        };
+                    })
+                });
+                if (id != '') {
+                    $(elementId).val(id).change();
+                }
+                else {
+                    $(elementId).val(null).change();
+                }
+            }
+        });
     }
+
 
         function getShipmentLocation(id,elementId) {
             id = id == null ? "" : id
@@ -634,12 +664,13 @@
             });
         }
 
-         function getShipmentLocationAjax(id,elementId) {
+         function getShipmentLocationAsync(id,elementId) {
      id = id == null ? "" : id
-
+     debugger
      $.ajax({
-         type: 'POST',
-         url: '@Url.Action("GetShipmentLocationAjax","Shipment")',
+         type: 'GET',
+       /*  url: '/Test/GetShipmentLocationAsync',*/
+           url: '@Url.Action("GetShipmentLocationAsync","Test")',
          datatype: 'json',
          success: function (result) {
              debugger
@@ -864,8 +895,9 @@
         $('#btnCreate').click(function () {
             $(".nav button#createTab").tab('show');
             clearSearchValue();
-            getShipmentLocation('', '#ddlCreateStorage');
-            getShipmentStatus('', '#ddlCreateShipmentStatus');
+            getShipmentLocationAsync('', '#ddlCreateStorage');
+            getShipmentStatusAsync('', '#ddlCreateShipmentStatus');
+            //getShipmentStatus('', '#ddlCreateShipmentStatus');
         });
 
         $('#btnCreateQrCode').click(function () {

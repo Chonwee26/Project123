@@ -24,7 +24,7 @@ namespace Project123Api.Controllers
         private readonly IShipmentRepository _shipmentRepo;
         private DataDbContext _dbContext;
         private IConfiguration _configuration;
-        private readonly AuthService _auth;
+        private readonly AuthService _auth; 
 
         public TestController(DataDbContext dbContext, IConfiguration configuration, IShipmentRepository shipmentRepository)
         {
@@ -41,10 +41,17 @@ namespace Project123Api.Controllers
         }
 
         // GET api/<TestController>/5
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocation()
+        [HttpGet("GetShipmentLocationAsync")]
+        public async Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocationAsync()
         {
-            IEnumerable<ShipmentLocationModel> dataModel = await _shipmentRepo.GetShipmentLocation();
+            IEnumerable<ShipmentLocationModel> dataModel = await _shipmentRepo.GetShipmentLocationAsync();
+            return await Task.FromResult(dataModel);
+        }  
+        
+        [HttpGet("GetShipmentStatusAsync")]
+        public async Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync()
+        {
+            IEnumerable<ShipmentLocationModel> dataModel = await _shipmentRepo.GetShipmentStatusAsync();
             return await Task.FromResult(dataModel);
         }
 

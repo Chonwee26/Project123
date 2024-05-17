@@ -387,7 +387,7 @@ namespace Project123.Controllers
         }
 
 
-        public async Task<IActionResult> GetShipmentLocationAjax()
+        public async Task<IActionResult> GetShipmentLocationAsync()
         {
             List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -401,7 +401,7 @@ namespace Project123.Controllers
 
                     try
                     {
-                        var response = await client.GetAsync("/api/Test/GetShipmentLocation");
+                        var response = await client.GetAsync("/api/Test/GetShipmentLocationAsync");
                         if (response.IsSuccessStatusCode)
                         {
                             storageList = await response.Content.ReadAsAsync<List<ShipmentLocationModel>>();

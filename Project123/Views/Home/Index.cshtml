@@ -1,8 +1,32 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    /* Keyframes for rotation animation */
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Apply rotation animation to the iframe */
+    .rotate {
+        animation: spin 10s linear infinite; /* Adjust the duration as needed */
+    }
+
+    /* Style to make iframe circular */
+    .rounded-iframe {
+        border-radius: 50%;
+        overflow: hidden;
+    }
+</style>
+
+<!-- Modify your iframe as follows -->
+<div class="rounded-iframe">
+    <iframe class="rotate" src="https://open.spotify.com/embed/track/3vwgJifwUJHSy7BsvY6puE?utm_source=generator&theme=0" width="50%"   height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @*<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3vwgJifwUJHSy7BsvY6puE?utm_source=generator&theme=0"  width="50%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>*@
 </div>

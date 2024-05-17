@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 //using Project123.Data;
 using Project123Api.Repositories;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,13 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddHttpClient("BaseClient", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["BaseAddress"]);
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,12 +65,17 @@ app.UseEndpoints(endpoints =>
     // Web routes
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Shipment}/{action=SearchShipment}/{id?}");
+     pattern: "{controller=Home}/{action=Index}/{id?}");
 
     // API routes
     endpoints.MapControllerRoute(
         name: "api",
         pattern: "api/{controller}/{action}/{id?}");
+
+    //endpoints.MapControllerRoute(
+    //   name: "test",
+    //   pattern: "Test/{action=GetShipmentLocationAsync}",
+    //   defaults: new { controller = "Test", action = "GetShipmentLocationAsync" });
 });
 
 app.Run();

@@ -21,7 +21,16 @@ namespace Project123.Controllers
 
 
 
-        public async Task<IActionResult> GetShipmentLocation()
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public BackupController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+
+        [HttpGet("Test/GetShipmentLocationAsync")]
+        public async Task<IActionResult> GetShipmentLocationAsync()
         {
             List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -29,13 +38,14 @@ namespace Project123.Controllers
                 // Temporarily bypass SSL certificate validation (not for production use)
                 handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    client.BaseAddress = new Uri("https://localhost:7061/");
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
 
-                    try
+                 //using (var client = _httpClientFactory.CreateClient("BaseClient"))
+                try
                     {
-                        var response = await client.GetAsync("/api/Test/GetShipmentLocation");
+
+                        var response = await client.GetAsync("/api/Test/GetShipmentLocationAsync");
                         if (response.IsSuccessStatusCode)
                         {
                             storageList = await response.Content.ReadAsAsync<List<ShipmentLocationModel>>();
@@ -50,11 +60,46 @@ namespace Project123.Controllers
 
                 return Json(new { success = this.response.Success, message = this.response.Message, Data = storageList });
             }
+
+        [HttpGet("Test/GetShipmentStatusAsync")]
+        public async Task<IActionResult> GetShipmentStatusAsync()
+        {
+            List<ShipmentLocationModel> statusList = new List<ShipmentLocationModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+                //using (var client = _httpClientFactory.CreateClient("BaseClient"))
+                try
+                {
+
+                    var response = await client.GetAsync("/api/Test/GetShipmentStatusAsync");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        statusList = await response.Content.ReadAsAsync<List<ShipmentLocationModel>>();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = statusList });
         }
 
-
     }
+
+
+
+
+
+}
         
     
 
-}
