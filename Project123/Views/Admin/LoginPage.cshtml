@@ -44,8 +44,6 @@
     </div>
 </form>
 
-
-
 @section Scripts{
     <!-- i18n plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.i18n/1.0.9/jquery.i18n.min.js" integrity="sha512-EkS8Kq86l7dHt/dOBniHgtYvAScDqFw/lIPX5VCwaVKsufs0pY44I2cguqZ45QaFOGGwVd3T1nXvVJYIEjRsjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -53,7 +51,6 @@
         $(document).ready(function () {
 
         });
-
 
         //$('.Layout').hide();
 
@@ -68,12 +65,10 @@
 
             },
 
-
             submitHandler: function (form) {
                 debugger
                 var userName = $('#txtEmail').val();
-
-          
+       
                         var formData = {
                             Email: $('#txtEmail').val(),
                             Password: $('#txtPassword').val()
@@ -83,14 +78,10 @@
                         type: 'POST',
                         url: '/Admin/Login',
                         data: formData,
-
                         dataType: 'json',
                         success: function (result) {
-                            debugger
-                            if (result.status == "S") {
-                                debugger
-
-
+                     
+                            if (result.status == "S") {                       
                                 SweetAlert('success', userName);
                                 window.location.href = "https://localhost:7166/Shipment/CreateShipment";
                                 /*    bindingTable(result.Data);*/
@@ -98,23 +89,15 @@
                             else {
                                 SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
                             }
-
-
-
                         },
                         error: function (request, status, error) {
                             debugger
                             SweetAlert('error', error);
-
                         }
-
-
-                    });
-          
+                    });      
                 $(".swal2-confirm").addClass('btn-swal-success');
                 $(".swal2-cancel").addClass('btn-swal-secondary');
             }
-
         });
     </script>
 }

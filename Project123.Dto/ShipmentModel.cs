@@ -19,6 +19,12 @@ namespace Project123.Dto
         public string CreateDate { get; set; }
 
         // Constructor to initialize properties
+  
+
+        public List<ShipmentLocationModel> ShipmentLocation { get; set; }
+        public List<ShipmentStatusModel> ShipmentStatusList { get; set; }
+       
+
         public ShipmentModel()
         {
             // Initialize properties to empty strings instead of null
@@ -31,7 +37,11 @@ namespace Project123.Dto
             ShipDateFR = "";
             ShipDateTO = "";
             CreateDate = "";
+            ShipmentLocation = new List<ShipmentLocationModel>();
+            ShipmentStatusList = new List<ShipmentStatusModel>();
+      
         }
+
     }
 }
 

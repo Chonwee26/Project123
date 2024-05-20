@@ -56,11 +56,13 @@ namespace Project123Api.Controllers
         }
 
         // POST api/<TestController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("SearchShipmentAsync")]
+        public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
         {
-        }
+            IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.SearchShipmentAsync(ShipmentData);
 
+            return shipmentList;
+        }
         // PUT api/<TestController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
@@ -68,9 +70,13 @@ namespace Project123Api.Controllers
         }
 
         // DELETE api/<TestController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("DeleteShipment")]
+        public async Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData)
         {
+            ResponseModel resp = await _shipmentRepo.DeleteShipmentAsync(ShipmentData);
+            return resp;
         }
+        
+        
     }
 }

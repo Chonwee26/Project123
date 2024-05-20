@@ -13,7 +13,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet" />
     <link href='https://fonts.googleapis.com/css?family=Noto Sans Thai' rel='stylesheet'>
-
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
 
@@ -62,7 +61,6 @@
 </head>
 <body>
     <header>
-      
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
                 <div class="container-fluid">
                     <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Chowii</a>
@@ -80,12 +78,10 @@
                                 <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="Register">Register </a>
                             </li>
 
-
                         </ul>
                     </div>
                 </div>
             </nav>
-        
     </header>
 
     @*<div class="container">
@@ -107,11 +103,8 @@
     <script src="~/lib/datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-
-
     <partial name="_ValidationScriptsPartial" />
     <script>
-
 
         function SweetAlert(type, message, title) {
             if (title == undefined) {

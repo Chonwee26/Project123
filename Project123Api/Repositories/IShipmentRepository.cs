@@ -1,4 +1,5 @@
 ﻿using AuthenticationPlugin;
+using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Project123Api.Repositories
 {
@@ -15,6 +18,9 @@ namespace Project123Api.Repositories
     {
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocationAsync();
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync();
+        Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData);
+        Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData);
+
       
     }
 
@@ -94,6 +100,7 @@ namespace Project123Api.Repositories
                         DataTable dtResult = new DataTable();
                         adapter.Fill(dtResult);
 
+
                         foreach (DataRow row in dtResult.Rows)
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel
@@ -161,13 +168,24 @@ namespace Project123Api.Repositories
 
 
 
-        public async Task<IEnumerable<ShipmentModel>> SearchShipment()
+
+        public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
         {
+            ResponseModel response = new ResponseModel();
             List<ShipmentModel> shipmentList = new List<ShipmentModel>();
-            string sqlSelect = @"SELECT CONVERT(VARCHAR(10), ShipmentStorageID) AS ShipmentItemID, 
-                                ShipmentStorageName AS ShipmentItemText
-                         FROM ShipmentLocation
-                         ORDER BY ShipmentStorageID";
+            string sqlWhere = string.Empty;
+            string sqlSelect = @"SELECT s.*, sl.ShipmentStorageID, sl.ShipmentStorageName ,st.ShipmentStatusID, st.ShipmentStatusName
+                         FROM dbo.Shipment s
+                         INNER JOIN ShipmentLocation sl
+                         ON s.Storage = sl.ShipmentStorageID
+                         INNER JOIN ShipmentStatus st
+                         ON s.ShipmentStatus = st.ShipmentStatusID
+                         ";
+            if (!string.IsNullOrEmpty(ShipmentData.OrderNumber))
+            {        
+                sqlWhere = "WHERE s.OrderNumber = @OrderNumber";
+            }
+            sqlSelect += sqlWhere;
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             try
@@ -176,8 +194,11 @@ namespace Project123Api.Repositories
                 {
                     await connection.OpenAsync();
 
+
                     using (SqlDataAdapter adapter = new SqlDataAdapter(sqlSelect, connection))
                     {
+                        adapter.SelectCommand.Parameters.AddWithValue("@OrderNumber", ShipmentData.OrderNumber);
+
                         DataTable dtResult = new DataTable();
                         adapter.Fill(dtResult);
 
@@ -185,29 +206,86 @@ namespace Project123Api.Repositories
                         {
                             ShipmentModel model = new ShipmentModel
                             {
-                                //ShipmentItemID = row["ShipmentItemID"].ToString(),
-                                //ShipmentItemText = row["ShipmentItemText"].ToString()
+                                ShipmentId = Convert.ToInt32(row["ShipmentId"]),
+                                OrderNumber = row["OrderNumber"].ToString(),
+                                FullName = row["FullName"].ToString(),
+                                MobileNumber = row["MobileNumber"].ToString(),
+                                Storage = row["Storage"].ToString(),
+                                ShipmentStatus = row["ShipmentStatus"] != DBNull.Value ? Convert.ToInt32(row["ShipmentStatus"]) : (int?)null,
+                                ShipDate = row["ShipDate"].ToString(),
+                                ShipDateFR = row["ShipDateFR"].ToString(),
+                                ShipDateTO = row["ShipDateTO"].ToString(),
+                                CreateDate = row["CreateDate"].ToString(),
                             };
+
+                            ShipmentLocationModel location = new ShipmentLocationModel
+                            {
+                                ShipmentItemID = row["ShipmentStorageID"].ToString(),
+                                ShipmentItemText = row["ShipmentStorageName"].ToString()
+                            };  
+                            ShipmentStatusModel status = new ShipmentStatusModel
+                            {
+                                ShipmentItemID = row["ShipmentStatusID"].ToString(),
+                                ShipmentItemText = row["ShipmentStatusName"].ToString()
+                            };
+                          
+                            model.ShipmentLocation.Add(location); 
+                            model.ShipmentStatusList.Add(status);
                             shipmentList.Add(model);
                         }
+                        response.Status = "S";
+                        response.Message = "Success";
+
                     }
                 }
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it as needed
-                var msg = ex.Message;
+                response.Status = "E";
+                response.Message = ex.Message;
+
                 // Optionally, rethrow or handle the exception as needed
             }
+          
 
             return shipmentList;
         }
 
+        public async Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlDelete = @"DELETE FROM Shipment WHERE ShipmentId = @ShipmentId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sqlDelete, connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.Clear();
+                        command.Parameters.AddWithValue("@ShipmentId", ShipmentData.ShipmentId);
+                        command.ExecuteNonQuery();
+                       
+                        response.Status = "S";
+                        response.Message = "Success";
+                    }
+                }
+                catch (Exception ex)
+                {
+                  response.Status="E";
+                  response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
 
-
-
-
-
-
+            return await Task.FromResult(response);
+        }
     }
-}
+    }
+

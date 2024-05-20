@@ -10,6 +10,7 @@
         .imgShow {
             border-radius: 10%;
         }
+
     </style>
 }
 
@@ -19,7 +20,6 @@
             <img src="~/picture/Japan-2107x1406.jpg" class="imgShow" width="500" height="500" />
         </div>
         <div class="col-6 d-flex flex-column justify-content-center align-items-center px-5">
-
             <h3>Sign Up</h3>
 
             <form id="frmRegister">
@@ -50,20 +50,12 @@
     </div>
 </div>
 
-
-
 @section Scripts{
     <script type="text/javascript">
 
         $(document).ready(function () {
 
-
-
-
         });
-
-    
-
 
         $('#frmRegister').validate({
             rules: {
@@ -75,7 +67,6 @@
             errorPlacement: function (error, element) {
 
             },
-
 
             submitHandler: function (form) {
                 debugger
@@ -100,40 +91,29 @@
                                 type: 'POST',
                                 url: '/Admin/CreateUser',
                                 data: formData,
-
                                 dataType: 'json',
                                 success: function (result) {
-                                    debugger
-                                    if (result.status == "S") {
-                                        debugger
-
-
-                                        SweetAlert('success', userName);
-                                   
-                                        /*    bindingTable(result.Data);*/
+                                
+                                    if (result.status == "S") {                                
+                                        SweetAlert('success', userName);                                 
+                                     /*    bindingTable(result.Data);*/
                                     }
+
                                     else {
                                         SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
                                     }
-
-
-
                                 },
                                 error: function (request, status, error) {
                                     debugger
                                     SweetAlert('error', error);
-
                                 }
-                            });
-                     
+                            });                 
                     }
                 });
                 $(".swal2-confirm").addClass('btn-swal-success');
                 $(".swal2-cancel").addClass('btn-swal-secondary');
             }
-
         });
-
     </script>
 }
 
