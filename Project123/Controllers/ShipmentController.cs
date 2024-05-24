@@ -115,7 +115,7 @@ namespace Project123.Controllers
         public IActionResult SearchShipmentAll(ShipmentModel ShipmentData)
         {
             try
-            {
+             {
                 // Check if all fields in ShipmentData are null or empty
                 if (string.IsNullOrEmpty(ShipmentData.OrderNumber) &&
                     string.IsNullOrEmpty(ShipmentData.FullName) &&
@@ -185,7 +185,7 @@ namespace Project123.Controllers
                 }
             }
             catch (Exception ex)
-            {
+             {
                 // Log the exception or handle it as needed
                 // Return message indicating an error occurred
                 var response = new

@@ -70,13 +70,48 @@ namespace Project123Api.Controllers
         }
 
         // DELETE api/<TestController>/5
-        [HttpDelete("DeleteShipment")]
-        public async Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData)
+        [HttpDelete("DeleteShipmentAsync/{id}")]
+        public async Task<ResponseModel> DeleteShipmentAsync(int id)
         {
-            ResponseModel resp = await _shipmentRepo.DeleteShipmentAsync(ShipmentData);
+            ResponseModel resp = await _shipmentRepo.DeleteShipmentAsync(id);
             return resp;
+
+
+        }   // DELETE api/<TestController>/5
+        [HttpPost("CreateShipmentAsync")]
+        public async Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData)
+        {
+            ShipmentData.OrderNumber = StringGenerator.GenerateRandomString(); //string
+            IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.CreateShipmentAsync(ShipmentData);
+            return shipmentList;
         }
-        
-        
+
+        public class StringGenerator
+        {
+            public static string GenerateRandomString()
+            {
+                // Define the characters from which to generate the random string
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                int length = 10;
+                // Create a StringBuilder to store the random string
+                StringBuilder sb = new StringBuilder();
+
+                // Create a Random object
+                Random random = new Random();
+
+                // Generate the random string
+                for (int i = 0; i < length - 1; i++)
+                {
+                    // Append a random character from the 'chars' string
+                    sb.Append(chars[random.Next(length)]);
+                }
+                sb.Append(random.Next(5));
+
+                string orderNumber = sb.ToString();
+                // Return the generated random string
+                return orderNumber;
+            }
+        }
+
     }
 }

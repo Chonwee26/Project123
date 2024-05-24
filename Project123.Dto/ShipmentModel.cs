@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project123.Dto
 {
-    public class ShipmentModel
+    public class ShipmentModel 
     {
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

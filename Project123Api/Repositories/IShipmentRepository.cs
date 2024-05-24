@@ -19,7 +19,9 @@ namespace Project123Api.Repositories
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocationAsync();
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync();
         Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData);
-        Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData);
+        Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData);
+        Task<ResponseModel> DeleteShipmentAsync(int id);
+      
 
       
     }
@@ -167,6 +169,56 @@ namespace Project123Api.Repositories
         }
 
 
+        public async Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<ShipmentModel> shipmentList = new List<ShipmentModel>();
+            string sqlCreate = @"INSERT INTO Shipment(OrderNumber, FullName, MobileNumber, Storage, ShipmentStatus, ShipDate, ShipDateFR, ShipDateTO, CreateDate)
+                                VALUES(@OrderNumber, @FullName, @MobileNumber, @Storage, @ShipmentStatus, @ShipDate, @ShipDateFR, @ShipDateTO, @CreateDate)";
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sqlCreate, connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.Clear();
+                        command.Parameters.AddWithValue("@OrderNumber", ShipmentData.OrderNumber);
+                        command.Parameters.AddWithValue("@FullName", ShipmentData.FullName);
+                        command.Parameters.AddWithValue("@MobileNumber", ShipmentData.MobileNumber);
+                        command.Parameters.AddWithValue("@Storage", ShipmentData.Storage);
+                        command.Parameters.AddWithValue("@ShipmentStatus", ShipmentData.ShipmentStatus);
+                        command.Parameters.AddWithValue("@ShipDate", ShipmentData.ShipDate);
+                        command.Parameters.AddWithValue("@ShipDateFR", ShipmentData.ShipDateFR ?? "");
+                        command.Parameters.AddWithValue("@ShipDateTO", ShipmentData.ShipDateTO ?? "");
+                        command.Parameters.AddWithValue("@CreateDate", ShipmentData.CreateDate);
+                        command.ExecuteNonQuery();
+
+                        response.Status = "S";
+                        response.Message = "Create Shipment Success Your Ordernumber are "+ShipmentData.OrderNumber;
+                        
+                   
+                    
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(shipmentList);
+        }
+    
+    
 
 
         public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
@@ -252,7 +304,7 @@ namespace Project123Api.Repositories
             return shipmentList;
         }
 
-        public async Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData)
+        public async Task<ResponseModel> DeleteShipmentAsync(int id)
         {
             ResponseModel response = new ResponseModel();
             string sqlDelete = @"DELETE FROM Shipment WHERE ShipmentId = @ShipmentId";
@@ -266,11 +318,11 @@ namespace Project123Api.Repositories
                     {
                         command.CommandType = CommandType.Text;
                         command.Parameters.Clear();
-                        command.Parameters.AddWithValue("@ShipmentId", ShipmentData.ShipmentId);
+                        command.Parameters.AddWithValue("@ShipmentId", id);
                         command.ExecuteNonQuery();
                        
                         response.Status = "S";
-                        response.Message = "Success";
+                        response.Message = "Delete Shipment "+ "Success";
                     }
                 }
                 catch (Exception ex)
@@ -286,6 +338,7 @@ namespace Project123Api.Repositories
 
             return await Task.FromResult(response);
         }
+
     }
     }
 

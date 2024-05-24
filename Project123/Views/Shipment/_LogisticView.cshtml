@@ -11,21 +11,30 @@
                     <h1 class=" d-flex justify-content-center">- Create Shipment-</h1>
                     <hr />
                     @*first*@
-                    <div class="row pb-3">
-                        <div class="col-12">
-                            <h6>ชื่อ-สกุล</h6>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="txtCreateFullName" name="FullName" />
-                            </div>
+                <div class="row pb-3">
+                    <div class="col-12">
+                        <h6>ชื่อ-สกุล</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="txtCreateFullName" name="FullName" />
                         </div>
+                    </div>
 
-                        <div class="col-12">
-                            <h6>หมายเลขโทรศัพท์</h6>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="txtCreateMobileNumber" name="MobileNumber" />
+                    <div class="col-12 col-md-6">
+                        <h6>หมายเลขโทรศัพท์</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="txtCreateMobileNumber" name="MobileNumber" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-6">
+                        <h6>วันที่ส่ง</h6>
+                        <div class="input-group">
+                            <div class="input555">
+                                <input type="text" class="form-control datetimepicker datetimepickerCreate" id="txtShipDate" name="ShipDate">
+                                <i class="fa-regular fa-calendar input-icon-addon"></i>
                             </div>
                         </div>
                     </div>
+                </div>
                     @*end first*@
 
                     @* Start second*@
@@ -35,7 +44,6 @@
                         <div class="input-group">
                             <div class="col-12">
                                 <select class="form-select select2 select2-select" id="ddlCreateStorage" name="Storage" required>
-                                
                                 </select>
                             </div>
                         </div>
@@ -44,24 +52,18 @@
                         <h6>สถานะขนส่ง</h6>
                         <div class="input-group">
                             <select class="form-select select2 select2-select" id="ddlCreateShipmentStatus" name="ShipmentStatus" required>
-                            
                             </select>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6">
-                        <h6>วันที่ส่ง</h6>
-                        <div class="input-group">
-                            <div class="input555">
-                                <input type="text" class="form-control datetimepicker" id="txtShipDate" name="ShipDate"> 
-                                <i class="fa-regular fa-calendar input-icon-addon"></i>
-                                </div>
-                            </div>
-                        </div>
 
-                    <div class="  col-12 col-sm-12 col-md-6  pt-2 d-flex mt-2 justify-content-end ">
+
+                    <div class="  col-12 col-sm-12 col-md-6 offset-md-6  pt-2 d-flex mt-2 justify-content-end ">
                         <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 ">ยกเลิก</button>
                         <button type="submit" id="btnCreateShipment" class="btn btn-primary m-2 px-4 ">ยืนยัน</button>
                     </div>
+
+                    <hr />
+
                 </div>
                 </div>
             </form>

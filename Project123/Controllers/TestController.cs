@@ -131,11 +131,102 @@ namespace Project123.Controllers
             return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = shipmentList });
         }
 
-        [HttpDelete("Test/DeleteShipmentAsync")]
+        [HttpDelete("Test/DeleteShipmentAsync/{id}")]
 
-        public async Task<ResponseModel> DeleteShipmentAsync(ShipmentModel ShipmentData)
+        public async Task<IActionResult> DeleteShipmentAsync(int id )
         {
+            ResponseModel resp = new ResponseModel();
+         
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                        {
+                    //string requestJson = JsonConvert.SerializeObject(id);
+                    //HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                    // Log the request URL
+                    var requestUrl = $"/api/Test/DeleteShipmentAsync/{id}";
+                    Console.WriteLine($"Sending DELETE request to: {requestUrl}");
+                    var response = await client.DeleteAsync(requestUrl);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        resp = await response.Content.ReadAsAsync<ResponseModel>();
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        resp.Status = "S";
+                        resp.Message = "Delete Success";
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
+        }
+
+        [HttpPost("Test/CreateShipmentAsync")]
+
+        public async Task<IActionResult> CreateShipmentAsync(ShipmentModel ShipmentData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<ShipmentModel> shipmentList = new List<ShipmentModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(ShipmentData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                    // Log the request URL
+                    var requestUrl = $"/api/Test/CreateShipmentAsync";
+                 
+                    var response = await client.PostAsync(requestUrl,httpContent);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        shipmentList = await response.Content.ReadAsAsync<List<ShipmentModel>>();
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        resp.Status = "S";
+                        resp.Message = "Success";
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, data = shipmentList });
         }
     }
 }
@@ -143,3 +234,4 @@ namespace Project123.Controllers
         
     
 
+ 

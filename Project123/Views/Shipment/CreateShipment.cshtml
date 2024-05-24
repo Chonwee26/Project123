@@ -138,8 +138,11 @@
         }
         /* end select2 style */
 
-        .datetimepicker {
+        .datetimepickerSearch {
             width:297px!important;
+        }
+        .datetimepickerCreate {
+            width: 635px !important;
         }
      
         .input555 {
@@ -375,12 +378,12 @@
                                 <h6>วันที่ส่ง</h6>
                                 <div class="input-group">
                                     <div class="input555">
-                                        <input type="text" class="form-control datetimepicker" id="txtSearchShipDateFR" name="ShipDateFR">
+                                        <input type="text" class="form-control datetimepicker datetimepickerSearch" id="txtSearchShipDateFR" name="ShipDateFR">
                                         <i class="fa-regular fa-calendar input-icon-addon"></i>
                                     </div>
                                     <span class="input-group-text">ถึง</span>
                                     <div class="input555">
-                                        <input type="text" class="form-control datetimepicker" id="txtSearchShipDateTO" name="ShipDateTO">
+                                        <input type="text" class="form-control datetimepicker datetimepickerSearch" id="txtSearchShipDateTO" name="ShipDateTO">
                                         <i class="fa-regular fa-calendar input-icon-addon"></i>
                                     </div>
                                 </div>
@@ -477,9 +480,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="text/javascript">
-        var dataTable
+        var dataTable;
         var newShipment = [];
 
+        var rowCount;
         $(document).ready(function () {
 
             $('#ddlSearchStorage').on('select2:select', function () {
@@ -858,7 +862,7 @@
                     reverseButtons: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax
+                        @*$.ajax
                             ({
                                 type: 'POST',
                                 url: '@Url.Action("CreateShipmentAjax1", "Shipment")',
@@ -867,6 +871,29 @@
                                 success: function (result) {
                                     if (result.Status = "S") {
                                         SweetAlert('success', result.Message);
+                                        $(".nav button#searchTab").tab('show');
+                                        $('#txtOrderNumber').val(result.Data.OrderNumber);
+                                        $('#btnSearch').click();
+                                    }
+                                    else {
+                                        SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                    }
+                                },
+                                error: function (request, status, error) {
+                                    SweetAlert('error', error);
+                                }
+                            });*@
+
+                        $.ajax
+                            ({
+                                type: 'POST',
+                                url: '@Url.Action("CreateShipmentAsync", "Test")',
+                                data: serializedCreate,
+                                dataType: "json",
+                                success: function (result) {
+                                    debugger
+                                    if (result.status = "S") {
+                                        SweetAlert('success', result.message);
                                         $(".nav button#searchTab").tab('show');
                                         $('#txtOrderNumber').val(result.Data.OrderNumber);
                                         $('#btnSearch').click();
@@ -928,7 +955,7 @@
 
             var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
             debugger
-            $.ajax
+            @*$.ajax
                 ({
                     type: 'POST',
                     url: '@Url.Action("DeleteShipment", "Shipment")',
@@ -950,7 +977,39 @@
                     error: function (request, status, error) {
                         SweetAlert('error', error);
                     }
-                });
+                });*@
+            console.log(rowData.ShipmentId);
+            var dataShipId =
+                  $.ajax
+      ({
+          type: 'DELETE',
+          url: '@Url.Action("DeleteShipmentAsync", "Test")' + '/' + encodeURIComponent(rowData.ShipmentId),
+
+          success: function (result) {
+              debugger
+              if (result.status == "S") {
+                  SweetAlert('success', result.message);
+                  debugger
+                  if (rowCount > 1) {
+                      $('#btnSearch').click();
+                  }
+                  else {
+                      $('#btnReset').click();
+                  }
+
+
+              }
+              else {
+                  SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+              }
+
+
+
+          },
+          error: function (request, status, error) {
+              SweetAlert('error', error);
+          }
+      });
         });
 
         $('#txtSearchShipDateFR').datetimepicker({
@@ -1094,6 +1153,7 @@
             $('#dvTable').show();
             // Initialize DataTable
             dataTable = $('#tblDataTable').DataTable({
+
                 destroy: true, //ล้างข้อมูลก่อนหน้า
                 data: newShipment,
                 searching: true,
@@ -1181,7 +1241,7 @@
 
 
             });
-
+            rowCount = dataTable.rows().count();
         }
     </script>
 }
