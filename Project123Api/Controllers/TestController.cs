@@ -84,6 +84,14 @@ namespace Project123Api.Controllers
             ShipmentData.OrderNumber = StringGenerator.GenerateRandomString(); //string
             IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.CreateShipmentAsync(ShipmentData);
             return shipmentList;
+        }  
+        
+        [HttpPost("UpdateShipmentAsync")]
+        public async Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync(ShipmentModel ShipmentData)
+        {
+            
+            IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.UpdateShipmentAsync(ShipmentData);
+            return shipmentList;
         }
 
         public class StringGenerator

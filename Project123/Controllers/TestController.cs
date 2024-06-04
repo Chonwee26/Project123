@@ -228,6 +228,54 @@ namespace Project123.Controllers
 
             return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, data = shipmentList });
         }
+
+        [HttpPost("Test/UpdateShipmentAsync")]
+        public async Task<IActionResult> UpdateShipmentAsync(ShipmentModel ShipmentData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<ShipmentModel> shipmentList = new List<ShipmentModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(ShipmentData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                    // Log the request URL
+                    var requestUrl = $"/api/Test/UpdateShipmentAsync";
+                 
+                    var response = await client.PostAsync(requestUrl,httpContent);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        shipmentList = await response.Content.ReadAsAsync<List<ShipmentModel>>();
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        resp.Status = "S";
+                        resp.Message = "Success";
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, data = shipmentList });
+        }
     }
 }
 

@@ -198,6 +198,8 @@
         }
         .btn-delete {
             cursor: pointer;
+        }.btn-edit {
+            cursor: pointer;
         }
     </style>
 
@@ -441,6 +443,7 @@
                                 <table id="tblDataTable" class="table table-bordered" width="100%">
                                     <thead>
                                         <tr class="text-center">
+                                            <th>แก้ไขสินค้า</th>
                                             <th>หมายเลขออเดอร์</th>
                                             <th>ชื่อ</th>
                                             <th>เบอร์โทรศัพท์</th>
@@ -482,8 +485,11 @@
     <script type="text/javascript">
         var dataTable;
         var newShipment = [];
-
+        var SaveStatus;
+        var SaveUrl;
         var rowCount;
+        var DataShipment;
+        var rowData;
         $(document).ready(function () {
 
             $('#ddlSearchStorage').on('select2:select', function () {
@@ -607,7 +613,8 @@
                 }
             }
         });
-    }          function getShipmentStatusAsync(id,elementId) {
+        } function getShipmentStatusAsync(id, elementId) {
+
         id = id == null ? "" : id
 
         $.ajax({
@@ -843,13 +850,26 @@
                 var frmCreate = $('#frmCreateShipment').serializeArray();
                 const currentTime = new Date($.now());
                 debugger
-                frmCreate.a
+             
                 frmCreate.push({ name: 'CreateDate', value: currentTime });
+                if (SaveStatus =="Update") {
+                    frmCreate.push({ name: 'OrderNumber', value: rowData.OrderNumber });
+                }
                 //if ($('#ddlCreateShipmentStatus').val() == '') {
                 //    $('#ddlCreateShipmentStatus').val('');
                 //}
-
+                
                 var serializedCreate = $.param(frmCreate);
+              
+                if (SaveStatus == "Create") {
+                    SaveUrl = '@Url.Action("CreateShipmentAsync", "Test")';
+                    DataShipment = serializedCreate
+                }
+       else {
+                    SaveUrl = '@Url.Action("UpdateShipmentAsync", "Test")';
+                    DataShipment = serializedCreate
+       }
+     
                 debugger
 
                 Swal.fire({
@@ -887,16 +907,28 @@
                         $.ajax
                             ({
                                 type: 'POST',
-                                url: '@Url.Action("CreateShipmentAsync", "Test")',
-                                data: serializedCreate,
+                                url: SaveUrl,
+                                data: DataShipment,
                                 dataType: "json",
                                 success: function (result) {
                                     debugger
+                                    SweetAlert('success', result.message);
+                                    $(".nav button#searchTab").tab('show');
+                                   
                                     if (result.status = "S") {
-                                        SweetAlert('success', result.message);
-                                        $(".nav button#searchTab").tab('show');
-                                        $('#txtOrderNumber').val(result.Data.OrderNumber);
-                                        $('#btnSearch').click();
+                                        if (SaveStatus == "Create") {
+                                            console.log("C")
+                                            $('#txtOrderNumber').val(result.Data.OrderNumber);
+                                            $('#btnSearch').click();
+                                        }
+                        
+                                        else {
+                                            console.log("E")
+                                         
+                                            $('#btnSearch').click();
+                                        }
+                      
+                     
                                     }
                                     else {
                                         SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
@@ -924,6 +956,7 @@
             clearSearchValue();
             getShipmentLocationAsync('', '#ddlCreateStorage');
             getShipmentStatusAsync('', '#ddlCreateShipmentStatus');
+            SaveStatus = "Create";
             //getShipmentStatus('', '#ddlCreateShipmentStatus');
         });
 
@@ -953,7 +986,7 @@
 
         $('#tblDataTable').on('click', '.btn-delete', function () {
 
-            var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
+             rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
             debugger
             @*$.ajax
                 ({
@@ -1038,6 +1071,26 @@
             formatDate: 'd/m/Y',
             timepicker: false,
         });
+
+        $('#tblDataTable').on('click' ,'.btn-edit', function () {
+            SaveStatus = "Update";
+             rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
+            debugger
+            $(".nav button#createTab").tab('show');
+
+            $('#txtCreateFullName').val(rowData.FullName);
+            $('#txtCreateMobileNumber').val(rowData.MobileNumber);
+            $('#txtShipDate').val(rowData.ShipDate);
+            //$('#ddlCreateStorage').val(rowData.Storage);
+            //$('#ddlCreateShipmentStatus').val(rowData.ShipmentStatus);
+
+            getShipmentStatusAsync(''+rowData.ShipmentStatus,'#ddlCreateShipmentStatus');
+
+            getShipmentLocationAsync(''+rowData.Storage, '#ddlCreateStorage');
+
+        });
+
+
 
         function bindingTable(newShipment) {
             debugger
@@ -1162,6 +1215,14 @@
                 info: false,
 
                 columns: [
+
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+
+                    },
 
                     {
                         data: null, className: 'text-center', orderable: false,

@@ -20,10 +20,8 @@ namespace Project123Api.Repositories
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync();
         Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData);
         Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData);
-        Task<ResponseModel> DeleteShipmentAsync(int id);
-      
-
-      
+        Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync(ShipmentModel ShipmentData);
+        Task<ResponseModel> DeleteShipmentAsync(int id);         
     }
 
     public class ShipmentRepository : IShipmentRepository
@@ -80,15 +78,13 @@ namespace Project123Api.Repositories
         //    return await Task.FromResult(shipmentList);
         //}
 
-
-
         public async Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocationAsync()
         {
             List<ShipmentLocationModel> shipmentList = new List<ShipmentLocationModel>();
             string sqlSelect = @"SELECT CONVERT(VARCHAR(10), ShipmentStorageID) AS ShipmentItemID, 
                                 ShipmentStorageName AS ShipmentItemText
-                         FROM ShipmentLocation
-                         ORDER BY ShipmentStorageID";
+                                FROM ShipmentLocation
+                                ORDER BY ShipmentStorageID";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             try
@@ -131,8 +127,8 @@ namespace Project123Api.Repositories
             List<ShipmentLocationModel> statusList = new List<ShipmentLocationModel>();
             string sqlSelect = @"SELECT CONVERT(VARCHAR(10), ShipmentStatusID) AS ShipmentItemID, 
                                 ShipmentStatusName AS ShipmentItemText
-                         FROM ShipmentStatus
-                         ORDER BY ShipmentStatusID";
+                                FROM ShipmentStatus
+                                ORDER BY ShipmentStatusID";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
             try
@@ -199,9 +195,64 @@ namespace Project123Api.Repositories
 
                         response.Status = "S";
                         response.Message = "Create Shipment Success Your Ordernumber are "+ShipmentData.OrderNumber;
-                        
-                   
-                    
+                                                             
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(shipmentList);
+        }   public async Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync (ShipmentModel ShipmentData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<ShipmentModel> shipmentList = new List<ShipmentModel>();
+            string sqlCreate = @"UPDATE Shipment
+                                SET
+                                   
+                                    FullName = @FullName,
+                                    MobileNumber = @MobileNumber,
+                                    Storage = @Storage,
+                                    ShipmentStatus = @ShipmentStatus,
+                                    ShipDate = @ShipDate,
+                                    ShipDateFR = @ShipDateFR,
+                                    ShipDateTO = @ShipDateTO,
+                                    CreateDate = @CreateDate
+                                WHERE                               
+                                    OrderNumber = @OrderNumber;
+                                ";
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sqlCreate, connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.Clear();
+                        command.Parameters.AddWithValue("@OrderNumber", ShipmentData.OrderNumber);
+                        command.Parameters.AddWithValue("@FullName", ShipmentData.FullName);
+                        command.Parameters.AddWithValue("@MobileNumber", ShipmentData.MobileNumber);
+                        command.Parameters.AddWithValue("@Storage", ShipmentData.Storage);
+                        command.Parameters.AddWithValue("@ShipmentStatus", ShipmentData.ShipmentStatus);
+                        command.Parameters.AddWithValue("@ShipDate", ShipmentData.ShipDate);
+                        command.Parameters.AddWithValue("@ShipDateFR", ShipmentData.ShipDateFR ?? "");
+                        command.Parameters.AddWithValue("@ShipDateTO", ShipmentData.ShipDateTO ?? "");
+                        command.Parameters.AddWithValue("@CreateDate", ShipmentData.CreateDate);
+                        command.ExecuteNonQuery();
+
+                        response.Status = "S";
+                        response.Message = "Update Shipment Success Your Ordernumber are "+ShipmentData.OrderNumber;
+                                                             
                     }
                 }
                 catch (Exception ex)
@@ -218,9 +269,6 @@ namespace Project123Api.Repositories
             return await Task.FromResult(shipmentList);
         }
     
-    
-
-
         public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
         {
             ResponseModel response = new ResponseModel();
