@@ -41,7 +41,6 @@ namespace Project123.Dto
             ShipmentStatusList = new List<ShipmentStatusModel>();
       
         }
-
     }
 }
 

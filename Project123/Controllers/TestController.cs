@@ -110,9 +110,21 @@ namespace Project123.Controllers
                     {
                         shipmentList = await response.Content.ReadAsAsync<List<ShipmentModel>>();
 
+                        if (shipmentList.Count >0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
                         ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        resp.Status = "S";
-                        resp.Message = "Success";
+
                     }
                     else
                     {
