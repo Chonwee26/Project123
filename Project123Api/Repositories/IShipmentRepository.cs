@@ -19,7 +19,7 @@ namespace Project123Api.Repositories
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentLocationAsync();
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync();
         Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData);
-        Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData);
+        Task<ResponseModel> CreateShipmentAsync(ShipmentModel ShipmentData);
         Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync(ShipmentModel ShipmentData);
         Task<ResponseModel> DeleteShipmentAsync(int id);         
     }
@@ -165,7 +165,7 @@ namespace Project123Api.Repositories
         }
 
 
-        public async Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData)
+        public async Task<ResponseModel> CreateShipmentAsync(ShipmentModel ShipmentData)
         {
             ResponseModel response = new ResponseModel();
             List<ShipmentModel> shipmentList = new List<ShipmentModel>();
@@ -194,7 +194,7 @@ namespace Project123Api.Repositories
                         command.ExecuteNonQuery();
 
                         response.Status = "S";
-                        response.Message = "Create Shipment Success Your Ordernumber are "+ShipmentData.OrderNumber;
+                        response.Message = ""+ShipmentData.OrderNumber;
                                                              
                     }
                 }
@@ -209,7 +209,7 @@ namespace Project123Api.Repositories
                 }
             }
 
-            return await Task.FromResult(shipmentList);
+            return await Task.FromResult(response);
         }   public async Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync (ShipmentModel ShipmentData)
         {
             ResponseModel response = new ResponseModel();

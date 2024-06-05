@@ -17,14 +17,6 @@
             background-color: white;
         }
 
-        #liveChat {
-            height: 40px;
-            width: 100px;
-            display: flex;
-            position: sticky;
-            justify-content: flex-end;
-            align-content: flex-end;
-        }
 
         .carousel-item img {
             height: 500px; /* Adjust the height as needed */
@@ -33,6 +25,72 @@
 
         #carouselExampleCaptions {
             margin: 0; /* Reset margin for the carousel container */
+        }
+
+
+        #chatbot {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 300px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        #chatbotHeader {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbotBody {
+            display: none;
+            padding: 10px;
+        }
+
+        #messages {
+            height: 250px;
+          
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        #userInput {
+            width: calc(100% - 70px);
+            padding: 5px;
+            outline: none;
+            margin-right:10px;
+        }
+
+        #btnSend {
+            padding: 5px 10px;
+            outline: none;
+        }
+
+        .bubble-message {
+            border-radius: 10px;
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            max-width: 80%; /* Ensures the bubbles don't exceed a certain width */
+            word-wrap: break-word; /* Ensures long text wraps */
+        }
+
+        .bot-bubble-message {
+            background-color: grey;
+        }
+
+        .user-bubble-message {
+            background-color: #007bff;
         }
     </style>
 }
@@ -45,7 +103,7 @@
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2" hidden></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3" hidden></button>
             </div>
-            <div class="carousel-inner">
+            <div class="carousel-inner d-flex">
                 <div class="carousel-item active">
                     <img src="~/picture/thailand.jpg" class="d-block w-100" alt="">
                     @*<div class="carousel-caption d-none d-md-block">
@@ -72,39 +130,27 @@
             </button>
         </div>
     </div>
+    <form id="frmSearchShipment">
+        <div class="col-9 offset-3 mt-3">
+            <h1 class="">เช็คเลขพัสดุ Chowii Express</h1>
+            <div class="col-12">
+                <div class="row">
+
+                    <div class="col-8">
+                        <input type="text" id="txtOrderNumber" class="form-control" name="OrderNumber" placeholder="ใส่หมายเลขพัสดุ" />
+                    </div>
+
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary px-4" id="btnSearch">Tracking</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-<form id="frmSearchShipment">
-    <div class="col-9 offset-3 mt-4">
-        <h1 class="">เช็คเลขพัสดุ Chowii Express</h1>
-        <div class="col-12">
-            <div class="row">
 
-                <div class="col-8">
-                    <input type="text" id="txtOrderNumber" class="form-control" name="OrderNumber"placeholder="ใส่หมายเลขพัสดุ" />
-                </div>
-
-                <div class="col-3">
-                    <button type="submit" class="btn btn-primary px-4" id="btnSearch">Tracking</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    @*<div class="card mt-4 py-4">
-        <div class="row">
-            <div class="content col-6">
-                <label id="idPost"></label>
-            </div>
-
-            <div class="arriveDate">
-
-                <label></label>
-            </div>
-        </div>
-    </div>*@
-</form>
 @*<button class="btn-outline-primary" id="liveChat">Live Chat</button>*@
 
 <div class="container mt-5" id="containerSection">
@@ -116,6 +162,20 @@
         </div>
     </div>
 </div>
+
+<div id="chatbot">
+    <div id="chatbotHeader">
+        <span>Live Chat</span>
+    </div>
+
+    <div id="chatbotBody">
+        <div id="messages"></div>
+        <div class="d-flex col-12">
+            <input type="text" class="form-control" id="userInput" placeholder="Type a message...">
+            <button class="btn btn-outline-primary" id="btnSend">Send</button>
+        </div>
+    </div>
+    </div>
 
 @section Scripts{
     <script type="text/javascript">
@@ -213,8 +273,6 @@
             choosePicture = Data.ShipmentStatusList[0].ShipmentItemID
             if (choosePicture == "1") {
                 picture = "/picture/box.png"
-
-
             }
             else if (choosePicture == "2") {
                 picture =
@@ -270,6 +328,80 @@
   <p>Create Date: ${Data.CreateDate}</p>
 `;
                 $('#shipmentInfo').html(html);
+        }
+
+
+        $('#chatbotHeader').click(function () {
+            $('#chatbotBody').toggle();
+
+        });
+
+        $('#btnSend').click(function () {
+            sendMessage()
+        });
+        $('#userInput').keypress(function (e) {
+            if (e.which == 13) { // Enter key pressed
+                sendMessage();
+            }
+        });
+     
+
+
+        function sendMessage() {
+            var userInput = $('#userInput').val();
+            if (userInput.trim() !== '') {
+                var userMessage = `<div class=" d-flex justify-content-end mt-3" id="userBubble">
+         <div class= "bubble-message user-bubble-message"id="userMessage">${userInput}</div ></div >`
+
+                $('#messages').append(userMessage);
+
+                $('#userInput').val('');
+
+                botResponse(userInput);
+                // Simulate bot response
+
+
+            }
+        }
+
+        function botResponse(userInput) {
+            debugger
+            userInput = userInput.toLowerCase();
+            var botchatResponse
+            setTimeout(function () {
+
+                if (userInput.includes("hello")) {
+                    botchatResponse = getBotResponse("hello I am bot Chowii")
+                }
+                else if (userInput.includes("help")) {
+                    botchatResponse = getBotResponse("What do you want me to help?") + `<div class=" mt-2 form-check">
+  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+  <label class="form-check-label" for="flexCheckDefault">
+    User
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" >
+  <label class="form-check-label" for="flexCheckChecked">
+   Tracking Order
+  </label>
+</div>`
+                }
+                else {
+                    botchatResponse = getBotResponse("I don't understand bro")
+                }
+                $('#messages').append(botchatResponse);
+                debugger
+            }, 1000);
+
+
+
+        }
+        function getBotResponse(botMessage) {
+            debugger
+            botMessage = botMessage == null || botMessage == undefined ? "" : botMessage;
+            var botContainer = `<div class=" d-flex justify-content-start mt-3" id="userBubble"><div class= "bubble-message bot-bubble-message"id="botMessage">${botMessage}</div ></div >`
+            return botContainer
         }
     </script>
 }

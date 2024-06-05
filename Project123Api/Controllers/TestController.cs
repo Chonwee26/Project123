@@ -79,11 +79,11 @@ namespace Project123Api.Controllers
 
         }   // DELETE api/<TestController>/5
         [HttpPost("CreateShipmentAsync")]
-        public async Task<IEnumerable<ShipmentModel>> CreateShipmentAsync(ShipmentModel ShipmentData)
+        public async Task<ResponseModel> CreateShipmentAsync(ShipmentModel ShipmentData)
         {
             ShipmentData.OrderNumber = StringGenerator.GenerateRandomString(); //string
-            IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.CreateShipmentAsync(ShipmentData);
-            return shipmentList;
+            ResponseModel resp  = await _shipmentRepo.CreateShipmentAsync(ShipmentData);
+            return resp;
         }  
         
         [HttpPost("UpdateShipmentAsync")]

@@ -380,7 +380,7 @@
                             <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>หมายเลขโทรศัพท์</h6>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="txtSearchMobileNumber" name="MobileNumber" />
+                                    <input type="text" class="form-control" id="txtSearchMobileNumber" name="MobileNumber" maxlength="10" />
                                 </div>
                             </div>
                             <div class="col-12 col-sm-12 col-md-6 ">
@@ -494,8 +494,7 @@
         var dataTable;
         var newShipment = [];
         var SaveStatus;
-        var SaveUrl;
-        var rowCount;
+        var SaveUrl;     
         var DataShipment;
         var rowData;
         $(document).ready(function () {
@@ -570,7 +569,7 @@
 
         $('#qrForm').submit(function (event) {
             
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault(); //กันไปอีกหน้า
 
             var formData = new FormData($(this)[0]); // Get form data
             $.ajax({
@@ -971,18 +970,20 @@
                                     $(".nav button#searchTab").tab('show');
                                    
                                     if (result.status = "S") {
+                                        clearSearchValue()
                                         if (SaveStatus == "Create") {
+                                            debugger
                                             console.log("C")
                                         
-                                            $('#txtOrderNumber').val(result.Data.OrderNumber);
+                                            $('#txtOrderNumber').val(result.message);
                                             $('#btnSearch').click();
                                         }
                         
                                         else {
                                             debugger
                                             const order = $('#txtOrderNumber').val();
-                                            clearSearchValue()
-                                            $('#txtOrderNumber').val(order);
+                                          
+                                            $('#txtOrderNumber').val(rowData.OrderNumber);
                                             $('#btnSearch').click();
                                         }
                       
@@ -1132,15 +1133,16 @@
 
           success: function (result) {
               debugger
+             var rowCount = dataTable.rows().count();
               if (result.status == "S") {
                   SweetAlert('success', result.message);
                   debugger
                   if (rowCount > 1) {
                       $('#btnSearch').click();
                   }
-                  else {
-                      $('#btnReset').click();
-                  }
+                  //else {
+                  //    $('#btnReset').click();
+                  //}
 
 
               }
@@ -1414,7 +1416,7 @@
 
 
             });
-            rowCount = dataTable.rows().count();
+            //rowCount = dataTable.rows().count();
         }
     </script>
 }

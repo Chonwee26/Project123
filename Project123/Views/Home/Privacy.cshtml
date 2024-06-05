@@ -1,6 +1,125 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    #chat-container {
+        width: 300px;
+        margin: 100px auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #chat-box {
+        height: 400px;
+        overflow-y: scroll;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    #messages {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .message {
+        margin-bottom: 10px;
+    }
+
+    .user-message {
+        text-align: right;
+    }
+
+    .bot-message {
+        text-align: left;
+    }
+
+    #user-input {
+        width: calc(100% - 60px);
+        padding: 5px;
+    }
+
+    #send-btn {
+        width: 50px;
+        padding: 5px;
+    }
+</style>
+
+
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box">
+            <div id="messages"></div>
+        </div>
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#send-btn').click(function () {
+            sendMessage();
+        });
+
+        $('#user-input').keypress(function (e) {
+            if (e.which == 13) { // Enter key pressed
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            let userMessage = $('#user-input').val().trim();
+            if (userMessage) {
+                addMessage(userMessage, 'user-message');
+                $('#user-input').val('');
+                botResponse(userMessage);
+            }
+        }
+
+        function addMessage(message, className) {
+            $('#messages').append(`<div class="message ${className}">${message}</div>`);
+            $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+        }
+
+        function botResponse(userMessage) {
+            let botMessage = getBotResponse(userMessage);
+            setTimeout(function () {
+                addMessage(botMessage, 'bot-message');
+            }, 500);
+        }
+
+        function getBotResponse(userMessage) {
+            // Simple keyword-based response
+            userMessage = userMessage.toLowerCase();
+            if (userMessage.includes('hello')) {
+                return 'Hello! How can I help you today?';
+            } else if (userMessage.includes('help')) {
+                return 'Sure, what do you need help with?';
+            } else {
+                return 'Sorry, I didn\'t understand that.';
+            }
+        }
+    });
+
+</script>

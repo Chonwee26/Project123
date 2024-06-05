@@ -1,24 +1,136 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<style>
-    /* Keyframes for rotation animation */
-    @@keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
 
-    /* Apply rotation animation to the iframe */
-    .rotate {
-        animation: spin 10s linear infinite; /* Adjust the duration as needed */
-    }
+@section Styles{
 
-    /* Style to make iframe circular */
-    .rounded-iframe {
-        border-radius: 50%;
-        overflow: hidden;
-    }
-</style>
+
+    <style type="text/css">
+        /* Keyframes for rotation animation */
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Apply rotation animation to the iframe */
+        .rotate {
+            animation: spin 10s linear infinite; /* Adjust the duration as needed */
+        }
+
+        /* Style to make iframe circular */
+        .rounded-iframe {
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+    
+
+        #chatbot {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 300px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        #chatbotHeader {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbotBody {
+            display: none;
+            padding: 10px;
+        }
+
+        #messages {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #userInput {
+            width: calc(100% - 70px);
+            padding: 5px;
+            outline: none;
+        }
+
+        #send-button {
+            padding: 5px 10px;
+            outline: none;
+        }
+
+        .bubble-message {
+          
+            border-radius: 10px;
+            color:white;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+           .bot-bubble-message {
+                background-color: grey;
+            }
+           .user-bubble-message {
+                background-color: #007bff;
+            }
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+    </style>
+}
 
 <!-- Modify your iframe as follows -->
 <div class="rounded-iframe">
@@ -26,7 +138,132 @@
 </div>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/"  width="50%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <h1 class="display-4 ">Welcome To Chowii Express!!!</h1>
+    <iframe style="border-radius:50%" src="https://open.spotify.com/embed/track/" width="50%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
+
+
+<body>
+
+    <div id="chatbot">
+        <div id="chatbotHeader">
+            <span>Live Chat</span>
+        </div>
+
+        <div id="chatbotBody">
+            <div id="messages"></div>
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+
+    <div id="adModal" class="modal">
+        <div class="modal-content">
+            <button class=" d-flex justify-content-end close"style="width:20px">&times;</button>
+            <h2>Chowii Express!</h2>
+            <p>Get 50% off on your first Ship!. Use code: FIRSTWii50.</p>
+            <a href="https://localhost:7166/shipment/searchshipment" class="btn btn-primary">Use Now</a>
+        </div>
+    </div>
+</body>
+
+@section Scripts{
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // Display the modal after 2 seconds
+            setTimeout(function () {
+                $('#adModal').fadeIn();
+            }, 1500);
+
+            // Close the modal when the user clicks on <span> (x)
+            $('.close').click(function () {
+                $('#adModal').fadeOut();
+            });
+
+            // Close the modal when the user clicks anywhere outside of the modal
+            $(window).click(function (event) {
+                if ($(event.target).is('#adModal')) {
+                    $('#adModal').fadeOut();
+                }
+            });
+
+            $('#chatbotHeader').click(function () {
+                $('#chatbotBody').toggle();
+
+            });
+
+            $('#send-button').click(function () {
+                sendMessage()
+            });
+            $('#userInput').keypress(function (e) {
+                if (e.which == 13) { // Enter key pressed
+                    sendMessage();
+                }
+            });
+        });
+
+
+        function sendMessage() {
+            var userInput = $('#userInput').val();
+            if (userInput.trim() !== '') {
+                var userMessage = `<div class=" d-flex justify-content-end mt-3" id="userBubble">
+         <div class= "bubble-message user-bubble-message"id="userMessage">${userInput}</div ></div >`
+
+                $('#messages').append(userMessage);
+
+                $('#userInput').val('');
+
+                botResponse(userInput);
+                // Simulate bot response
+              
+
+            }
+        }
+
+        function botResponse(userInput) {
+            debugger
+            userInput = userInput.toLowerCase();
+            var botchatResponse
+            setTimeout(function () {
+
+                if (userInput.includes("hello")) {
+                     botchatResponse = getBotResponse("hello I am bot Chowii")
+                }
+                else if (userInput.includes("help")) {
+                    botchatResponse = getBotResponse("What do you want me to help?") +`<div class=" mt-2 form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    User
+                                                    </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" >
+                                                    <label class="form-check-label" for="flexCheckChecked">
+                                                    Tracking Order
+                                                    </label>
+                                                    </div>`
+
+                }
+                else {
+                     botchatResponse = getBotResponse("I don't understand bro")
+                }
+                $('#messages').append(botchatResponse);
+                debugger
+            }, 1000);
+        
+          
+         
+        }
+        function getBotResponse(botMessage) {
+            debugger
+            botMessage = botMessage == null || botMessage == undefined ?"":botMessage;
+            var botContainer = `<div class=" d-flex justify-content-start mt-3" id="userBubble"><div class= "bubble-message bot-bubble-message"id="botMessage">${botMessage}</div ></div >`
+            return botContainer
+        }
+    </script>
+
+}
