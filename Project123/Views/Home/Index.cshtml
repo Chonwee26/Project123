@@ -4,7 +4,6 @@
 
 @section Styles{
 
-
     <style type="text/css">
         /* Keyframes for rotation animation */
         @@keyframes spin {
@@ -21,14 +20,11 @@
         .rotate {
             animation: spin 10s linear infinite; /* Adjust the duration as needed */
         }
-
-        /* Style to make iframe circular */
+      
         .rounded-iframe {
             border-radius: 50%;
             overflow: hidden;
-        }
-
-    
+        }   
 
         #chatbot {
             position: fixed;
@@ -73,8 +69,7 @@
             outline: none;
         }
 
-        .bubble-message {
-          
+        .bubble-message {        
             border-radius: 10px;
             color:white;
             padding-left: 10px;
@@ -82,17 +77,18 @@
             padding-top: 5px;
             padding-bottom: 5px;
         }
+
            .bot-bubble-message {
                 background-color: grey;
             }
+
            .user-bubble-message {
                 background-color: #007bff;
             }
 
-
-        .modal {
+        .modal-ads {
             display: none;
-            position: fixed;
+            position:fixed;
             z-index: 1;
             padding-top: 100px;
             left: 0;
@@ -104,11 +100,18 @@
         }
 
         .modal-content {
-            background-color: #fff;
-            margin: auto;
+            /*    background-color: #fff;*/
+            display:flex;
+            justify-content:center;
+            align-items:center;           
+            margin:auto;
+            background-image: url('picture/logistics.png');
+            background-size: cover;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            height:100%;
+            max-height:300px;
             max-width: 600px;
             text-align: center;
             border-radius: 10px;
@@ -128,7 +131,6 @@
                 text-decoration: none;
                 cursor: pointer;
             }
-
     </style>
 }
 
@@ -141,7 +143,6 @@
     <h1 class="display-4 ">Welcome To Chowii Express!!!</h1>
     <iframe style="border-radius:50%" src="https://open.spotify.com/embed/track/" width="50%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
-
 
 <body>
 
@@ -158,21 +159,21 @@
     </div>
 
 
-    <div id="adModal" class="modal">
+    <div id="adModal" class="modal-ads">
         <div class="modal-content">
-            <button class=" d-flex justify-content-end close"style="width:20px">&times;</button>
+            @*<button class="flex-row-reverse justify-content-end align-items-start close"style="width:20px">&times;</button>*@
             <h2>Chowii Express!</h2>
             <p>Get 50% off on your first Ship!. Use code: FIRSTWii50.</p>
-            <a href="https://localhost:7166/shipment/searchshipment" class="btn btn-primary">Use Now</a>
+            <a href="https://localhost:7166/shipment/searchshipment" class="btn btn-primary mt-5">Use Now</a>
         </div>
     </div>
 </body>
 
 @section Scripts{
-
-    
+  
     <script type="text/javascript">
         $(document).ready(function () {
+            var token = localStorage.getItem('access_token'); // or wherever you store the token
 
             // Display the modal after 2 seconds
             setTimeout(function () {
@@ -206,7 +207,6 @@
             });
         });
 
-
         function sendMessage() {
             var userInput = $('#userInput').val();
             if (userInput.trim() !== '') {
@@ -214,18 +214,13 @@
          <div class= "bubble-message user-bubble-message"id="userMessage">${userInput}</div ></div >`
 
                 $('#messages').append(userMessage);
-
                 $('#userInput').val('');
-
-                botResponse(userInput);
-                // Simulate bot response
-              
-
+                botResponse(userInput);          
             }
         }
 
         function botResponse(userInput) {
-            debugger
+             
             userInput = userInput.toLowerCase();
             var botchatResponse
             setTimeout(function () {
@@ -246,22 +241,18 @@
                                                     Tracking Order
                                                     </label>
                                                     </div>`
-
                 }
                 else {
                      botchatResponse = getBotResponse("I don't understand bro")
                 }
-                $('#messages').append(botchatResponse);
-                debugger
-            }, 1000);
-        
-          
-         
+                $('#messages').append(botchatResponse);          
+            }, 1000);             
+      
         }
         function getBotResponse(botMessage) {
-            debugger
+             
             botMessage = botMessage == null || botMessage == undefined ?"":botMessage;
-            var botContainer = `<div class=" d-flex justify-content-start mt-3" id="userBubble"><div class= "bubble-message bot-bubble-message"id="botMessage">${botMessage}</div ></div >`
+            var botContainer = `<div class=" d-flex justify-content-start mt-3" id="botBubble"><div class= "bubble-message bot-bubble-message"id="botMessage">${botMessage}</div ></div >`
             return botContainer
         }
     </script>

@@ -15,12 +15,12 @@ using Project123Api.Repositories;
 
 namespace Project123Api.Controllers
 {
-
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TestController : ControllerBase
     {
+      
         private readonly IShipmentRepository _shipmentRepo;
         private DataDbContext _dbContext;
         private IConfiguration _configuration;
@@ -59,6 +59,7 @@ namespace Project123Api.Controllers
         [HttpPost("SearchShipmentAsync")]
         public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
         {
+
             IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.SearchShipmentAsync(ShipmentData);
 
             return shipmentList;
@@ -87,11 +88,11 @@ namespace Project123Api.Controllers
         }  
         
         [HttpPost("UpdateShipmentAsync")]
-        public async Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync(ShipmentModel ShipmentData)
+        public async Task<ResponseModel> UpdateShipmentAsync(ShipmentModel ShipmentData)
         {
             
-            IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.UpdateShipmentAsync(ShipmentData);
-            return shipmentList;
+           ResponseModel resp = await _shipmentRepo.UpdateShipmentAsync(ShipmentData);
+            return resp;
         }
 
         public class StringGenerator

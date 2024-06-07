@@ -12,14 +12,12 @@ using System.Text;
 using Microsoft.Extensions.Primitives;
 using Project123.Migrations;
 using Project123Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Project123.Controllers
-{
-
+{   
     public class ShipmentController : BaseController
-    {
-
-
+    {     
 
         private readonly DataDbContext _db;
         private readonly string connectionString;
@@ -29,7 +27,6 @@ namespace Project123.Controllers
             _db = db;
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
 
         public IActionResult Index()
         {

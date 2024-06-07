@@ -265,11 +265,12 @@ namespace Project123.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        shipmentList = await response.Content.ReadAsAsync<List<ShipmentModel>>();
+                        resp = await response.Content.ReadAsAsync<ResponseModel>();
+
 
                         ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        resp.Status = "S";
-                        resp.Message = "Success";
+                        //resp.Status = "S";
+                        //resp.Message = "Success";
                     }
                     else
                     {

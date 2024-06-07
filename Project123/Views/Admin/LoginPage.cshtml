@@ -48,8 +48,9 @@
     <!-- i18n plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.i18n/1.0.9/jquery.i18n.min.js" integrity="sha512-EkS8Kq86l7dHt/dOBniHgtYvAScDqFw/lIPX5VCwaVKsufs0pY44I2cguqZ45QaFOGGwVd3T1nXvVJYIEjRsjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
 
+        $(document).ready(function () {
+         // or wherever you store the token
         });
 
         //$('.Layout').hide();
@@ -68,22 +69,28 @@
             submitHandler: function (form) {
                 debugger
                 var userName = $('#txtEmail').val();
-       
-                        var formData = {
+
+                var formData = {
+
                             Email: $('#txtEmail').val(),
-                            Password: $('#txtPassword').val()
-                        };
+                            Password: $('#txtPassword').val(),
+
+                };
+
                 $.ajax
                     ({
                         type: 'POST',
-                        url: '/Admin/Login',
+                     url: '@Url.Action("Login1","Admin")',
                         data: formData,
                         dataType: 'json',
                         success: function (result) {
-                     
-                            if (result.status == "S") {                       
+                            debugger
+                            if (result.status == "S") {
                                 SweetAlert('success', userName);
-                                window.location.href = "https://localhost:7166/Shipment/CreateShipment";
+                                localStorage.setItem('access_token', result.message);
+                                var token = localStorage.getItem('access_token');
+                                window.location.href = "https://localhost:7166/Shipment/SearchShipment";
+
                                 /*    bindingTable(result.Data);*/
                             }
                             else {
@@ -94,7 +101,7 @@
                             debugger
                             SweetAlert('error', error);
                         }
-                    });      
+                    });
                 $(".swal2-confirm").addClass('btn-swal-success');
                 $(".swal2-cancel").addClass('btn-swal-secondary');
             }

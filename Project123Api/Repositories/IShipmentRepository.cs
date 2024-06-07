@@ -20,7 +20,7 @@ namespace Project123Api.Repositories
         Task<IEnumerable<ShipmentLocationModel>> GetShipmentStatusAsync();
         Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData);
         Task<ResponseModel> CreateShipmentAsync(ShipmentModel ShipmentData);
-        Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync(ShipmentModel ShipmentData);
+        Task<ResponseModel> UpdateShipmentAsync(ShipmentModel ShipmentData);
         Task<ResponseModel> DeleteShipmentAsync(int id);         
     }
 
@@ -210,7 +210,7 @@ namespace Project123Api.Repositories
             }
 
             return await Task.FromResult(response);
-        }   public async Task<IEnumerable<ShipmentModel>> UpdateShipmentAsync (ShipmentModel ShipmentData)
+        }   public async Task<ResponseModel> UpdateShipmentAsync (ShipmentModel ShipmentData)
         {
             ResponseModel response = new ResponseModel();
             List<ShipmentModel> shipmentList = new List<ShipmentModel>();
@@ -266,7 +266,7 @@ namespace Project123Api.Repositories
                 }
             }
 
-            return await Task.FromResult(shipmentList);
+            return await Task.FromResult(response);
         }
 
         //public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)

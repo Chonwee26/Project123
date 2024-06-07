@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Data.SqlClient;
 using Project123Api.Repositories;
+using Azure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project123Api.Controllers
 {
@@ -30,41 +32,107 @@ namespace Project123Api.Controllers
             _dbContext = dbContext;
             _auth = new AuthService(_configuration);
             _adminRepo = adminRepository;
-        }    
-
-        [HttpPost("Login1")]
-        public  IActionResult Login1([FromBody]  AdminModel admin)
-         {
-            var adminEmail = _dbContext.Tb_Admin.FirstOrDefault(a => a.Email == admin.Email);
-
-            if (adminEmail == null)
-            {
-                return NotFound("Not found Email");
-            }
-            if (!SecurePasswordHasherHelper.Verify(admin.Password, adminEmail.Password))
-            {
-                return Unauthorized("Can't login");
-            }
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Email, admin.Email),
-                new Claim(ClaimTypes.Email, admin.Email),
-            };
-
-            var token = _auth.GenerateAccessToken(claims);
-
-            return new ObjectResult(new
-            {
-                access_token = token.AccessToken,
-                expires_in = token.ExpiresIn,
-                token_type = token.TokenType,
-                creation_Time = token.ValidFrom,
-                user_id = adminEmail.Id,
-            });
-   
-           
         }
+
+
+        //[AllowAnonymous]
+        //[HttpPost("login")]
+        //public IActionResult Login([FromBody] LoginDto loginDto)
+        //{
+        //    var user = _dbContext.Tb_User.SingleOrDefault(u => u.Username == loginDto.Username && u.Password == loginDto.Password);
+
+        //    if (user == null)
+        //    {
+        //        return Unauthorized();
+        //    }
+
+        //    var token = GenerateJwtToken(user.Id.ToString());
+        //    return Ok(new { Token = token });
+
+
+        //}
+
+
+
+
+      
+        [HttpPost("Login1")]
+        public async Task<ResponseModel> Login1(AdminModel admin)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            try
+            {
+                var adminEmail = await _dbContext.Tb_Admin.FirstOrDefaultAsync(a => a.Email == admin.Email);
+
+                if (adminEmail == null || !SecurePasswordHasherHelper.Verify(admin.Password, adminEmail.Password))
+                {
+                    resp.Status = "E";
+                    resp.Message = "Invalid email or password.";
+                    return resp;
+                }
+
+                var claims = new[]
+                {
+            new Claim(JwtRegisteredClaimNames.Email, admin.Email),
+            new Claim(ClaimTypes.Email, admin.Email),
+        };
+
+                var token = _auth.GenerateAccessToken(claims);
+
+                resp.Status = "S";
+                resp.Message = ""+token.AccessToken;
+                new ObjectResult(new
+                {
+                    access_token = token.AccessToken,
+                    expires_in = token.ExpiresIn,
+                    token_type = token.TokenType,
+                    creation_time = token.ValidFrom,
+                    user_id = adminEmail.Id,
+                });
+            }
+            catch (Exception ex)
+            {
+                resp.Status = "E";
+                resp.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return resp;
+        }
+
+        //[HttpPost("Login1")]
+        //public IActionResult Login1([FromBody] AdminModel admin)
+        //{
+        //    var adminEmail = _dbContext.Tb_Admin.FirstOrDefault(a => a.Email == admin.Email);
+
+        //    if (adminEmail == null)
+        //    {
+        //        return NotFound("Not found Email");
+        //    }
+        //    if (!SecurePasswordHasherHelper.Verify(admin.Password, adminEmail.Password))
+        //    {
+        //        return Unauthorized("Can't login");
+        //    }
+
+        //    var claims = new[]
+        //    {
+        //        new Claim(JwtRegisteredClaimNames.Email, admin.Email),
+        //        new Claim(ClaimTypes.Email, admin.Email),
+        //    };
+
+        //    var token = _auth.GenerateAccessToken(claims);
+
+        //    return new ObjectResult(new
+        //    {
+        //        access_token = token.AccessToken,
+        //        expires_in = token.ExpiresIn,
+        //        token_type = token.TokenType,
+        //        creation_Time = token.ValidFrom,
+        //        user_id = adminEmail.Id,
+        //    });
+
+
+        //}
 
 
 
@@ -171,5 +239,8 @@ namespace Project123Api.Controllers
 
             return response;
         }
+
+
+ 
     }
 }

@@ -17,7 +17,6 @@
             background-color: white;
         }
 
-
         .carousel-item img {
             height: 500px; /* Adjust the height as needed */
             object-fit: cover; /* Ensure the image covers the fixed height */
@@ -26,7 +25,6 @@
         #carouselExampleCaptions {
             margin: 0; /* Reset margin for the carousel container */
         }
-
 
         #chatbot {
             position: fixed;
@@ -103,7 +101,7 @@
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2" hidden></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3" hidden></button>
             </div>
-            <div class="carousel-inner d-flex">
+            <div class="carousel-inner d-flex" style="border-radius:15px;">
                 <div class="carousel-item active">
                     <img src="~/picture/thailand.jpg" class="d-block w-100" alt="">
                     @*<div class="carousel-caption d-none d-md-block">
@@ -150,18 +148,18 @@
     </form>
 </div>
 
-
-@*<button class="btn-outline-primary" id="liveChat">Live Chat</button>*@
-
 <div class="container mt-5" id="containerSection">
-    <div class="card">
-        <div class="card-body">
+    <div class="card"">
+        <div  id="cardAccordion">
+
+            </div>
+            <div class="card-body">
 
 
-            <div id="shipmentInfo" class="mt-3"></div>
+                <div id="shipmentInfo" class="mt-3"></div>
+            </div>
         </div>
     </div>
-</div>
 
 <div id="chatbot">
     <div id="chatbotHeader">
@@ -221,7 +219,7 @@
                         success: function (result) {
 
                             if (result.Message == "S") {
-                                debugger
+                                 
                                 displayShipmentInfo(result.Data);
                             }
 
@@ -234,16 +232,21 @@
                         }
                     });
                 }*@
+                  var token = localStorage.getItem('access_token');
+
                 $.ajax
                     ({
                         type: 'POST',
                         url: '@Url.Action("SearchShipmentAsync", "Test")',
                         data: frmSearch1,
                         dataType: "json",
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
                         success: function (result) {
-                            debugger
+                             debugger
                             if (result.status == "S") {
-                                debugger
+                                 
                                 if (result.Data.length > 0) {
                                     $("#containerSection").show();
                                     displayShipmentInfo(result.Data);
@@ -262,11 +265,10 @@
                         }
                     });
                 }
-
         });
 
         function displayShipmentInfo(shipmentInfo) {
-            debugger
+             
             var Data = shipmentInfo.find(f => f.OrderNumber == shipmentInfo[0].OrderNumber);
             var picture;
             var choosePicture;
@@ -292,7 +294,7 @@
                 picture =
                 "/picture/5988246.png"
             }
-            var html = `
+            var accordion = `
             <div class="accordion accordion-flush" id="accordionExample">
     <div class="accordion-item">
         <h2 class="accordion-header">
@@ -306,18 +308,17 @@
                     <div class="d-flex justify-content-around">
                         <img src= ${picture} style="height:200px;width:200px;" class="m-3" />
                     </div>
-                    <h3 class="text-center">${Data.ShipmentStatusList[0].ShipmentItemText}</h3> 
-                   
+                    <h3 class="text-center">${Data.ShipmentStatusList[0].ShipmentItemText}</h3>                   
                 </div>
-
-
-            </div>
-          
-
+            </div>        
         </div>
     </div>
 </div>
-                <hr>
+
+`;
+            $('#cardAccordion').html(accordion);
+
+            var html =`<hr>
   <h6>Shipment ID: ${Data.ShipmentId}</h6>
   <p>Order Number: ${Data.OrderNumber}</p>
   <p>Full Name: ${Data.FullName}</p>
@@ -329,7 +330,6 @@
 `;
                 $('#shipmentInfo').html(html);
         }
-
 
         $('#chatbotHeader').click(function () {
             $('#chatbotBody').toggle();
@@ -343,9 +343,7 @@
             if (e.which == 13) { // Enter key pressed
                 sendMessage();
             }
-        });
-     
-
+        });    
 
         function sendMessage() {
             var userInput = $('#userInput').val();
@@ -354,18 +352,13 @@
          <div class= "bubble-message user-bubble-message"id="userMessage">${userInput}</div ></div >`
 
                 $('#messages').append(userMessage);
-
                 $('#userInput').val('');
-
-                botResponse(userInput);
-                // Simulate bot response
-
-
+                botResponse(userInput);             
             }
         }
 
         function botResponse(userInput) {
-            debugger
+             
             userInput = userInput.toLowerCase();
             var botchatResponse
             setTimeout(function () {
@@ -390,15 +383,12 @@
                 else {
                     botchatResponse = getBotResponse("I don't understand bro")
                 }
-                $('#messages').append(botchatResponse);
-                debugger
+                $('#messages').append(botchatResponse);              
             }, 1000);
-
-
 
         }
         function getBotResponse(botMessage) {
-            debugger
+             
             botMessage = botMessage == null || botMessage == undefined ? "" : botMessage;
             var botContainer = `<div class=" d-flex justify-content-start mt-3" id="userBubble"><div class= "bubble-message bot-bubble-message"id="botMessage">${botMessage}</div ></div >`
             return botContainer

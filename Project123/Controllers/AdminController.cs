@@ -18,9 +18,14 @@ namespace Project123.Controllers
     {
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly IAuthenticationService _authenSvc;
-      
 
+
+        private readonly IHttpClientFactory _httpClientFactory;
       
+        public AdminController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
 
         //public AdminController(IHttpClientFactory clientFactory, IAuthenticationService authenticationService)
         //{
@@ -91,56 +96,107 @@ namespace Project123.Controllers
         }
 
 
-        //public async Task<IActionResult> Login(AdminModel UserData)
-        //{
-        //    using (HttpClientHandler handler = new HttpClientHandler())
-        //    {
-        //        // Temporarily bypass SSL certificate validation (not for production use)
-        //        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
-        //        using (HttpClient client = new HttpClient(handler))
-        //        {
-        //            client.BaseAddress = new Uri("https://localhost:7061/");
+        [HttpPost("Admin/Login")]
 
-        //            UserData = new AdminModel
-        //            {
-        //                Name = "",
-        //                Email = UserData.Email,
-        //                Password = UserData.Password,
-        //                Role = ""
-        //            };
+        public async Task<IActionResult> Login(AdminModel UserData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<AdminModel> UserList = new List<AdminModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
-        //            try
-        //            {
-        //                string requestJson = JsonConvert.SerializeObject(UserData);
-        //                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
 
-        //                var responseResult = await client.PostAsync("api/Admin/Login", httpContent);
 
-        //                if (responseResult.IsSuccessStatusCode)
-        //                {
-        //                    this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
-        //                    ;
-        //                    ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(UserList);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                    // Log the request URL
+                    var requestUrl = $"/api/Admin/Login";
 
-        //                }
-        //                else
-        //                {
-        //                    this.response.Status = "E";
-        //                    this.response.Message = $"Error: {responseResult.StatusCode}";
-        //                }
-        //            }
+                    var response = await client.PostAsync(requestUrl, httpContent);
 
-        //            catch (Exception ex)
-        //            {
-        //                this.response.Status = "E";
-        //                this.response.Message = ex.Message;
-        //            }
-        //        }
-        //    }
+                    if (response.IsSuccessStatusCode)
+                    {
+                        resp = await response.Content.ReadAsAsync<ResponseModel>();
 
-        //    return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
-        //}
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, data = UserList });
+        }
+
+        [HttpPost("Admin/Login1")]
+        public async Task<IActionResult> Login1(AdminModel UserData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    UserData = new AdminModel
+                    {
+                        
+                        Name = "",
+                        Email = UserData.Email,
+                        Password = UserData.Password,
+                        Role = ""
+                    };
+
+                    try
+                    {
+                        string requestJson = JsonConvert.SerializeObject(UserData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Admin/Login1", httpContent);
+
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                            ;
+                            ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         //public async Task<IActionResult> SearchUser(dataModel UserData)
         //{
