@@ -57,6 +57,10 @@
             color: #ffffff !important;
             font-weight: 900;
         }
+
+
+
+
     </style>
 </head>
 <body>
@@ -71,8 +75,14 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item">
-                            <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="LoginPage">Login </a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Register/Login</a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark " asp-area="" asp-controller="Admin" asp-action="LoginPage">Login</a>
+                                    <a class="nav-link  text-dark" asp-area="" asp-controller="Admin" asp-action="Register">Register </a>
+                                </li>
+                                </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="Register">Register </a>
@@ -97,11 +107,11 @@
     @*</main>
         </div>*@
 
-    @*  <footer class="border-top footer text-muted">
-            <div class="container">
+      <footer class="border-top footer text-muted bg-primary"style="position: fixed; bottom: 0;width:100%;padding:15px 0;z-index:1000;">
+            <div class="d-flex justify-content-center container" style="color:white;">
                 &copy; 2023 - Resume - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
             </div>
-        </footer>  *@
+        </footer>  
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

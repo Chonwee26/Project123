@@ -21,7 +21,8 @@ using Microsoft.AspNetCore.Http;
 using Project123Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 // Add services to the container.
 builder.Services.AddHttpClient();
 builder.Services.AddSession(options =>
@@ -32,8 +33,7 @@ builder.Services.AddSession(options =>
 }); // Add this line
 builder.Services.AddDistributedMemoryCache(); // Add this line for in-memory cache
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddControllers();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

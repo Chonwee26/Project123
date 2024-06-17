@@ -18,10 +18,10 @@
         }
 
         .carousel-item img {
-            height: 500px; /* Adjust the height as needed */
-            object-fit: cover; /* Ensure the image covers the fixed height */
+            height: 500px;
+            min-width: auto;
+            object-fit: cover;
         }
-
         #carouselExampleCaptions {
             margin: 0; /* Reset margin for the carousel container */
         }
@@ -90,6 +90,72 @@
         .user-bubble-message {
             background-color: #007bff;
         }
+        #progressCard {
+            margin: auto;
+            max-width: 800px;
+            border: none;
+        }
+
+        #progressBar {
+          
+            color: blue;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            justify-content: space-between; /* Distributes the space between the items */
+        }
+
+            #progressBar li {
+                list-style-type: none;
+                font-weight: 400;
+                color: rgb(160, 159, 159);
+                padding: 10px;
+                position: relative;
+                flex: 1; /* Allows the items to grow and shrink as needed */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+                #progressBar li:before {
+                    content: "";
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: currentColor;
+                    position: absolute;
+                    top: -5px; /* Adjust the position as needed */
+                    z-index:-1;
+                   
+                }
+
+              /*หลอดbar*/  #progressBar li:after { 
+                    content: '';
+                    height: 8px;
+                    background: #ddd;
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    width: 100%;
+                    z-index: 1;
+                    transform: translateX(-50%);
+                }
+
+              
+
+                #progressBar li.active {
+                    color: black;
+                }
+
+                    #progressBar li.active:before,
+                    #progressBar li.active:after {
+                        background-color: blue;
+                    }
+
+                    #step3{
+                        width:100% !important;
+                       white-space:nowrap;
+                    }
     </style>
 }
 
@@ -103,18 +169,19 @@
             </div>
             <div class="carousel-inner d-flex" style="border-radius:15px;">
                 <div class="carousel-item active">
-                    <img src="~/picture/thailand.jpg" class="d-block w-100" alt="">
+                    <img src="~/picture/shipment_pic4.jpg" class="d-block w-100"style="object-fit:cover;max-height:500px">
                     @*<div class="carousel-caption d-none d-md-block">
                             <h5>First slide label</h5>
                             <p>Some representative placeholder content for the first slide.</p>
                         </div>*@
                 </div>
                 <div class="carousel-item">
-                    <img src="~/picture/Japan-2107x1406.jpg" class="d-block w-100" alt="...">
+                  
+                    <img src="~/picture/shipment_pic2.jpg" class="d-block w-100"style="object-fit:cover" alt="shipmentpic1"/>
 
                 </div>
                 <div class="carousel-item">
-                    <img src="~/picture/iceland.jpg" class="d-block w-100" alt="...">
+                    <img src="~/picture/shipment_pic3.jpg"class="d-block w-100"style="object-fit:cover" />
 
                 </div>
             </div>
@@ -149,15 +216,29 @@
 </div>
 
 <div class="container mt-5" id="containerSection">
-    <div class="card"">
-        <div  id="cardAccordion">
+    <div class="card">
+        <div id="cardAccordion">
+          
+        </div>
+        <div class="card-body">
+            <div class="d-flex mt-4 card justify-content-center" id="progressCard">
+                <div class="tracking">
+                 
+                    <div class="progress-track">
+                        <ul id="progressBar">
+                            <li class="step0" id="step1">กำลังเตรียมพัสดุ</li>
+                            <li class="step0  text-center" id="step2">กำลังจัดส่ง</li>
+                            <li class="step0  text-right" id="step3">ถึงศูนย์คัดแยกโกดังสินค้า</li>
+                            <li class="step0  text-right" id="step4">กำลังจัดส่งให้ลูกค้า</li>
+                            <li class="step0  text-right" id="step5">จัดส่งเสร็จสิ้น</li>
+                        </ul>
+                    </div>
+                </div>
 
             </div>
-            <div class="card-body">
 
-
-                <div id="shipmentInfo" class="mt-3"></div>
-            </div>
+            <div id="shipmentInfo" class="mt-3"></div>
+        </div>
         </div>
     </div>
 
@@ -174,6 +255,10 @@
         </div>
     </div>
     </div>
+
+
+
+
 
 @section Scripts{
     <script type="text/javascript">
@@ -244,7 +329,7 @@
                             'Authorization': 'Bearer ' + token
                         },
                         success: function (result) {
-                             debugger
+                              
                             if (result.status == "S") {
                                  
                                 if (result.Data.length > 0) {
@@ -273,27 +358,39 @@
             var picture;
             var choosePicture;
             choosePicture = Data.ShipmentStatusList[0].ShipmentItemID
-            if (choosePicture == "1") {
-                picture = "/picture/box.png"
-            }
-            else if (choosePicture == "2") {
-                picture =
-                   "/picture/truckani.gif"
+         
+            $('.step0').removeClass("active");
+
+        
+            for (var i = 1; i <= choosePicture; i++) {
+                 
+                $('#step' + i).addClass("active");
             }
 
-            else if (choosePicture == "3") {
-                picture =
-                    "/picture/warehouse.png"
-            }
+         
+            switch (choosePicture) {
+                case "1":
+                    picture = "/picture/box.png";
+                    break;
+                case "2":
+                    picture = "/picture/truckani.gif";
+                    break;
+                case "3":
+                    picture = "/picture/warehouse.png";
+                    break;
+                case "4":
+                    picture = "/picture/scooterani.gif";
+                    break;
+                case "5":
+                    picture = "/picture/5988246.png";
+                    break;
+                default:
+                    picture = ""; 
+                    break;
+            }           
+            $('#shipmentPicture').attr('src', picture);
+         
 
-            else if (choosePicture == "4") {
-                picture =
-                   "/picture/scooterani.gif"
-            }
-            else if (choosePicture == "5") {
-                picture =
-                "/picture/5988246.png"
-            }
             var accordion = `
             <div class="accordion accordion-flush" id="accordionExample">
     <div class="accordion-item">

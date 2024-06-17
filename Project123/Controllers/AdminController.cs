@@ -44,7 +44,7 @@ namespace Project123.Controllers
             return View();
         }
 
-        public IActionResult Register()
+        public IActionResult RegisterPage()
         {
             return View();
         }
@@ -196,6 +196,52 @@ namespace Project123.Controllers
             }
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+
+        }
+
+        [HttpPost("Admin/Register")]
+        public async Task<IActionResult> Register(AdminModel UserData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        string requestJson = JsonConvert.SerializeObject(UserData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Admin/Register", httpContent);
+
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                            ;
+                            ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+
         }
 
         //public async Task<IActionResult> SearchUser(dataModel UserData)

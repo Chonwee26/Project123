@@ -140,8 +140,8 @@ namespace Project123Api.Controllers
 
 
 
-        [HttpPost("Register")]
-        public IActionResult Register([FromBody] AdminModel admin) 
+        [HttpPost("Register1")]
+        public IActionResult Register1([FromBody] AdminModel admin) 
         {
             var adminWithEmail = _dbContext.Tb_Admin.Where(a => a.Email == admin.Email).SingleOrDefault();
             if (adminWithEmail != null) {
@@ -179,9 +179,27 @@ namespace Project123Api.Controllers
             return response;
         }
 
+        [HttpPost("[action]")]
+        public async Task<ResponseModel> Register(AdminModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
 
+            try
+            {
+                response = await _adminRepo.SearchUser(UserData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
 
-           [HttpPost("[action]")]
+            return response;
+        }
+
+        [HttpPost("[action]")]
         public async Task<ResponseModel> SearchUser(dataModel UserData)
         {
             ResponseModel response = new ResponseModel();

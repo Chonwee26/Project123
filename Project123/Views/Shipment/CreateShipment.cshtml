@@ -531,7 +531,7 @@
             // for the btnGenerate button
 
             $('#btnGenerate').click(function () {
-                debugger
+                 
                 // btnGenerate the link that would be
                 // used to btnGenerate the QR Code
                 // with the given data
@@ -579,7 +579,7 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    debugger
+                     
                     if (data.length > 0) {
 
 
@@ -832,7 +832,7 @@
           data: frmSearch,
           dataType: "json",
           success: function (result) {
-              debugger
+               
               if (result.status == "S") {
                   
 
@@ -859,7 +859,7 @@
           dataType: "json",
           success: function (result) {
               if (result.Message == "S") {
-                  debugger
+                   
 
                   $('#tblDataTable').dataTable().empty();
                   bindingTableAll(result.Data);
@@ -965,14 +965,14 @@
                                 data: DataShipment,
                                 dataType: "json",
                                 success: function (result) {
-                                    debugger
+                                     
                                     SweetAlert('success', result.message);
                                     $(".nav button#searchTab").tab('show');
                                    
                                     if (result.status = "S") {
                                         clearSearchValue()
                                         if (SaveStatus == "Create") {
-                                            debugger
+                                             
                                             console.log("C")
                                         
                                             $('#txtOrderNumber').val(result.message);
@@ -980,7 +980,7 @@
                                         }
                         
                                         else {
-                                            debugger
+                                             
                                             const order = $('#txtOrderNumber').val();
                                           
                                             $('#txtOrderNumber').val(rowData.OrderNumber);
@@ -1027,7 +1027,7 @@
 
         //$('#btnDownload').click(function () {
 
-        //    debugger
+        //     
         //    var imgQR = $('#imageQR').attr('src');
         //    var link = document.createElement('a');
         //    link.href = imgQR;
@@ -1132,11 +1132,11 @@
           url: '@Url.Action("DeleteShipmentAsync", "Test")' + '/' + encodeURIComponent(rowData.ShipmentId),
 
           success: function (result) {
-              debugger
+               
              var rowCount = dataTable.rows().count();
               if (result.status == "S") {
                   SweetAlert('success', result.message);
-                  debugger
+                   
                   if (rowCount > 1) {
                       $('#btnSearch').click();
                   }
@@ -1189,7 +1189,7 @@
         $('#tblDataTable').on('click' ,'.btn-edit', function () {
             SaveStatus = "Update";
              rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
-            debugger
+             
             $(".nav button#createTab").tab('show');
 
             $('#txtCreateFullName').val(rowData.FullName);
@@ -1306,7 +1306,7 @@
 
             $('#ddlSearchShipmentStatus').val('').trigger('change');
             $('#ddlSearchStorage').val('').trigger('change');
-            debugger
+             
 
 
         }
@@ -1316,7 +1316,7 @@
         }
 
         function bindingTableAll(newShipment) {
-         debugger
+          
             $('#dvTable').show();
             // Initialize DataTable
             dataTable = $('#tblDataTable').DataTable({

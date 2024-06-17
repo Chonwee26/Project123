@@ -68,13 +68,13 @@ namespace Project123Api.Controllers
            ResponseModel resp = new ResponseModel();
             string token = GetTokenFromSession();
 
-            if (string.IsNullOrEmpty(token))
-            {
-                resp.Status = "E";
-                resp.Message = "Error";
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    resp.Status = "E";
+            //    resp.Message = "Error";
 
-                return (IEnumerable<ShipmentModel>)resp;
-            }
+            //    return (IEnumerable<ShipmentModel>)resp;
+            //}
 
 
             IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.SearchShipmentAsync(ShipmentData);
