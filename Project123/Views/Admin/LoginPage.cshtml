@@ -67,7 +67,7 @@
             },
 
             submitHandler: function (form) {
-                debugger
+             
                 var userName = $('#txtEmail').val();
 
                 var formData = {
@@ -75,16 +75,18 @@
                             Email: $('#txtEmail').val(),
                             Password: $('#txtPassword').val(),
 
+
+
                 };
 
                 $.ajax
                     ({
                         type: 'POST',
-                     url: '@Url.Action("Login1","Admin")',
+                     url:"/Admin/Login1",
                         data: formData,
                         dataType: 'json',
                         success: function (result) {
-                            debugger
+                         
                             if (result.status == "S") {
                                 SweetAlert('success', userName);
                                 localStorage.setItem('access_token', result.message);
@@ -98,7 +100,7 @@
                             }
                         },
                         error: function (request, status, error) {
-                            debugger
+                           
                             SweetAlert('error', error);
                         }
                     });

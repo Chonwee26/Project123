@@ -7,10 +7,12 @@ namespace Project123Api.Repositories
     public class DataDbContext : DbContext
     {
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
-        public DataDbContext(DbContextOptions<DataDbContext> options, IConfiguration configuration) : base(options)
+        public DataDbContext(DbContextOptions<DataDbContext> options, IConfiguration configuration, HttpClient httpClient) : base(options)
         {
             _configuration = configuration;
+            _httpClient = httpClient;
         }
 
 

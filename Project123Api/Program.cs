@@ -24,6 +24,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpClient();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+}); // Add this line
+builder.Services.AddDistributedMemoryCache(); // Add this line for in-memory cache
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 
@@ -87,6 +95,8 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseSession(); // Add this line
 
 app.MapControllers();
 

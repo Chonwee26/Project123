@@ -159,7 +159,7 @@ namespace Project123.Controllers
 
                     UserData = new AdminModel
                     {
-                        
+
                         Name = "",
                         Email = UserData.Email,
                         Password = UserData.Password,

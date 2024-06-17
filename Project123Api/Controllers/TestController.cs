@@ -15,7 +15,7 @@ using Project123Api.Repositories;
 
 namespace Project123Api.Controllers
 {
-    [Authorize]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class TestController : ControllerBase
@@ -33,6 +33,12 @@ namespace Project123Api.Controllers
             _auth = new AuthService(_configuration);
             _shipmentRepo = shipmentRepository;
         }
+
+        private string GetTokenFromSession()
+        {
+            return HttpContext.Session.GetString("UserToken");
+        }
+
         // GET: api/<TestController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -59,6 +65,17 @@ namespace Project123Api.Controllers
         [HttpPost("SearchShipmentAsync")]
         public async Task<IEnumerable<ShipmentModel>> SearchShipmentAsync(ShipmentModel ShipmentData)
         {
+           ResponseModel resp = new ResponseModel();
+            string token = GetTokenFromSession();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                resp.Status = "E";
+                resp.Message = "Error";
+
+                return (IEnumerable<ShipmentModel>)resp;
+            }
+
 
             IEnumerable<ShipmentModel> shipmentList = await _shipmentRepo.SearchShipmentAsync(ShipmentData);
 
@@ -121,6 +138,8 @@ namespace Project123Api.Controllers
                 return orderNumber;
             }
         }
+
+     
 
     }
 }

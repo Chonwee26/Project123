@@ -90,6 +90,10 @@ namespace Project123Api.Controllers
                     creation_time = token.ValidFrom,
                     user_id = adminEmail.Id,
                 });
+
+                string userToken = token.AccessToken;
+
+                HttpContext.Session.SetString("UserToken", userToken);
             }
             catch (Exception ex)
             {
