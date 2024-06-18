@@ -7,10 +7,10 @@ namespace Project123.Dto
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Age { get; set; }
+    
+        public string? Name { get; set; }
+     
+        public string? Age { get; set; }
 
         public DateTime RecordDate { get; set; } = DateTime.Now;
     }

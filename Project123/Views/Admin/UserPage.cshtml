@@ -1,0 +1,560 @@
+﻿@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+
+@section Styles{
+
+    <!-- Css -->
+    <link href="~/lib/dataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+
+
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: #0054FF !important;
+            color: white;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[aria-selected]:hover {
+            background-color: #00B0F0;
+            color: #fff;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #0054FF !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice,
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove,
+        .selectgroup-input:checked + .selectgroup-button {
+            color: #00A0DA;
+            border-color: #00A0DA;
+            background-color: rgba(167,239,239,.15);
+        }
+
+        .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple {
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #d0d4dd;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border: 1px solid #1572e8;
+            outline: 0;
+        }
+
+        .select2-container {
+            width: 100% !important;
+            vertical-align: middle;
+        }
+
+        .select2-dropdown {
+            z-index: 13000;
+        }
+
+        /*style select2 multiple*/
+        .select2-container .select2-selection--multiple {
+            min-height: 38px;
+        }
+
+        /* ถ้าปิดตรงนี้ ตรงที่พิม Select 2 จะไม่เห็นกรอบ */
+        .select2-container--default .select2-dropdown .select2-search__field:focus, .select2-container--default .select2-search--inline .select2-search__field:focus {
+            /*border: 0;*/
+        }
+
+        .select2-container .select2-search--inline .select2-search__field {
+            height: 26px;
+        }
+        /*end style select2 multiple*/
+
+        /* select2 style testing */
+        .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ebedf2;
+        }
+
+        .select2-selection__rendered {
+            height: 28px !important;
+            padding: 7px;
+            line-height: 1.5 !important;
+            font-size: 14px;
+            padding: .25rem .5rem !important;
+            font-size: .875rem !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #000;
+        }
+
+        .select2-dropdown {
+            background-color: white;
+            border: 1px solid #ebedf2;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            left: -100000px;
+            width: 100%;
+            font-size: 14px;
+            z-index: 1051;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[aria-selected]:hover {
+            background-color: #00B0F0;
+            color: #fff;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #00B0F0;
+        }
+
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: #00B0F0;
+            color: white;
+        }
+
+        .select2-results__option--selectable {
+            color: #000;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 26px;
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 20px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            margin-top: 1px;
+            margin-right: 8px;
+            color: #888888;
+        }
+        /* end select2 style */
+
+        .datetimepickerSearch {
+            width: 297px !important;
+        }
+
+        .datetimepickerCreate {
+            width: 635px !important;
+        }
+
+        .input555 {
+            position: relative;
+        }
+
+
+
+
+            .input555 i {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+        .qr-code {
+            max-width: 200px;
+            margin: 10px;
+        }
+
+        #reader {
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            background-color: white;
+        }
+
+        #qr-shaded-region {
+            border-color: rgba(0, 0, 0, 0) !important;
+        }
+
+        #btnCloseMd {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #b4b4b4;
+            z-index: 99999;
+            cursor: pointer;
+        }
+
+        #btnSelectImg {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #b4b4b4;
+            z-index: 99999;
+            cursor: pointer;
+        }
+
+        #qr-reader__dashboard {
+            display: none;
+        }
+
+        .btn-delete {
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
+        <button class="nav-link active" id="searchTab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Search</button>
+        <button class="nav-link" id="createTab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Create</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+        <div class="container mt-5">
+
+            <div class="row">
+
+                <form id="frmSearchUser">
+                    <div class="col-12">
+
+
+                        <h1 class=" d-flex justify-content-center">- User info -</h1>
+                        <hr />
+                        @*first*@
+                        <div class="row pb-3">
+
+                            <div class="col-12 col-sm-12 col-md-6">
+                                <h6>ชื่อ-สกุล</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtSearchName" name="Name" />
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-12 col-md-6">
+                                <h6>อายุ</h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtSearchAge" name="Age" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="  col-8 p-3 d-flex">
+                                <button type="button" id="btnCreate" class="btn btn-success mx-2 px-4 ">สร้าง</button>
+                            </div>
+
+                            <div class="  col-4 p-3 d-flex justify-content-end">
+                                <button type="button" id="btnReset" class="btn btn-secondary mx-2 px-4 ">ล้าง</button>
+                                <button type="submit" id="btnSearch" class="btn btn-primary mx-2 px-4 ">ค้นหา</button>
+                            </div>
+                            <hr />
+                            </div>
+                            <div class="col-12" id="dvTable" style="display:none">
+                                <table id="tblDataTable" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>แก้ไข</th>
+                                            <th>ชื่อ</th>
+                                            <th>อายุ</th>
+                                            <th>วันที่สร้าง</th>
+                                            <th>ลบ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+</form>
+            </div>
+        </div>
+
+    </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <partial name="_UserView" />
+    </div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+</div>
+
+@section Scripts{ 
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+        });
+
+
+        $('#frmSearchUser').validate({
+            rules: {
+
+                Name:
+                {
+
+                },
+                Age:
+                    {
+
+                    },
+                },
+                messages: {
+
+                },
+                errorPlacement: function (error, element) {
+
+                },
+
+                submitHandler: function (form) {
+
+           var formData = {
+
+       Name: $('#txtSearchName').val(),
+       Age: $('#txtSearchAge').val()
+   };
+   $.ajax
+       ({
+           type: 'POST',
+           url:'@Url.Action("SearchUser1","Admin")',
+           data: formData,
+           dataType: 'json',
+           success: function (result) {
+               debugger
+               if (result.status == "S") {
+
+                    bindingTable(result.Data);
+               }
+
+               else {
+                   SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+               }
+           },
+           error: function (request, status, error) {
+
+               SweetAlert('error', error);
+           }
+       });
+
+
+                }
+
+            });
+
+                  $('#frmCreateUser').validate({
+          rules: {
+              Name: {
+                  required: true
+              },
+              Age: {
+                  required: true
+              }
+          },
+          messages: {
+
+          },
+          errorPlacement: function (error, element) {
+
+          },
+
+          submitHandler: function (form) {
+
+
+              var userName = $('#txtCreateName').val();
+
+              Swal.fire({
+                  icon: "question",
+                  title: "ยืนยันสร้างUser",
+                  text: $('#txtCreateName').val(),
+                  showCancelButton: true,
+                  confirmButtonText: "ยืนยัน",
+                  cancelButtonText: "ยกเลิก",
+                  reverseButtons: true,
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      var formData = {
+
+                          Name: $('#txtCreateName').val(),
+                          Age: $('#txtCreateAge').val()
+                      };
+                      $.ajax
+                          ({
+                              type: 'POST',
+                              url:'@Url.Action("CreateUser123","Admin")',
+                              data: formData,
+                              dataType: 'json',
+                              success: function (result) {
+                                  debugger
+                                  if (result.status == "S") {
+                                      SweetAlert('success', userName);
+                                   /*    bindingTable(result.Data);*/
+                                  }
+
+                                  else {
+                                      SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                  }
+                              },
+                              error: function (request, status, error) {
+
+                                  SweetAlert('error', error);
+                              }
+                          });
+                  }
+              });
+              $(".swal2-confirm").addClass('btn-swal-success');
+              $(".swal2-cancel").addClass('btn-swal-secondary');
+          }
+      });
+
+
+        $('#btnCreate').click(function () {
+            $(".nav button#createTab").tab('show');
+        });
+
+        $('#btnCancel').click(function () {
+            $(".nav button#searchTab").tab('show');
+        });
+
+        $('#btnReset').click(function () {
+            clearValue();
+        });
+
+        $('#tblDataTable').on('click', '.btn-delete', function () {
+            var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
+
+            Swal.fire({
+                icon: "question",
+                title: "ยืนยันลบUser",
+                text: rowData.Name,
+                showCancelButton: true,
+                confirmButtonText: "ยืนยัน",
+                cancelButtonText: "ยกเลิก",
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax
+                        ({
+                            type: 'DELETE',
+                            url: '@Url.Action("DeleteUser", "Admin")' + '/' + encodeURIComponent(rowData.Id),
+
+                            success: function (result) {
+
+                                var rowCount = dataTable.rows().count();
+                                if (result.status == "S") {
+                                    SweetAlert('success', result.message);
+
+                                    if (rowCount > 1) {
+                                        $('#btnSearch').click();
+                                    }
+                                    //else {
+                                    //    $('#btnReset').click();
+                                    //}
+
+
+                                }
+                                else {
+                                    SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                }
+
+
+
+                            },
+                            error: function (request, status, error) {
+                                SweetAlert('error', error);
+                            }
+                        });
+
+
+
+                }
+
+            });
+
+            $(".swal2-confirm").addClass('btn-swal-danger');
+            $(".swal2-cancel").addClass('btn-swal-secondary');
+        });
+
+        function clearValue() {
+            $('#frmSearchUser')[0].reset();
+        }
+
+        function bindingTable(User) {
+
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: User,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
+
+                columns: [
+
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+
+                    },
+
+                    {
+                        data: null, className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+
+                            return data.Name;
+                        }
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.Age;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.RecordDate;
+
+                        }
+
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                    },
+                    //{
+                    //    data: 'CreateDate', classNmae: 'text-left', orderable: false,
+                    //    render: function (data, type, row) {
+
+                    //      /*  return data.CreateDate;*/
+                    //        return data;
+                    //    }
+                    //}
+
+                ]
+
+
+            });
+            //rowCount = dataTable.rows().count();
+        }
+    </script>
+}

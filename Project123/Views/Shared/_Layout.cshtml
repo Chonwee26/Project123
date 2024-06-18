@@ -69,15 +69,17 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
+                        <ul class="navbar-nav flex-grow-1 ">
 
-                            <li class="nav-item">
-                                <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="LoginPage">Login </a>
+                            <li class="d-flex nav-item dropdown float-end">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Register/Login</a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark " asp-area="" asp-controller="Admin" asp-action="LoginPage">Login</a>
+                                        <a class="nav-link  text-dark" asp-area="" asp-controller="Admin" asp-action="RegisterPage">Register </a>
+                                    </li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="Register">Register </a>
-                            </li>
-
                         </ul>
                     </div>
                 </div>

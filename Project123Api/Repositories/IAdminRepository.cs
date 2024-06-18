@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Project123.Dto;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,8 +15,10 @@ namespace Project123Api.Repositories
     public interface IAdminRepository
     {
         Task<ResponseModel> CreateUser(dataModel userData);
-        Task<ResponseModel> SearchUser(dataModel userData);
+        Task<IEnumerable<dataModel>> SearchUser(dataModel userData);
         Task<ResponseModel> Register(AdminModel userData);
+        Task<ResponseModel> DeleteUser(string id);
+   
         //Task<ResponseModel> Login(AdminModel userData);
     }
 
@@ -62,11 +65,43 @@ namespace Project123Api.Repositories
             return await Task.FromResult(response);
         }
 
+        public async Task<ResponseModel> DeleteUser(int id)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlCreateUser = @"DELETE Tb_User WHERE Tb_User.Id = @UserId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlCreateUser, connection);
+                    command.Parameters.AddWithValue("@UserId",id);
+                   
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "User Delete successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(response);
+        }
 
         public async Task<ResponseModel> Register(AdminModel UserData)
         {
             ResponseModel response = new ResponseModel();
-            string sqlCreateUser = @"INSERT INTO Tb_Admin (Name, Age,RecordDate) VALUES (@Name, @Age, @RecordDate)";
+            string sqlCreateUser = @"INSERT INTO Tb_Admin (Name, Email,Password,Role) VALUES (@Name, @Email, @Password,@Role)";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -77,7 +112,7 @@ namespace Project123Api.Repositories
                     SqlCommand command = new SqlCommand(sqlCreateUser, connection);
                     command.Parameters.AddWithValue("@Name", UserData.Name);
                     command.Parameters.AddWithValue("@Email", UserData.Email);
-                    command.Parameters.AddWithValue("@Password", UserData.Password);
+                    command.Parameters.AddWithValue("@Password",SecurePasswordHasherHelper.Hash(UserData.Password));
                     command.Parameters.AddWithValue("@Role", UserData.Role);
                     await command.ExecuteNonQueryAsync();
 
@@ -97,40 +132,92 @@ namespace Project123Api.Repositories
 
             return await Task.FromResult(response);
         }
-
-
-        public async Task<ResponseModel> SearchUser(dataModel UserData)
+        public async Task<IEnumerable<dataModel>> SearchUser(dataModel UserData)
         {
             ResponseModel response = new ResponseModel();
-            string sqlCreateUser = @"INSERT INTO Tb_User (Name, Age,RecordDate) VALUES (@Name, @Age, @RecordDate)";
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using (SqlConnection connection = new SqlConnection(connectionString))
+
+            // Check if all fields in UserData are null or empty
+            if (string.IsNullOrEmpty(UserData.Name) && string.IsNullOrEmpty(UserData.Age))
             {
-                connection.Open();
+                response.Status = "E";
+                response.Message = "Error: UserData fields are empty";
 
-                try
-                {
-                    SqlCommand command = new SqlCommand(sqlCreateUser, connection);
-                    command.Parameters.AddWithValue("@Name", UserData.Name);
-                    command.Parameters.AddWithValue("@Age", UserData.Age);
-                    command.Parameters.AddWithValue("@RecordDate", UserData.RecordDate);
-                    await command.ExecuteNonQueryAsync();
-
-                    response.Status = "S";
-                    response.Message = "User created successfully.";
-                }
-                catch (Exception ex)
-                {
-                    response.Status = "E";
-                    response.Message = ex.Message;
-                }
-                finally
-                {
-                    connection.Close();
-                }
+                return new List<dataModel>(); // Return empty list indicating no data found
             }
 
-            return await Task.FromResult(response);
+            List<dataModel> userList = new List<dataModel>();
+            string sqlSelect = @"SELECT s.Id,s.Name, s.Age, s.RecordDate
+                         FROM dbo.Tb_User s ";
+ List<string> sqlWhereClauses = new List<string>();
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(UserData.Name))
+            {
+                sqlWhereClauses.Add("s.Name = @Name");
+                sqlParameters.Add(new SqlParameter("@Name", UserData.Name));
+            }
+
+
+            if (!string.IsNullOrEmpty(UserData.Age))
+            {
+                sqlWhereClauses.Add("s.Age = @Age");
+                sqlParameters.Add(new SqlParameter("@Age", UserData.Age));
+            }
+
+            string sqlWhere = sqlWhereClauses.Count > 0 ? " WHERE " + string.Join(" AND ", sqlWhereClauses) : "";
+            sqlSelect += sqlWhere;
+
+
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                dataModel user = new dataModel
+                                {
+                                    Id = reader.GetInt32("Id"),
+                                    Name = reader["Name"].ToString(),
+                                    Age = reader["Age"].ToString(),
+                                    RecordDate = Convert.ToDateTime(reader["RecordDate"])
+                                };
+
+                                userList.Add(user);
+                            }
+                        }
+                    }
+                }
+
+                if (userList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return userList;
         }
 
 

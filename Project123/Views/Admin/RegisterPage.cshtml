@@ -24,22 +24,24 @@
 
             <form id="frmRegister">
                 <div class="form-group mb-4">
-                    <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" required />
+                    <input type="email" class="form-control" id="txtEmail" placeholder="Enter your Email" name="Email" required />
                 </div>
 
                 <div class="form-group mb-4">
-                    <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" required />
+                    <input type="password" class="form-control" id="txtPassword" placeholder="Enter your Password" name="Password" required />
                 </div>
                 <div class="form-group mb-4">
-                    <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Confirm your Password" required />
+                    <input type="password" class="form-control" id="txtPasswordConfirm" placeholder="Confirm your Password" required />
                 </div>
                 <div class="form-group mb-4">
-                    <input type="text" class="form-control" id="txtName" name="Name" placeholder="Your Name"required />
+                    <input type="text" class="form-control" id="txtName" name="Name" placeholder="Your Name" required />
                 </div>
                 <div class="form-group mb-4">
-                    <input type="text" class="form-control" id="txtAge" name="Age" placeholder="Your Age" required/>
+                    <input type="text" class="form-control" id="txtAge" name="Age" placeholder="Your Age" required />
                 </div>
-
+                <div class="form-group mb-4">
+                    <input type="text" class="form-control" id="txtRole" name="Role" placeholder="Your Role" required />
+                </div>
                 <div class="form-group mb-4">
                     <button type="submit" class="btn btn-primary" id="btnSignUp">Sign Up</button>
 
@@ -54,7 +56,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-
+         
         });
 
         $('#frmRegister').validate({
@@ -62,9 +64,22 @@
                 Name: {
                     required: true
                 },
-                Age: {
+                Password: {
+                    required: true
+                },
+                    Role: {
+                    required: true
+                },
+                    Name: {
+                    required: true
+                },
+
+                Email: {
                     required:true
-                }
+                },
+                Age: {
+                    required: true
+                },
             },
             messages: {
 
@@ -74,8 +89,13 @@
             },
 
             submitHandler: function (form) {
+                if ($('#txtPassword').val() != $('#txtPasswordConfirm').val()) {
 
-              
+                    return SweetAlert('error', "Password ไม่ตรงกัน");
+
+                }
+
+
                 var userName = $('#txtName').val();
 
                 Swal.fire({
@@ -89,19 +109,21 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         var formData = {
+                            Email: $('#txtEmail').val(),
+                            Password: $('#txtPassword').val(),
                             Name: $('#txtName').val(),
-                            Age: $('#txtAge').val()
+                            Role: $('#txtRole').val()
                         };
                         $.ajax
                             ({
                                 type: 'POST',
-                                url: '/Admin/CreateUser',
+                                url:'@Url.Action("Register2","Admin")',
                                 data: formData,
                                 dataType: 'json',
                                 success: function (result) {
-                                
-                                    if (result.status == "S") {                                
-                                        SweetAlert('success', userName);                                 
+                                    debugger
+                                    if (result.status == "S") {
+                                        SweetAlert('success', userName);
                                      /*    bindingTable(result.Data);*/
                                     }
 
@@ -110,10 +132,10 @@
                                     }
                                 },
                                 error: function (request, status, error) {
-                                    
+
                                     SweetAlert('error', error);
                                 }
-                            });                 
+                            });
                     }
                 });
                 $(".swal2-confirm").addClass('btn-swal-success');

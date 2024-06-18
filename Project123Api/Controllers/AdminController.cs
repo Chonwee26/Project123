@@ -159,7 +159,7 @@ namespace Project123Api.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("CreateUser123")]
         public async Task<ResponseModel> CreateUser(dataModel UserData)
         {
             ResponseModel response = new ResponseModel();
@@ -179,14 +179,46 @@ namespace Project123Api.Controllers
             return response;
         }
 
-        [HttpPost("[action]")]
+
+       
+        [HttpDelete("DeleteUser/{id}")]
+        public async Task<ResponseModel> DeleteUser(int id)
+        {
+            ResponseModel resp = await _adminRepo.DeleteUser(id);
+            return resp;
+
+
+        }  
+       
+        [HttpPost("SearchUser1")]
+        public async Task<IEnumerable<dataModel>> SearchUser(dataModel UserData)
+        {
+            ResponseModel resp = new ResponseModel();
+          
+
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    resp.Status = "E";
+            //    resp.Message = "Error";
+
+            //    return (IEnumerable<ShipmentModel>)resp;
+            //}
+
+
+            IEnumerable<dataModel> userList = await _adminRepo.SearchUser(UserData);
+
+            return userList;
+        }
+        // PUT api/<TestController>/5
+
+        [HttpPost("Register2")]
         public async Task<ResponseModel> Register(AdminModel UserData)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                response = await _adminRepo.SearchUser(UserData);
+                response = await _adminRepo.Register(UserData);
                 //response.Status = "S";
                 //response.Message = "User created successfully.";
             }
@@ -199,25 +231,25 @@ namespace Project123Api.Controllers
             return response;
         }
 
-        [HttpPost("[action]")]
-        public async Task<ResponseModel> SearchUser(dataModel UserData)
-        {
-            ResponseModel response = new ResponseModel();
+        //[HttpPost("[action]")]
+        //public async Task<ResponseModel> SearchUser(dataModel UserData)
+        //{
+        //    ResponseModel response = new ResponseModel();
 
-            try
-                            {
-                response = await _adminRepo.SearchUser(UserData);
-                //response.Status = "S";
-                //response.Message = "User created successfully.";
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.Status = "E";
-            }
+        //    try
+        //                    {
+        //        response = await _adminRepo.SearchUser(UserData);
+        //        //response.Status = "S";
+        //        //response.Message = "User created successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.Status = "E";
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
 
 

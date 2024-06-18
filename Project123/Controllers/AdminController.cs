@@ -49,6 +49,11 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult UserPage()
+        {
+            return View();
+        }
+        [HttpPost("Admin/CreateUser123")]
         public async Task<IActionResult> CreateUser(dataModel UserData)
         {
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -67,7 +72,7 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(UserData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Admin/CreateUser", httpContent);
+                        var responseResult = await client.PostAsync("api/Admin/CreateUser123", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -95,7 +100,110 @@ namespace Project123.Controllers
              return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+        [HttpDelete("Admin/DeleteUser/{id}")]
 
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    //string requestJson = JsonConvert.SerializeObject(id);
+                    //HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                    // Log the request URL
+                    var requestUrl = $"/api/Admin/DeleteUser/{id}";
+                   
+                    var response = await client.DeleteAsync(requestUrl);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        resp = await response.Content.ReadAsAsync<ResponseModel>();
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                       
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
+        }
+
+        [HttpPost("Admin/SearchUser1")]
+        public async Task<IActionResult> SearchUser(dataModel UserData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<dataModel> UserList = new List<dataModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(UserData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Admin/SearchUser1", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        UserList = await response.Content.ReadAsAsync<List<dataModel>>();
+
+                        if (UserList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;                       
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = UserList });
+        }
 
         [HttpPost("Admin/Login")]
 
@@ -199,8 +307,8 @@ namespace Project123.Controllers
 
         }
 
-        [HttpPost("Admin/Register")]
-        public async Task<IActionResult> Register(AdminModel UserData)
+        [HttpPost("Admin/Register2")]
+        public async Task<IActionResult>Register(AdminModel UserData)
         {
             using (HttpClientHandler handler = new HttpClientHandler())
             {
@@ -216,7 +324,7 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(UserData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Admin/Register", httpContent);
+                        var responseResult = await client.PostAsync("api/Admin/Register2", httpContent);
 
                         if (responseResult.IsSuccessStatusCode)
                         {
