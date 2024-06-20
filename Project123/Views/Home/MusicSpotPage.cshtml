@@ -6,19 +6,130 @@
 }
 
 @section Styles{
-                <style type="text/css">
+   
+    <style type="text/css">
+        .content {
+            border-radius:20px;
+            height:100vh;
+           
+      
+        }
+        .main-content {
+          
+            background-color: #0e0d0d;
+            margin-right: 10px;
+            padding: 15px;
+            @*for not support brownser*@ background-image: linear-gradient(#762676a8, #0e0d0d);
+            overflow-y: auto;
+        }
+        .aside-content {
+            background-color: #262626;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .main-content-music {
+            margin-top: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-                </style>
+        .music-content {
+            display: flex !important;
+            justify-content: center;
+          align-content:space-between;
+            flex-direction: column;
+        }
+        music-content-title {
+            align-items: baseline!important;
+        }
+
+        .img-music-content {
+            display: flex !important;
+            justify-content: center;
+            width: 100%;
+            height: auto;
+            max-height: 205px;
+            max-width: 205px;
+        }
+    </style>
 }
-<div class="col-7">
-    <h1 style="color:white">hello world</h1>
-</div>
-<div class="col-5">
+<div class="d-flex container-fluid content">
+    <div class="content main-content col-lg-9 col-7">
+        <div class="">
 
+            <h1 style="color:white">hello world</h1>
+            <p>
+                john doe john doe john doe john doe john doe john doe john doe
+                john doe john doe john doe john doe john doe john doe
+                john doejohn doe john doe john doejohn doe john doe john doe john doe
+            </p>
+            <div class="main-content-music row">
+                <div class="col-lg-2 col-4">
+                    <div class="music-content">
+                        <img src="~/picture/Spotify Image/music_pic1_holo.jpg" class="img-music-content" />
+
+                    </div>
+                    <div class="music-content-title">
+                        <h6>Spice and Wolf</h6>
+                        <p>Kevin Penkin</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-4 music-content ">
+                    <img src="~/picture/Spotify Image/music_pic2_eureka.jpg" class="img-music-content" />
+                    <h6>Spice and Wolf</h6>
+                    <p>Kevin Penkin</p>
+                </div>
+
+
+
+                <div class="col-lg-2 col-4 music-content ">
+                    <img src="~/picture/Spotify Image/music_pic3_yanagi.jpg" class="img-music-content" />
+                    <h6>Spice and Wolf</h6>
+                    <p>Kevin Penkin</p>
+                </div>
+
+                <div class="col-lg-2 col-4 music-content ">
+                    <img src="~/picture/Spotify Image/music_pic4.jpg" class="img-music-content" />
+                    <h6>Spice and Wolf</h6>
+                    <p>Kevin Penkin</p>
+                </div>
+
+                <div class="col-lg-2 col-4 music-content ">
+                    <img src="~/picture/Spotify Image/music_pic5.jpg" class="img-music-content" />
+                    <h6>Spice and Wolf</h6>
+                    <p>Kevin Penkin</p>
+                </div>
+
+                <div class="col-lg-2 col-4 music-content ">
+                    <img src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+                    <h6>Spice and Wolf</h6>
+                    <p>Kevin Penkin</p>
+                </div>
+
+            </div>
+        </div>
+      
+    </div>
+    <div class="d-flex content aside-content col-lg-3 col-5">
+        <div class="">
+
+           
+            <aside class="">
+              
+                <p>”Spice and Wolf:MERCHANT MEETS THE WISE WOLF”Original Soundtrack (Vol.2)</p>
+            </aside>
+    </div>
 </div>
-@section Scripts{ 
+    </div>
+@section Scripts{
+  
     <script type="text/javascript">
 
+        $(document).ready(function () {
+
+        }) 
 
     </script>
 }
