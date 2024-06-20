@@ -1,0 +1,259 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Project123</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Project123.styles.css" asp-append-version="true" />
+    <link href="~/lib/dataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Noto Sans Thai' rel='stylesheet'>
+
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+
+        .btn-swal-primary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00B0F0 !important;
+            border-color: #00B0F0 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-secondary {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #8E8E8E !important;
+            border-color: #8E8E8E !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-success {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #00BF2A !important;
+            border-color: #00BF2A !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+
+        .btn-swal-danger {
+            min-width: 83px !important;
+            font-size: 11px !important;
+            padding: 7px 13px !important;
+            background: #DE0000 !important;
+            border-color: #DE0000 !important;
+            color: #ffffff !important;
+            font-weight: 900;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background-color: black;
+        }
+
+        #main {
+            color: white;
+            margin-left: 90px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            bottom: 0px;
+            height: 100vh;
+            display: flex !important;
+            flex-direction: column;
+            z-index: 1; /* Ensure sideBar is below bottomBar */
+            border: 4px solid;
+            min-width: 72px; /* Minimum width to match your input range */
+            max-width: 420px; /* Maximum width to match your input range */
+            overflow-y: auto;
+            scrollbar-color: black gray;
+            padding: 10px;
+        }
+
+        .search-sidebar {
+            background-color: #4e4e4e;
+            margin-bottom: 20px;
+        }
+
+        .lib-sidebar {
+            background-color: #4e4e4e;
+            padding-top: 12px;
+        }
+
+        #bottomBar {
+            position: fixed;
+            background-color: #000;
+            bottom: 0;
+            height: 75px;
+            max-height: 75px !important;
+            width: 100vw;
+            border: 4px solid;
+            z-index: 2; /* Ensure bottomBar is above sideBar */
+        }
+
+        img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .imgArtist {
+            display: flex !important;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+        }
+
+        .imgMainArtist {
+            display: flex !important;
+            justify-content: center;
+        }
+
+        .img-bottomside {
+            width: 56px;
+            height: 56px;
+        }
+
+        .dv-bottomside {
+            margin: 3px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+
+        <nav class="sidebar">
+            <div class="search-sidebar" id="">
+                <div id="sidebarHome">
+                    <button class="btn" id="btnHome"><i class="fa-solid fa-house"></i></button>
+                </div>
+
+
+                <div id="sidebarSearch">
+                    <button>search</button>
+                </div>
+
+            </div>
+            <div class="lib-sidebar" id="libSideBar">
+                <div class="imgArtist">
+                    <img src="~/picture/shipment_pic3.jpg" />
+                </div>
+                <div class="imgArtist">
+                    <img src="~/picture/shipment_pic4.jpg" />
+                </div>
+                <div class="imgArtist">
+                    <img src="~/picture/shipment_pic2.jpg" />
+                </div>
+                <div class="imgArtist">
+                    <img src="~/picture/logistics.png" />
+                </div>
+                <div class="imgArtist">
+                    <img src="~/picture/shipment_pic1.jpg" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    @*<div class="container">
+        <main role="main" class="pb-3">*@
+    @RenderBody()
+    @*</main>
+        </div>*@
+
+    <footer class="border-top footer">
+        <div class="bottombar" id="bottomBar">
+            <div class="col-12">
+                <div class="row">
+                    <div class="d-flex col-4">
+                        <div class="dv-bottomside">
+
+                            <img class="img-bottomside" src="~/picture/Japan-2107x1406.jpg" />
+                        </div>
+                        <div class="row">
+                            <h6 style="color: white;" class="mt-2">Trying to stay alive</h6>
+                            <p style="color: gray">xenophuria</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        Trying to stay alive xenophuria
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
+    <script src="~/lib/datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+       
+            $(".sidebar").resizable({
+                handles: 'e', // Enable resizing from the east (right) edge
+                minWidth: 90,
+                maxWidth: 420,
+                resize: function (event, ui) {
+                    $('#main').css('margin-left', ui.size.width + 'px');
+                }
+            });
+    
+        function SweetAlert(type, message, title) {
+            if (title == undefined) {
+                switch (type) {
+                    case "error":
+                        title = 'error'
+                        break;
+                    case "warning":
+                        title = 'warning'
+                        break;
+                    default:
+                        title = 'success'
+                }
+            }
+            if (type == "success") {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: type,
+                    title: title,
+                    text: message,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                });
+            }
+            $(".swal2-confirm").addClass('btn-swal-primary');
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

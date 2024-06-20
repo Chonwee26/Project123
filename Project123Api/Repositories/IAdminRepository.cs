@@ -17,7 +17,7 @@ namespace Project123Api.Repositories
         Task<ResponseModel> CreateUser(dataModel userData);
         Task<IEnumerable<dataModel>> SearchUser(dataModel userData);
         Task<ResponseModel> Register(AdminModel userData);
-        Task<ResponseModel> DeleteUser(string id);
+        Task<ResponseModel> DeleteUser(int id);
    
         //Task<ResponseModel> Login(AdminModel userData);
     }

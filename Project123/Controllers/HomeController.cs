@@ -19,6 +19,16 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult MusicPlayerPage()
+        {
+            return View();
+        }
+
+        public IActionResult MusicSpotPage()
+        {
+            return View();
+        }
+
         public IActionResult ExportExcel()
         {
             return View();
