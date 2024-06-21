@@ -567,13 +567,13 @@ namespace Project123.Controllers
 
 
 
-        public IActionResult CreateShipment()
+        public IActionResult ShipmentPage()
         {
             return View();
         }
 
 
-        public IActionResult SearchShipment()
+        public IActionResult SearchShipmentPage()
         {
             return View();
         }

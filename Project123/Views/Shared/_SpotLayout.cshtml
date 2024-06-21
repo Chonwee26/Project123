@@ -25,54 +25,17 @@
             box-sizing: border-box;
         }
 
-        .btn-swal-primary {
-            min-width: 83px !important;
-            font-size: 11px !important;
-            padding: 7px 13px !important;
-            background: #00B0F0 !important;
-            border-color: #00B0F0 !important;
-            color: #ffffff !important;
-            font-weight: 900;
-        }
-
-        .btn-swal-secondary {
-            min-width: 83px !important;
-            font-size: 11px !important;
-            padding: 7px 13px !important;
-            background: #8E8E8E !important;
-            border-color: #8E8E8E !important;
-            color: #ffffff !important;
-            font-weight: 900;
-        }
-
-        .btn-swal-success {
-            min-width: 83px !important;
-            font-size: 11px !important;
-            padding: 7px 13px !important;
-            background: #00BF2A !important;
-            border-color: #00BF2A !important;
-            color: #ffffff !important;
-            font-weight: 900;
-        }
-
-        .btn-swal-danger {
-            min-width: 83px !important;
-            font-size: 11px !important;
-            padding: 7px 13px !important;
-            background: #DE0000 !important;
-            border-color: #DE0000 !important;
-            color: #ffffff !important;
-            font-weight: 900;
-        }
 
         html, body {
             height: 100%;
             margin: 0;
             overflow:hidden;
+           
         }
 
         body {
             background-color: black;
+
         }
 
         #main {
@@ -98,7 +61,6 @@
             padding: 10px;
             box-sizing: border-box;
             z-index:2;
-
             
         }
 
@@ -129,6 +91,9 @@
             z-index: 3; /* Ensure bottomBar is above sideBar */
         }
 
+        .bottomside-title{
+            padding-top:15px;
+        }
         img {
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -136,17 +101,43 @@
             height: 50px;
         }
 
-        .imgArtist {
+        .imgArtist ,.iconlove {
             display: flex !important;
             justify-content: center;
+            align-items: center;
             width: 64px;
             height: 64px;
         }
+        .iconlove {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            width: 64px;
+            height: 64px;
+        }
+        .button-control {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            width: 32px;
+            height: 32px;
+            background-color: black;
+            border: none;
+        }
+        button .button-control button:focus{
+            outline:none;
+        }
 
+        .icon-control {
+           color:#ffffff !important;
+           font-size:16px;          
+           
+        }
+     
         .imgMainArtist {
             display: flex !important;
             justify-content: center;
-            align-items:center;
+            align-items: center;
         }
 
         .img-bottomside {
@@ -165,11 +156,32 @@
             color: #bfbfbf !important;
         }
 
+        .active-icon {
+            color: white !important;
+        }
+
+        .inactive-icon {
+            color: #bfbfbf !important;
+        }
+
         /* New hover styles */
         #sidebarHome a:hover,
         #sidebarSearch a:hover,
-        .imgArtist:hover  {
+        .iconlove:hover,
+        .imgArtist:hover {
             background-color: gray; /* or any color you prefer */
+
+        }
+
+        .progress {
+            height: 10px;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            background-color: #007bff; /* Blue color for the progress bar */
+            width: 0%; /* Initial width is 0%, will be adjusted via JavaScript */
+            transition: width 0.3s ease; /* Smooth transition animation */
         }
 
     </style>
@@ -180,24 +192,26 @@
             <nav class="sidebar">
                 <div class="search-sidebar" id="">
                     <div id="sidebarHome">
-                        <a href="#" class="btn" id="btnHome"><i class="fa-solid fa-house" id="iconHome" style="color:#bfbfbf"></i></a>
+                        <a href="#" class="btn active-icon" id="btnHome"><i class="fa-solid fa-house" id="iconHome" ></i></a>
                     </div>
                 
                     <div id="sidebarSearch">
                         <a href="#" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
+                       
                     </div>
 
                 </div>
                 <div class="lib-sidebar" id="libSideBar">
+                    <div class="iconlove">
+                        <a href="#" class="btn" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+                    </div>
                     <div class="imgArtist">
                         <img src="~/picture/shipment_pic3.jpg" />
                     </div>
                     <div class="imgArtist">
                         <img src="~/picture/shipment_pic4.jpg" />
                     </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic2.jpg" />
-                    </div>
+
                     <div class="imgArtist">
                         <img src="~/picture/logistics.png" />
                     </div>
@@ -236,17 +250,53 @@
             <div class="col-12">
                 <div class="row">
                     <div class="d-flex col-4">
-                        <div class="dv-bottomside">
+                        <div class="dv-bottomside" style="margin:5px 15px 0px 15px">
 
                             <img class="img-bottomside" src="~/picture/Japan-2107x1406.jpg" />
                         </div>
-                        <div class="row">
-                            <h6 style="color: white;" class="mt-2">Trying to stay alive</h6>
+                        <div class="bottomside-title">
+                            <h6 style="color:white;margin:0" class="">Trying to stay alive</h6>
                             <p style="color: gray">xenophuria</p>
                         </div>
                     </div>
-                    <div class="col-3">
-                      
+                    <div class="content bottomside-control col-4">
+
+                        <div class="col-12 d-flex justify-content-center">
+                            <button class="button-control" type="button"><i class="fa-solid icon-control fa-shuffle"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-backward"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-play"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-pause"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-circle-play"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-forward"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-repeat"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-volume-low"></i></button>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="content bottomside-control col-4 ">
+                        <div class="col-12 d-flex justify-content-center">
+                            <button class="button-control" type="button"><i class="fa-solid icon-control fa-shuffle"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-backward"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-play"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-pause"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-circle-play"></i></button>
+                            <button class="button-control"><i class="fa-solid icon-control fa-forward"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-repeat"></i></button>
+
+                            <button class="button-control"><i class="fa-solid icon-control fa-volume-low"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -264,60 +314,36 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
 
-        $(".sidebar").resizable({
-            handles: 'e', // Enable resizing from the east (right) edge
-            minWidth: 107,
-            maxWidth: 420,
-            resize: function (event, ui) {
-                $('#main').css('margin-left', ui.size.width + 'px');
-            }
-        });
-
-        function SweetAlert(type, message, title) {
-            if (title == undefined) {
-                switch (type) {
-                    case "error":
-                        title = 'error'
-                        break;
-                    case "warning":
-                        title = 'warning'
-                        break;
-                    default:
-                        title = 'success'
+        $(document).ready(function () {
+            $(".sidebar").resizable({
+                handles: 'e', // Enable resizing from the east (right) edge
+                minWidth: 107,
+                maxWidth: 420,
+                resize: function (event, ui) {
+                    $('#main').css('margin-left', ui.size.width + 'px');
                 }
+            });
+     
+            function changeIconClass(activeIcon, inactiveIcon) {
+                $(activeIcon).addClass('active-icon').removeClass('inactive-icon');
+                $(inactiveIcon).addClass('inactive-icon').removeClass('active-icon');
             }
-            if (type == "success") {
-                Swal.fire({
-                    icon: type,
-                    title: title,
-                    text: message,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                Swal.fire({
-                    icon: type,
-                    title: title,
-                    text: message,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                });
-            }
-            $(".swal2-confirm").addClass('btn-swal-primary');
-        }
 
-        function changeIconColor(activeIcon, inactiveIcon) {
-            $(activeIcon).css('color', 'white');
-            $(inactiveIcon).css('color', '#bfbfbf');
-        }
+            $('#btnHome').on('click', function () {
+                changeIconClass('#iconHome', '#iconSearch, #iconLove');
+            });
 
-        $('#btnHome').on('click', function () {
-            changeIconColor('#iconHome', '#iconSearch');
+            $('#btnSearch').on('click', function () {
+                changeIconClass('#iconSearch', '#iconHome, #iconLove');
+            });
+
+            $('#btnLove').on('click', function () {
+
+                changeIconClass('#iconLove', '#iconHome, #iconSearch');
+            });
         });
+       
 
-        $('#btnSearch').on('click', function () {
-            changeIconColor('#iconSearch', '#iconHome');
-        });
 
     </script>
     @await RenderSectionAsync("Scripts", required: false)

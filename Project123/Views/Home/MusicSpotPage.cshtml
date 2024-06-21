@@ -6,27 +6,28 @@
 }
 
 @section Styles{
-   
     <style type="text/css">
         .content {
-            border-radius:20px;
-            height:100vh;
-           
-      
+            border-radius: 20px;
+            height: 100vh;
         }
+
         .main-content {
-          
             background-color: #0e0d0d;
             margin-right: 10px;
             padding: 15px;
-            @*for not support brownser*@ background-image: linear-gradient(#762676a8, #0e0d0d);
+            background-image: linear-gradient(#762676a8, #0e0d0d);
             overflow-y: auto;
         }
-        .aside-content {
+
+        .aside {
+            display:flex;
             background-color: #262626;
             padding: 15px;
             overflow-y: auto;
+            color:white;
         }
+
         .main-content-music {
             margin-top: 100px;
             display: flex;
@@ -35,101 +36,154 @@
         }
 
         .music-content {
+            padding-top:12px;
             display: flex !important;
             justify-content: center;
-          align-content:space-between;
+            align-content: space-between;
             flex-direction: column;
-        }
-        music-content-title {
-            align-items: baseline!important;
+         
         }
 
-        .img-music-content {
+        .music-content-title {
+            align-items: baseline !important;
+        }
+
+        .img-music-content,
+        .img-aside {
             display: flex !important;
             justify-content: center;
             width: 100%;
             height: auto;
-            max-height: 205px;
             max-width: 205px;
+        }
+
+        .img-aside {
+            max-height: 388px;
+            max-width: 388px;
+        }
+
+        .img-aside-content,
+        .aside-content {
+            display: flex !important;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .music-content:hover {
+            background-color: #8f2c8fa8; /* or any color you prefer */
+        }
+        .music-content:active{
+            background-color:black;
         }
     </style>
 }
+
 <div class="d-flex container-fluid content">
     <div class="content main-content col-lg-9 col-7">
-        <div class="">
-
-            <h1 style="color:white">hello world</h1>
+        <div>
+            <h1 style="color:white">Hello World</h1>
             <p>
-                john doe john doe john doe john doe john doe john doe john doe
-                john doe john doe john doe john doe john doe john doe
-                john doejohn doe john doe john doejohn doe john doe john doe john doe
+                John Doe John Doe John Doe John Doe John Doe John Doe John Doe
+                John Doe John Doe John Doe John Doe John Doe John Doe
+                John Doe John Doe John Doe John Doe John Doe John Doe John Doe
             </p>
             <div class="main-content-music row">
-                <div class="col-lg-2 col-4">
-                    <div class="music-content">
-                        <img src="~/picture/Spotify Image/music_pic1_holo.jpg" class="img-music-content" />
 
-                    </div>
-                    <div class="music-content-title">
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">                
+                        <img id="music_pic1" src="~/picture/Spotify Image/music_pic1_holo.jpg" class="img-music-content" />            
                         <h6>Spice and Wolf</h6>
-                        <p>Kevin Penkin</p>
-                    </div>
+                        <p>Kevin Penkin</p>              
                 </div>
 
-                <div class="col-lg-2 col-4 music-content ">
-                    <img src="~/picture/Spotify Image/music_pic2_eureka.jpg" class="img-music-content" />
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">
+                    <img id="music_pic2" src="~/picture/Spotify Image/music_pic2_eureka.jpg" class="img-music-content" />
                     <h6>Spice and Wolf</h6>
                     <p>Kevin Penkin</p>
                 </div>
 
-
-
-                <div class="col-lg-2 col-4 music-content ">
-                    <img src="~/picture/Spotify Image/music_pic3_yanagi.jpg" class="img-music-content" />
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">
+                    <img id="music_pic3" src="~/picture/Spotify Image/music_pic3_yanagi.jpg" class="img-music-content" />
                     <h6>Spice and Wolf</h6>
                     <p>Kevin Penkin</p>
                 </div>
 
-                <div class="col-lg-2 col-4 music-content ">
-                    <img src="~/picture/Spotify Image/music_pic4.jpg" class="img-music-content" />
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">
+                    <img id="music_pic4" src="~/picture/Spotify Image/music_pic4.jpg" class="img-music-content" />
                     <h6>Spice and Wolf</h6>
                     <p>Kevin Penkin</p>
                 </div>
 
-                <div class="col-lg-2 col-4 music-content ">
-                    <img src="~/picture/Spotify Image/music_pic5.jpg" class="img-music-content" />
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">
+                    <img id="music_pic5" src="~/picture/Spotify Image/music_pic5.jpg" class="img-music-content" />
                     <h6>Spice and Wolf</h6>
                     <p>Kevin Penkin</p>
                 </div>
 
-                <div class="col-lg-2 col-4 music-content ">
-                    <img src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+                <div class="col-xxl-2 col-lg-4 col-6 music-content">
+                    <img id="music_pic6" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
                     <h6>Spice and Wolf</h6>
                     <p>Kevin Penkin</p>
                 </div>
 
             </div>
         </div>
-      
     </div>
-    <div class="d-flex content aside-content col-lg-3 col-5">
-        <div class="">
+    <div class=" content aside col-lg-3 col-5" id="aside">
+        <div>
+            <aside class="aside-content px-3">
+                <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                <div class="img-aside-content">
+                    <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                </div>
+                <h3>17さいのうた。</h3>
+                <h6>Yuika</h6>
 
-           
-            <aside class="">
-              
-                <p>”Spice and Wolf:MERCHANT MEETS THE WISE WOLF”Original Soundtrack (Vol.2)</p>
+                <div class="aside-about-artist">
+                    <div class="aside-about-artist-img">
+                        <h6>About the artist</h6>
+                    </div>
+                    <div class="aside-about-artist-title">
+                        <h6>Yuika</h6>
+                        <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                    </div>
+                </div>
             </aside>
+        </div>
     </div>
 </div>
-    </div>
+
 @section Scripts{
-  
     <script type="text/javascript">
-
         $(document).ready(function () {
+            function toggleAsideDisplay() {
+                $('#aside').toggle();
+                $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+            }
 
-        }) 
+            $('.img-music-content').on('click', function () {
+                var imgSrc = $(this).attr('src');
+                $('#aside_pic').attr('src', imgSrc);
+                if ($('#aside').css('display') == 'none') {
+                    toggleAsideDisplay();
+                }
+            });
 
+            $('#btnCloseAside').click(function () {
+                toggleAsideDisplay();
+            });
+        });
+
+        //$('#aside').on('change', function () {
+
+
+        //    if ($('#aside').css('display') == 'none') {
+        //        debugger
+        //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
+        //    }
+        //    else {
+        //        $('.main-content').removeClass('col-lg-12 col-12').addClass('col-lg-9 col-7');
+        //    }
+        //});
+        
     </script>
 }
