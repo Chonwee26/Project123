@@ -833,17 +833,13 @@
           dataType: "json",
           success: function (result) {
                
-              if (result.status == "S") {
+            
                   
 
-                  $('#tblDataTable').dataTable().empty();
+             
                   bindingTableAll(result.Data);
               /*    bindingTable(result.Data);*/
-              }
-              else {
-                  SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
-              }
-
+            
 
 
           },
@@ -1178,7 +1174,7 @@
                 })
             },
             timepicker: false,
-        });
+        })
 
         $('#txtShipDate').datetimepicker({
             format: 'd/m/Y',
@@ -1303,7 +1299,7 @@
 
         function clearSearchValue() {
             $('#frmSearchShipment')[0].reset();
-
+            $('#tblDataTable').dataTable().empty();
             $('#ddlSearchShipmentStatus').val('').trigger('change');
             $('#ddlSearchStorage').val('').trigger('change');
              
@@ -1370,8 +1366,40 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                            
-                            return data.ShipmentLocation[0].ShipmentItemText
+                            //if (data.ShipmentLocation[0].ShipmentItemText == "Bangsue") {
+                            //    debugger
+                            //    return '<span style="color:blue">' + data.ShipmentLocation[0].ShipmentItemText + '</span>'
+                            //}
+                            //else {
+                            //    return data.ShipmentLocation[0].ShipmentItemText
+                            //}
+
+                            switch (data.ShipmentLocation[0].ShipmentItemText) {
+
+                                case "Saraburi":
+                                    return '<span style="color:brown">' + data.ShipmentLocation[0].ShipmentItemText + '</span>';
+                                    break
+
+                                case "Bangsue":
+                                    return '<span style="color:blue">' + data.ShipmentLocation[0].ShipmentItemText + '</span>';
+                                    break
+
+                                case "Wangnoi":
+                                    return '<span style="color:red">' + data.ShipmentLocation[0].ShipmentItemText + '</span>';
+                                    break
+
+                                case "Rangsit":
+                                    return '<span style="color:Orange">' + data.ShipmentLocation[0].ShipmentItemText + '</span>';
+                                    break
+
+
+
+                                default:
+                                    return data.ShipmentLocation[0].ShipmentItemText; 
+
+                                   
+                            }
+                          
 
                         }
 

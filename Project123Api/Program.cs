@@ -20,9 +20,11 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using Project123Api.Repositories;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 builder.Services.AddHttpClient();
 builder.Services.AddSession(options =>
@@ -46,6 +48,7 @@ builder.Services.AddDbContext<DataDbContext>(options =>
 
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
+builder.Services.AddScoped<ISpotRepository, SpotRepository>();
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

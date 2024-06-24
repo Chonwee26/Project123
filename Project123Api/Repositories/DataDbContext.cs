@@ -27,7 +27,9 @@ namespace Project123Api.Repositories
 
         public DbSet<dataModel> Tb_User { get; set; }
         public DbSet<AdminModel> Tb_Admin { get; set; }
-
+        public DbSet<AlbumsModel> Albums { get; set; }
+        public DbSet<SongModel> Song { get; set; }
+      
         public DbSet<ShipmentModel> Shipment { get; set; }
         public DbSet<ShipmentLocationModel> ShipmentLocation { get; set; }
         public DbSet<ShipmentLocationModel> ShipmentStatus { get; set; }

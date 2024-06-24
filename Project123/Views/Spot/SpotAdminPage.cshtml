@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "~/Views/Shared/_SpotLayout.cshtml";
+}
+@section Styles{
+    <style>
+    </style>
+}
+
+<form id="albumForm">
+    <input type="text" id="txtAlbumName" placeholder="Album Name">
+    <input type="text" id="txtAlbumArtist" placeholder="Artist Name">
+    <input type="file" id="fileAlbumImage" placeholder="Image URL">
+    <button type="button" onclick="saveAlbum()">Save Album</button>
+</form>
+<hr />
+<form id="songForm">
+    <input type="text" id="txtSongAlbumId" placeholder="Album ID">
+    <input type="text" id="txtSongArtist" placeholder="Artist Name">
+    <input type="text" id="txtSongName" placeholder="Song Name">
+    <input type="file" id="fileSongFile" placeholder="File URL">
+    <input type="text" id="txtSongGenres" placeholder="Genres">
+    <input type="file" id="fileSongImage" placeholder="Song Image URL">
+    <button type="button" onclick="saveSong()">Save Song</button>
+</form>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+        });
+        function saveAlbum() {
+       
+            var formData = new FormData();
+            formData.append("AlbumName", $("#txtAlbumName").val());
+            formData.append("ArtistName", $("#txtAlbumArtist").val());
+            formData.append("AlbumImage", $("#fileAlbumImage")[0].files[0]);
+
+            $.ajax({
+                url:  '@Url.Action("CreateAlbum", "Spot")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: formData,
+                success: function (result) {
+                    alert('Album saved successfully');
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function saveSong() {
+            var formData = new FormData();
+            formData.append("AlbumId", $("#txtSongAlbumId").val());
+            formData.append("ArtistName", $("#txtSongArtist").val());
+            formData.append("SongName", $("#txtSongName").val());
+            formData.append("SongFile", $("#fileSongFile")[0].files[0]);
+            formData.append("SongGenres", $("#txtSongGenres").val());
+            formData.append("SongImage", $("fileSongImage")[0].files[0]);
+
+
+            $.ajax({
+               '@Url.Action("CreateSong", "Spot")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: formData,
+                success: function (result) {
+                    debugger
+                    alert('Song saved successfully');
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+    </script>
+
+
+}
