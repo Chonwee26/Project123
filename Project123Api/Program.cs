@@ -19,14 +19,22 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using Project123Api.Repositories;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+// Add logging services
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventLog();
 // Add services to the container.
 builder.Services.AddHttpClient();
+builder.Logging.SetMinimumLevel(LogLevel.Information); // Set minimum logging level
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the timeout as needed

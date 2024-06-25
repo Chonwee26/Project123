@@ -9,6 +9,7 @@ namespace Project123Api.Controllers
     [ApiController]
     public class SpotController : BaseController
     {
+
         private readonly ISpotRepository _spotRepo;
         private DataDbContext _dbContext;
         private IConfiguration _configuration;
@@ -22,7 +23,7 @@ namespace Project123Api.Controllers
             _spotRepo = spotRepository;
         }
 
-        [HttpPost("CreateSong")]
+        [HttpPost("CreateSong123")]
         public async Task<ResponseModel> CreateSong(SongModel SongData)
         {
             ResponseModel response = new ResponseModel();
