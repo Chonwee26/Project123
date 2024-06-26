@@ -139,25 +139,27 @@
         /* end select2 style */
 
         .datetimepickerSearch {
-            width:297px!important;
+            width: 297px !important;
         }
+
         .datetimepickerCreate {
             width: 635px !important;
         }
-     
+
         .input555 {
             position: relative;
         }
-          
+
 
 
 
             .input555 i {
                 position: absolute;
-                right: 15px; 
+                right: 15px;
                 top: 50%;
                 transform: translateY(-50%);
             }
+
         .qr-code {
             max-width: 200px;
             margin: 10px;
@@ -196,9 +198,12 @@
         #qr-reader__dashboard {
             display: none;
         }
+
         .btn-delete {
             cursor: pointer;
-        }.btn-edit {
+        }
+
+        .btn-edit {
             cursor: pointer;
         }
     </style>
@@ -220,9 +225,9 @@
                             <!-- Get a Placeholder image initially,
                                  this will change according to the
                                  data entered later -->
-                        
+
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Example"
-                                 class="qr-code img-thumbnail img-responsive" id="imageQR"/>
+                                 class="qr-code img-thumbnail img-responsive" id="imageQR" />
                         </div>
 
                         <div class="form-horizontal">
@@ -235,7 +240,7 @@
                                     <div class="col-sm-8">
 
                                         <!-- Input box to enter the
-                required data -->
+                                        required data -->
                                         <input type="text" size="60"
                                                maxlength="60" class="form-control"
                                                id="content" placeholder="Enter content" />
@@ -249,7 +254,7 @@
                                         <div class="col-sm-offset-2 col-sm-10">
 
                                             <!-- Button to btnGenerate QR Code for
-                    the entered data -->
+                                            the entered data -->
                                             <button type="button" class="btn btn-secondary  mt-3" id="btnGenerate">
                                                 Generate QRCode
                                             </button>
@@ -397,7 +402,7 @@
                                         <i class="fa-regular fa-calendar input-icon-addon"></i>
                                     </div>
                                 </div>
-                            </div>                         
+                            </div>
                         </div>
                         @*end first*@
                         @* Start second*@
@@ -407,15 +412,13 @@
                                 <h6>สถานที่เก็บสินค้า</h6>
                                 <div class="input-group">
                                     <select class="form-select select2 select2-select" id="ddlSearchStorage" style="width:100%" name="Storage">
-                                       
                                     </select>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-12 col-md-6 ">
                                 <h6>สถานะขนส่ง</h6>
                                 <div class="input-group">
-                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus"  name="ShipmentStatus">
-                                      
+                                    <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus">
                                     </select>
                                 </div>
                             </div>
@@ -494,7 +497,7 @@
         var dataTable;
         var newShipment = [];
         var SaveStatus;
-        var SaveUrl;     
+        var SaveUrl;
         var DataShipment;
         var rowData;
         $(document).ready(function () {
@@ -531,15 +534,15 @@
             // for the btnGenerate button
 
             $('#btnGenerate').click(function () {
-                 
+
                 // btnGenerate the link that would be
                 // used to btnGenerate the QR Code
                 // with the given data
                 var content = $('#content').val();
                 var qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(content);
-              
+
                 $('#imageQR').attr('src', qrCodeUrl);
-              
+
                 //var content = htmlEncode($('#content').val());
 
                 //var finalURL =
@@ -568,7 +571,7 @@
         });
 
         $('#qrForm').submit(function (event) {
-            
+
             event.preventDefault(); //กันไปอีกหน้า
 
             var formData = new FormData($(this)[0]); // Get form data
@@ -579,7 +582,7 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                     
+
                     if (data.length > 0) {
 
 
@@ -620,7 +623,7 @@
             url: '@Url.Action("GetShipmentStatus","Shipment")',
             datatype: 'json',
             success: function (result) {
-                
+
                 $(elementId).html('');
                 $(elementId).select2({
                     placeholder:'--- ทั้งหมด ---',
@@ -650,7 +653,7 @@
             url: '@Url.Action("GetShipmentStatusAsync","Test")',
             datatype: 'json',
             success: function (result) {
-                
+
                 $(elementId).html('');
                 $(elementId).select2({
                     placeholder:'--- ทั้งหมด ---',
@@ -681,7 +684,7 @@
                 url: '@Url.Action("GetShipmentLocation","Shipment")',
                 datatype: 'json',
                 success: function (result) {
-                    
+
                     $(elementId).html('');
                     $(elementId).select2({
                         placeholder:'--- ทั้งหมด ---',
@@ -705,14 +708,14 @@
 
          function getShipmentLocationAsync(id,elementId) {
      id = id == null ? "" : id
-     
+
      $.ajax({
          type: 'GET',
        /*  url: '/Test/GetShipmentLocationAsync',*/
            url: '@Url.Action("GetShipmentLocationAsync","Test")',
          datatype: 'json',
          success: function (result) {
-             
+
              $(elementId).html('');
              $(elementId).select2({
                  placeholder:'--- ทั้งหมด ---',
@@ -818,9 +821,9 @@
                     formattedDate = moment(inputDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
                     inputDate = formattedDate;
                 }
-                
+
                 var frmSearch = $('#frmSearchShipment').serialize();
-                
+
                 var frmSearch1 = {
                     OrderNumber: $('#txtOrderNumber').val()
                 }
@@ -832,14 +835,14 @@
           data: frmSearch,
           dataType: "json",
           success: function (result) {
-               
-            
-                  
 
-             
+
+
+
+
                   bindingTableAll(result.Data);
               /*    bindingTable(result.Data);*/
-            
+
 
 
           },
@@ -855,7 +858,7 @@
           dataType: "json",
           success: function (result) {
               if (result.Message == "S") {
-                   
+
 
                   $('#tblDataTable').dataTable().empty();
                   bindingTableAll(result.Data);
@@ -899,8 +902,8 @@
              /*   moment($('#txtShipDate').val(), 'DD/MM/YYYY').format('YYYY-MM-DD');*/
                 var frmCreate = $('#frmCreateShipment').serializeArray();
                 const currentTime = new Date($.now());
-                
-             
+
+
                 frmCreate.push({ name: 'CreateDate', value: currentTime });
                 if (SaveStatus =="Update") {
                     frmCreate.push({ name: 'OrderNumber', value: rowData.OrderNumber });
@@ -908,9 +911,9 @@
                 //if ($('#ddlCreateShipmentStatus').val() == '') {
                 //    $('#ddlCreateShipmentStatus').val('');
                 //}
-                
+
                 var serializedCreate = $.param(frmCreate);
-              
+
                 if (SaveStatus == "Create") {
                     SaveUrl = '@Url.Action("CreateShipmentAsync", "Test")';
                     DataShipment = serializedCreate
@@ -919,8 +922,8 @@
                     SaveUrl = '@Url.Action("UpdateShipmentAsync", "Test")';
                     DataShipment = serializedCreate
        }
-     
-                
+
+
 
                 Swal.fire({
                     icon: "question",
@@ -961,29 +964,29 @@
                                 data: DataShipment,
                                 dataType: "json",
                                 success: function (result) {
-                                     
+
                                     SweetAlert('success', result.message);
                                     $(".nav button#searchTab").tab('show');
-                                   
+
                                     if (result.status = "S") {
                                         clearSearchValue()
                                         if (SaveStatus == "Create") {
-                                             
+
                                             console.log("C")
-                                        
+
                                             $('#txtOrderNumber').val(result.message);
                                             $('#btnSearch').click();
                                         }
-                        
+
                                         else {
-                                             
+
                                             const order = $('#txtOrderNumber').val();
-                                          
+
                                             $('#txtOrderNumber').val(rowData.OrderNumber);
                                             $('#btnSearch').click();
                                         }
-                      
-                     
+
+
                                     }
                                     else {
                                         SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
@@ -1023,7 +1026,7 @@
 
         //$('#btnDownload').click(function () {
 
-        //     
+        //
         //    var imgQR = $('#imageQR').attr('src');
         //    var link = document.createElement('a');
         //    link.href = imgQR;
@@ -1041,7 +1044,7 @@
 
 
         $('#btnDownload').click(function (e) {
-           
+
 
             var imgQR = $('#imageQR').attr('src');
 
@@ -1060,10 +1063,10 @@
                     // link.click();  // Uncomment if you want automatic download
 
                     // Alternative: Provide a visual download link (optional)
-                 
-                   
+
+
                         link.click();
-              
+
                     document.body.appendChild(downloadContainer);
                 } else {
                     console.error('Error downloading image:', this.statusText);
@@ -1096,7 +1099,7 @@
         $('#tblDataTable').on('click', '.btn-delete', function () {
 
              rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
-            
+
             @*$.ajax
                 ({
                     type: 'POST',
@@ -1104,7 +1107,7 @@
                     data: rowData,
                     dataType: "json",
                     success: function (result) {
-                        
+
                         if (result.Status == "S") {
                             SweetAlert('success', result.Message);
                             $('#btnSearch').click();
@@ -1128,11 +1131,11 @@
           url: '@Url.Action("DeleteShipmentAsync", "Test")' + '/' + encodeURIComponent(rowData.ShipmentId),
 
           success: function (result) {
-               
+
              var rowCount = dataTable.rows().count();
               if (result.status == "S") {
                   SweetAlert('success', result.message);
-                   
+
                   if (rowCount > 1) {
                       $('#btnSearch').click();
                   }
@@ -1185,7 +1188,7 @@
         $('#tblDataTable').on('click' ,'.btn-edit', function () {
             SaveStatus = "Update";
              rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
-             
+
             $(".nav button#createTab").tab('show');
 
             $('#txtCreateFullName').val(rowData.FullName);
@@ -1203,7 +1206,7 @@
 
 
         function bindingTable(newShipment) {
-            
+
             $('#dvTable').show();
             // Initialize DataTable
             dataTable = $('#tblDataTable').DataTable({
@@ -1220,7 +1223,7 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                            
+
 
                             return data.OrderNumber;
                         }
@@ -1228,7 +1231,7 @@
                     {
                         data: null, className: 'text-left', orderable: false,
                         render: function (data, type, row) {
-                            
+
                             return data.FullName;
 
                         }
@@ -1302,7 +1305,7 @@
             $('#tblDataTable').dataTable().empty();
             $('#ddlSearchShipmentStatus').val('').trigger('change');
             $('#ddlSearchStorage').val('').trigger('change');
-             
+
 
 
         }
@@ -1312,7 +1315,7 @@
         }
 
         function bindingTableAll(newShipment) {
-          
+
             $('#dvTable').show();
             // Initialize DataTable
             dataTable = $('#tblDataTable').DataTable({
@@ -1338,7 +1341,7 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                            
+
 
                             return data.OrderNumber;
                         }
@@ -1346,7 +1349,7 @@
                     {
                         data: null, className: 'text-left', orderable: false,
                         render: function (data, type, row) {
-                            
+
                             return data.FullName;
 
                         }
@@ -1395,11 +1398,11 @@
 
 
                                 default:
-                                    return data.ShipmentLocation[0].ShipmentItemText; 
+                                    return data.ShipmentLocation[0].ShipmentItemText;
 
-                                   
+
                             }
-                          
+
 
                         }
 
@@ -1408,7 +1411,7 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                            
+
                             return data.ShipmentStatusList[0].ShipmentItemText
 
                         }
@@ -1450,3 +1453,10 @@
 }
 
 
+<th>Edit</th>
+<th>#</th>
+<th>Title</th>
+<th>Artist</th>
+<th>Album</th>
+<th>Duration</th>
+<th>Genres</th>

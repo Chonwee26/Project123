@@ -94,6 +94,68 @@ namespace Project123.Controllers
 
         //    return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         //}
+        [HttpPost("Spot/CreateAlbum1")]
+        public async Task<IActionResult> CreateAlbum(AlbumModel AlbumData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        // Save files and update paths in SongData
+                      
+                        if (AlbumData.AlbumImage != null)
+                        {
+                            var (filePath, error) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            AlbumData.AlbumImagePath = filePath;
+                        }
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var songDataCopy = new
+                        {
+                            AlbumData.AlbumId,
+                            AlbumData.ArtistName,
+                            AlbumData.AlbumName,
+                            AlbumData.AlbumImagePath
+                            
+
+                        };
+
+                        string requestJson = JsonConvert.SerializeObject(songDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/CreateAlbum", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
 
         [HttpPost("Spot/CreateSong1")]
         public async Task<IActionResult> CreateSong(SongModel SongData)
@@ -139,7 +201,9 @@ namespace Project123.Controllers
                             SongData.SongGenres,
                             SongData.SongId,
                             SongData.SongImagePath,
-                            SongData.SongName
+                            SongData.SongName,
+                            SongData.SongLength
+
                         };
 
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
@@ -169,7 +233,7 @@ namespace Project123.Controllers
 
 
 
-        private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string songName)
+        private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string Name)
         {
             if (file == null || file.Length == 0)
             {
@@ -178,11 +242,11 @@ namespace Project123.Controllers
 
             // Sanitize artist name and song name for use in file paths
             var sanitizedArtistName = SanitizeFileName(artistName);
-            var sanitizedSongName = SanitizeFileName(songName);
+            var sanitizedName = SanitizeFileName(Name);
 
             // Create the directory path for the artist and song
             var artistFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", sanitizedArtistName);
-            var songFolderPath = Path.Combine(artistFolderPath, sanitizedSongName);
+            var songFolderPath = Path.Combine(artistFolderPath, sanitizedName);
 
             // Ensure the directories exist
             Directory.CreateDirectory(songFolderPath);
@@ -195,8 +259,8 @@ namespace Project123.Controllers
             }
 
             // Generate a unique file name and get the full file path
-            var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            var filePath = Path.Combine(songFolderPath, uniqueFileName);
+            var FileName = file.FileName;
+            var filePath = Path.Combine(songFolderPath, FileName);
 
             // Save the file to the generated path
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -205,7 +269,7 @@ namespace Project123.Controllers
             }
 
             // Return the relative path to the saved file
-            return (Path.Combine("/uploads", sanitizedArtistName, sanitizedSongName, uniqueFileName).Replace("\\", "/"), null);
+            return (Path.Combine("/uploads", sanitizedArtistName, sanitizedName, FileName).Replace("\\", "/"), null);
         }
 
         // Helper method to sanitize file names
@@ -219,6 +283,63 @@ namespace Project123.Controllers
         }
 
 
+
+        [HttpPost("Spot/SearchSong1")]
+        public async Task<IActionResult> SearchSong(SongModel SongData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<SongModel> SongList = new List<SongModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(SongData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/SearchSong", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        SongList = await response.Content.ReadAsAsync<List<SongModel>>();
+
+                        if (SongList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = SongList });
+        }
 
 
         //private async Task<string> SaveFile(IFormFile file)

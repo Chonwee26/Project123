@@ -14,10 +14,10 @@ namespace Project123.Dto
         public string? ArtistName { get; set; }
         public string? SongName { get; set; }
         public string? SongGenres { get; set; }
-        public IFormFile? SongFile { get; set; } 
+        public IFormFile? SongFile { get; set; }
         public IFormFile? SongImage { get; set; }
+        public int? SongLength { get; set; }
         public string? SongFilePath { get; set; }
         public string? SongImagePath { get; set; }
-
     }
 }

@@ -6,6 +6,7 @@
         .content {
             border-radius: 20px;
             height: 100vh;
+            width:100%;
         }
 
         .main-content {
@@ -71,6 +72,16 @@
         .music-content:active {
             background-color: black;
         }
+        #dvTable #tblDataTable th,tr ,td{
+            color: white !important;
+            background-color: black !important;
+            border:none!important;
+        }
+
+        table.dataTable thead .sorting_asc{
+           background-image:none!important;
+        }
+     
     </style>
 }
 
@@ -90,23 +101,50 @@
                     <input type="text" id="txtAlbumArtist" placeholder="Artist Name">
                     <input type="file" id="fileAlbumImage" placeholder="Image URL">
                     <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
-                    <button type="button" onclick="saveAlbum()">Save Album</button>
+                    <button type="button" onclick="createAlbum()">Create Album</button>
                 </form>
-                <hr />
+              
                 <form id="songForm">
                     <input type="text" id="txtSongAlbumId" placeholder="Album ID">
                     <input type="text" id="txtSongArtist" placeholder="Artist Name">
                     <input type="text" id="txtSongName" placeholder="Song Name">
                     <input type="file" id="fileSongFile" placeholder="File URL">
                     <audio id="audiocontrolPreview" controls style="display: none;">
-                    <source id="songAudioPreview" src="#" type="audio/mp3" />
-                   
 
-                    Your brownser does not support this audio elemento</audio>
+                        <source id="songAudioPreview" src="#" type="audio/mp3" />
+
+
+                        Your brownser does not support this audio elemento
+                    </audio>
+                    <p id="duration"></p>
+                    <input type="number" id="durationInput" placeholder="Duration input" hidden>
                     <input type="text" id="txtSongGenres" placeholder="Genres">
                     <input type="file" id="fileSongImage" placeholder="Song Image URL">
                     <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
-                    <button type="button" onclick="saveSong()">Save Song</button>
+                    <button type="button" onclick="createSong()">Create Song</button>
+                    <button type="button" onclick="searchSong()">Search Song</button>
+
+
+
+                    <div class="col-12" id="dvTable" style="display:none">
+                        <table id="tblDataTable" class="table table-bordered" width="100%">
+                            <thead>
+                                <tr class=" ">
+                                   
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Artist</th>
+                                    <th>Album</th>
+                                    <th>Duration</th>
+                                    <th>Genres</th>
+                                   
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
             </div>
         </div>
@@ -115,28 +153,43 @@
 
 @section Scripts{
     <script>
+        var duration;
+        var audioControl;
+        var audioDurationElement;
+
         $(document).ready(function () {
+
+            audioControl = $('#audiocontrolPreview')[0];
+            audioDurationElement = $('#duration');
+
             $('#fileSongFile').change(function (e) {
                 var file = e.target.files[0];
                 var url = URL.createObjectURL(file);
 
+                $(audioControl).on('loadedmetadata', function () {
+                    duration = audioControl.duration;
+                    var minutes = Math.floor(duration / 60);
+                    var seconds = Math.floor(duration % 60);
+                    // Ensure seconds are displayed with two digits
+                    var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                    $('#durationInput').val(parseInt(duration));
+                    console.log(audioDurationElement.text());
+                });
                 $('#songAudioPreview').attr('src', url);
-                $('#audiocontrolPreview')[0].load(); // Reload audio player to apply the new source
+                audioControl.load(); // Reload audio player to apply the new source
                 $('#audiocontrolPreview').show();
-            
             });
 
-         
             $('#fileAlbumImage').change(function () {
-                showPreview(this, '#albumImagePreview','image');
+                showPreview(this, '#albumImagePreview', 'image');
             });
 
             $('#fileSongImage').change(function () {
-                showPreview(this, '#songImagePreview','image');
+                showPreview(this, '#songImagePreview', 'image');
             });
         });
 
-        
         function showPreview(input, previewSelector, type) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -149,18 +202,39 @@
                 }
 
                 reader.readAsDataURL(input.files[0]);
-
             }
-        } 
+        }
 
-        function saveAlbum() {
+        function searchSong() {
+            frmSearch = {
+                SongName: $("#txtSongName").val(),
+                ArtistName: $("#txtSongArtist").val(),
+                SongGenres: $("#txtSongGenres").val()
+            }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchSong1", "Spot")',
+                data: frmSearch,
+                dataType: "json",
+                success: function (result) {
+                    debugger
+                    bindingTableSong(result.Data);
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function createAlbum() {
             var formData = new FormData();
             formData.append("AlbumName", $("#txtAlbumName").val());
             formData.append("ArtistName", $("#txtAlbumArtist").val());
             formData.append("AlbumImage", $("#fileAlbumImage")[0].files[0]);
 
             $.ajax({
-                url: '@Url.Action("CreateAlbum", "Spot")',
+                url: '@Url.Action("CreateAlbum1", "Spot")',
                 type: 'POST',
                 contentType: false,
                 processData: false,
@@ -174,7 +248,12 @@
             });
         }
 
-        function saveSong() {
+        function createSong() {
+            if (!duration) {
+                alert("Please wait until the audio duration is loaded.");
+                return;
+            }
+
             var formData = new FormData();
             formData.append("AlbumId", $("#txtSongAlbumId").val());
             formData.append("ArtistName", $("#txtSongArtist").val());
@@ -182,10 +261,13 @@
             formData.append("SongFile", $("#fileSongFile")[0].files[0]);
             formData.append("SongGenres", $("#txtSongGenres").val());
             formData.append("SongImage", $("#fileSongImage")[0].files[0]);
+            formData.append("SongLength", $('#durationInput').val());
+
+            console.log(duration);
 
             $.ajax({
                 url: '@Url.Action("CreateSong1", "Spot")',
-                contentType:false,
+                contentType: false,
                 type: 'POST',
                 processData: false,
                 data: formData,
@@ -196,6 +278,99 @@
                     console.error(error);
                 }
             });
+        }
+
+        function bindingTableSong(songData) {
+
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: songData,
+                searching: false,
+                lengthchange: false,
+                scrollx: false,
+                info: false,
+
+                columns: [
+
+
+
+                    {
+                        data: null, className: 'text-center', orderable: false,sortable:false,
+
+                        render: function (data, type, row, meta) {
+
+
+                            return (meta.row + 1)
+                        }
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.SongName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ArtistName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.AlbumId
+
+
+                        }
+
+
+                    },
+
+                    
+                {
+                    data: null, className: 'text-center', orderable: false,
+
+                    render: function (data, type, row) {
+                        debugger
+                        var duration = data.SongLength
+                        var minutes = Math.floor(duration / 60);
+                        var seconds = Math.floor(duration % 60);
+                      
+                        // Ensure seconds are displayed with two digits
+                        var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                        audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                        return duration != null ? minutes + ':' + formattedSeconds : "";
+
+                    }
+
+                },
+                {
+                    data: null, className: 'text-center', orderable: false,
+
+                    render: function (data, type, row) {
+
+                        return data.SongGenres;
+
+                    }
+
+                }
+             ]
+           
+               
+            });
+            //rowCount = dataTable.rows().count();
         }
     </script>
 }
