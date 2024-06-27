@@ -23,7 +23,7 @@ namespace Project123Api.Controllers
             _spotRepo = spotRepository;
         }
 
-        [HttpPost("CreateAlbum")]
+        [HttpPost("CreateAlbum123")]
         public async Task<ResponseModel> CreateAlbum(AlbumModel AlbumData)
         {
             ResponseModel response = new ResponseModel();
@@ -72,6 +72,16 @@ namespace Project123Api.Controllers
             IEnumerable<SongModel> songList = await _spotRepo.SearchSong(SongData);
 
             return songList;
+        }
+
+        [HttpPost("SearchAlbum")]
+        public async Task<IEnumerable<AlbumModel>> SearchAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<AlbumModel> albumList = await _spotRepo.SearchAlbum(AlbumData);
+
+            return albumList;
         }
     }
 }

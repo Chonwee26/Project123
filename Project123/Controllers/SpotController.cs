@@ -112,7 +112,7 @@ namespace Project123.Controllers
                       
                         if (AlbumData.AlbumImage != null)
                         {
-                            var (filePath, error) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName);
+                            var (filePath, error) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -121,7 +121,7 @@ namespace Project123.Controllers
                         }
 
                         // Create a copy of SongData with nullified IFormFile properties for serialization
-                        var songDataCopy = new
+                        var AlbumDataCopy = new
                         {
                             AlbumData.AlbumId,
                             AlbumData.ArtistName,
@@ -131,10 +131,10 @@ namespace Project123.Controllers
 
                         };
 
-                        string requestJson = JsonConvert.SerializeObject(songDataCopy);
+                        string requestJson = JsonConvert.SerializeObject(AlbumDataCopy);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Spot/CreateAlbum", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/CreateAlbum123", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -155,8 +155,6 @@ namespace Project123.Controllers
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
-
-
         [HttpPost("Spot/CreateSong1")]
         public async Task<IActionResult> CreateSong(SongModel SongData)
         {
@@ -174,21 +172,23 @@ namespace Project123.Controllers
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName);
+                            var (filePath, error) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
                             }
+
                             SongData.SongFilePath = filePath;
                         }
 
                         if (SongData.SongImage != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName);
+                            var (filePath, error) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
                             }
+
                             SongData.SongImagePath = filePath;
                         }
 
@@ -203,7 +203,6 @@ namespace Project123.Controllers
                             SongData.SongImagePath,
                             SongData.SongName,
                             SongData.SongLength
-
                         };
 
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
@@ -231,9 +230,7 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-
-
-        private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string Name)
+        private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string Name, int? AlbumId)
         {
             if (file == null || file.Length == 0)
             {
@@ -246,13 +243,23 @@ namespace Project123.Controllers
 
             // Create the directory path for the artist and song
             var artistFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", sanitizedArtistName);
-            var songFolderPath = Path.Combine(artistFolderPath, sanitizedName);
+            var albumFolderPath = "";
+
+            if (AlbumId != null)
+            {
+                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString(), sanitizedName);
+            }
+            else
+            {
+                albumFolderPath = Path.Combine(artistFolderPath, sanitizedName);
+            }
 
             // Ensure the directories exist
-            Directory.CreateDirectory(songFolderPath);
+            Directory.CreateDirectory(albumFolderPath);
 
             // Check for duplicate file
-            var existingFiles = Directory.GetFiles(songFolderPath, file.FileName);
+            var existingFiles = Directory.GetFiles(albumFolderPath, file.FileName);
+
             if (existingFiles.Length > 0)
             {
                 return (null, "Song already exists");
@@ -260,7 +267,7 @@ namespace Project123.Controllers
 
             // Generate a unique file name and get the full file path
             var FileName = file.FileName;
-            var filePath = Path.Combine(songFolderPath, FileName);
+            var filePath = Path.Combine(albumFolderPath, FileName);
 
             // Save the file to the generated path
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -268,8 +275,36 @@ namespace Project123.Controllers
                 await file.CopyToAsync(stream);
             }
 
+            // Move file to album if AlbumId is provided
+            if (AlbumId != null)
+            {
+                var (newFilePath, moveError) = MoveFileToAlbum(filePath, artistFolderPath, sanitizedName, AlbumId.Value);
+                if (moveError != null)
+                {
+                    return (null, moveError);
+                }
+                filePath = newFilePath;
+            }
+
             // Return the relative path to the saved file
-            return (Path.Combine("/uploads", sanitizedArtistName, sanitizedName, FileName).Replace("\\", "/"), null);
+            return (Path.Combine("/uploads", sanitizedArtistName, AlbumId != null ? $"Album_{AlbumId}" : sanitizedName, FileName).Replace("\\", "/"), null);
+        }
+
+        // Helper method to move file to album
+        private (string newFilePath, string error) MoveFileToAlbum(string filePath, string artistFolderPath, string sanitizedName, int AlbumId)
+        {
+            try
+            {
+                var albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString());
+                Directory.CreateDirectory(albumFolderPath);
+                var newFilePath = Path.Combine(albumFolderPath, Path.GetFileName(filePath));
+                System.IO.File.Move(filePath, newFilePath);
+                return (newFilePath, null);
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error moving file to album: {ex.Message}");
+            }
         }
 
         // Helper method to sanitize file names
@@ -339,6 +374,65 @@ namespace Project123.Controllers
             }
 
             return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = SongList });
+        }
+
+
+
+        [HttpPost("Spot/SearchAlbum1")]
+        public async Task<IActionResult> SearchAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<AlbumModel> AlbumList = new List<AlbumModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(AlbumData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/SearchAlbum", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        AlbumList = await response.Content.ReadAsAsync<List<AlbumModel>>();
+
+                        if (AlbumList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = AlbumList });
         }
 
 

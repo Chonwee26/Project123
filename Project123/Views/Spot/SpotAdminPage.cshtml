@@ -72,87 +72,130 @@
         .music-content:active {
             background-color: black;
         }
-        #dvTable #tblDataTable th,tr ,td{
+        #dvTableSong #tblDataTableSong th,tr ,td{
             color: white !important;
             background-color: black !important;
             border:none!important;
         }
 
+        #dvTableAlbum #tblDataTableAlbum th, tr, td {
+            color: white !important;
+            background-color: black !important;
+            border: none !important;
+        }
+
         table.dataTable thead .sorting_asc{
            background-image:none!important;
         }
+        .btn-edit{
+            cursor:pointer;
+        }
+
      
     </style>
 }
 
-<div class="d-flex container-fluid content">
-    <div class="content main-content">
-        <div>
-            <h1 style="color:white">Hello World</h1>
-            <p>
-                John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-                John Doe John Doe John Doe John Doe John Doe John Doe
-                John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-            </p>
-            <div class="main-content-music row">
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
+        <button class="nav-link active" id="searchTab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Search</button>
+        <button class="nav-link" id="createTab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Create</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="d-flex container-fluid content">
+            <div class="content main-content">
+                <div>
+                    <h1 style="color:white">Hello World</h1>
+                    <p>
+                        John Doe John Doe John Doe John Doe John Doe John Doe John Doe
+                        John Doe John Doe John Doe John Doe John Doe John Doe
+                        John Doe John Doe John Doe John Doe John Doe John Doe John Doe
+                    </p>
+                    <div class="main-content-music row">
 
-                <form id="albumForm">
-                    <input type="text" id="txtAlbumName" placeholder="Album Name">
-                    <input type="text" id="txtAlbumArtist" placeholder="Artist Name">
-                    <input type="file" id="fileAlbumImage" placeholder="Image URL">
-                    <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
-                    <button type="button" onclick="createAlbum()">Create Album</button>
-                </form>
-              
-                <form id="songForm">
-                    <input type="text" id="txtSongAlbumId" placeholder="Album ID">
-                    <input type="text" id="txtSongArtist" placeholder="Artist Name">
-                    <input type="text" id="txtSongName" placeholder="Song Name">
-                    <input type="file" id="fileSongFile" placeholder="File URL">
-                    <audio id="audiocontrolPreview" controls style="display: none;">
+                        <form id="albumForm">
+                            <input type="text" id="txtAlbumArtist" placeholder="Artist Name">
+                            <input type="text" id="txtAlbumName" placeholder="Album Name">
+                            <input type="file" id="fileAlbumImage" placeholder="Image URL">
+                            <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
+                            <button type="button" onclick="createAlbum()">Create Album</button>
+                            <button type="button" onclick="searchAlbum()">Search Album</button>
+                        </form>
 
-                        <source id="songAudioPreview" src="#" type="audio/mp3" />
-
-
-                        Your brownser does not support this audio elemento
-                    </audio>
-                    <p id="duration"></p>
-                    <input type="number" id="durationInput" placeholder="Duration input" hidden>
-                    <input type="text" id="txtSongGenres" placeholder="Genres">
-                    <input type="file" id="fileSongImage" placeholder="Song Image URL">
-                    <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
-                    <button type="button" onclick="createSong()">Create Song</button>
-                    <button type="button" onclick="searchSong()">Search Song</button>
+                        <div class="col-12" id="dvTableAlbum" style="display:none">
+                            <table id="tblDataTableAlbum" class="table table-bordered" width="100%">
+                                <thead>
+                                    <tr class=" ">
+                                        <th>Edit</th>
+                                        <th>#</th>
+                                        <th>Album</th>
+                                        <th>Artist</th>
 
 
 
-                    <div class="col-12" id="dvTable" style="display:none">
-                        <table id="tblDataTable" class="table table-bordered" width="100%">
-                            <thead>
-                                <tr class=" ">
-                                   
-                                    <th>#</th>
-                                    <th>Title</th>
-                                    <th>Artist</th>
-                                    <th>Album</th>
-                                    <th>Duration</th>
-                                    <th>Genres</th>
-                                   
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <form id="songForm">
+                            <input type="text" id="txtSongAlbumId" placeholder="Album ID">
+                            <input type="text" id="txtSongArtist" placeholder="Artist Name">
+                            <input type="text" id="txtSongName" placeholder="Song Name">
+                            <input type="file" id="fileSongFile" placeholder="File URL">
+                            <audio id="audiocontrolPreview" controls style="display: none;">
+
+                                <source id="songAudioPreview" src="#" type="audio/mp3" />
+
+
+                                Your brownser does not support this audio elemento
+                            </audio>
+                            <p id="duration"></p>
+                            <input type="number" id="durationInput" placeholder="Duration input" hidden>
+                            <input type="text" id="txtSongGenres" placeholder="Genres">
+                            <input type="file" id="fileSongImage" placeholder="Song Image URL">
+                            <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
+                            <button type="button" onclick="createSong()">Create Song</button>
+                            <button type="button" onclick="searchSong()">Search Song</button>
+
+
+
+                            <div class="col-12" id="dvTableSong" style="display:none">
+                                <table id="tblDataTableSong" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr class=" ">
+
+                                            <th>#</th>
+                                            <th>Title</th>
+                                            <th>Artist</th>
+                                            <th>Album</th>
+                                            <th>Duration</th>
+                                            <th>Genres</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <partial name="_SpotAdminView" />
+    </div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
 </div>
 
-@section Scripts{
-    <script>
+        @section Scripts{
+            <script>
         var duration;
         var audioControl;
         var audioDurationElement;
@@ -180,6 +223,29 @@
                 audioControl.load(); // Reload audio player to apply the new source
                 $('#audiocontrolPreview').show();
             });
+            // Handle row click in the song table
+            $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
+                var rowData = $('#tblDataTableSongAlbum').DataTable().row(this).data();
+               
+                // Check if rowData is not null
+                if (rowData) {
+                    // Set the audio source
+                    debugger
+                    $('#songAudioPreview').attr('src', rowData.SongFilePath);
+
+                    // Load the new audio source
+                    audioControl.load();
+
+                    // Display the audio control
+                    $('#audiocontrolPreview').show();
+
+                    // Play the audio (optional)
+                    // audioControl.play();
+                } else {
+                    console.error('Row data is null or undefined');
+                }
+            });
+
 
             $('#fileAlbumImage').change(function () {
                 showPreview(this, '#albumImagePreview', 'image');
@@ -187,6 +253,11 @@
 
             $('#fileSongImage').change(function () {
                 showPreview(this, '#songImagePreview', 'image');
+            });
+
+
+            $('#btnCancel').click(function () {
+                $(".nav button#searchTab").tab('show');
             });
         });
 
@@ -204,12 +275,33 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        function searchAlbum() {
+            frmSearch = {
+                AlbumName: $("#txtAlbumName").val(),
+                ArtistName: $("#txtAlbumArtist").val(),
+            }
+             $.ajax({
+     type: 'POST',
+     url: '@Url.Action("SearchAlbum1", "Spot")',
+     data: frmSearch,
+     dataType: "json",
+     success: function (result) {
+         debugger
+         bindingTableAlbum(result.Data);
+         /* bindingTable(result.Data); */
+     },
+     error: function (request, status, error) {
+         console.log(error);
+     }
+ });
+        }
 
         function searchSong() {
             frmSearch = {
                 SongName: $("#txtSongName").val(),
                 ArtistName: $("#txtSongArtist").val(),
-                SongGenres: $("#txtSongGenres").val()
+                SongGenres: $("#txtSongGenres").val(),
+                AlbumId: $("#txtSongAlbumId").val()
             }
             $.ajax({
                 type: 'POST',
@@ -282,9 +374,9 @@
 
         function bindingTableSong(songData) {
 
-            $('#dvTable').show();
+            $('#dvTableSong').show();
             // Initialize DataTable
-            dataTable = $('#tblDataTable').DataTable({
+            dataTable = $('#tblDataTableSong').DataTable({
 
                 destroy: true, //ล้างข้อมูลก่อนหน้า
                 data: songData,
@@ -338,7 +430,7 @@
 
                     },
 
-                    
+
                 {
                     data: null, className: 'text-center', orderable: false,
 
@@ -347,7 +439,7 @@
                         var duration = data.SongLength
                         var minutes = Math.floor(duration / 60);
                         var seconds = Math.floor(duration % 60);
-                      
+
                         // Ensure seconds are displayed with two digits
                         var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                         audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
@@ -367,10 +459,187 @@
 
                 }
              ]
-           
-               
+
+
             });
             //rowCount = dataTable.rows().count();
         }
-    </script>
-}
+
+        $('#tblDataTableAlbum').on('click', '.btn-edit', function () {
+            SaveStatus = "Update";
+            rowData = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+            debugger
+            $('#h1Album').text(rowData.AlbumName);
+            $(".nav button#createTab").tab('show');
+            
+            frmSearch = {
+
+                ArtistName: rowData.ArtistName,
+                AlbumId: rowData.AlbumId
+            }
+
+          
+ $.ajax({
+     type: 'POST',
+     url: '@Url.Action("SearchSong1", "Spot")',
+     data: frmSearch,
+     dataType: "json",
+     success: function (result) {
+         debugger
+         bindingTableSongAlbum(result.Data);
+         /* bindingTable(result.Data); */
+     },
+     error: function (request, status, error) {
+         console.log(error);
+     }
+ });
+
+
+        });
+
+
+
+        function bindingTableAlbum(albumData) {
+
+            $('#dvTableAlbum').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTableAlbum').DataTable({
+
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: albumData,
+                searching: false,
+                lengthchange: false,
+                scrollx: false,
+                info: false,
+
+                columns: [
+
+
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+
+                    },
+
+                    {
+                        data: null, className: 'text-center', orderable: false, sortable: false,
+
+                        render: function (data, type, row, meta) {
+
+
+                            return (meta.row + 1)
+                        }
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.AlbumName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ArtistName;
+
+                        }
+
+                    }
+                ]
+
+
+            });
+            //rowCount = dataTable.rows().count();
+                }
+
+
+
+                function bindingTableSongAlbum(songAlbumData) {
+
+                    $('#dvTableSongAlbum').show();
+                    // Initialize DataTable
+                    dataTable = $('#tblDataTableSongAlbum').DataTable({
+
+                        destroy: true, //ล้างข้อมูลก่อนหน้า
+                        data: songAlbumData,
+                        searching: false,
+                        lengthchange: false,
+                        scrollx: false,
+                        info: false,
+
+                        columns: [
+
+
+
+                            {
+                                data: null, className: 'text-center', orderable: false, sortable: false,
+
+                                render: function (data, type, row, meta) {
+
+
+                                    return (meta.row + 1)
+                                }
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+                                render: function (data, type, row) {
+
+                                    return data.SongName;
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.ArtistName;
+
+                                }
+
+                            },
+                           
+
+
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+                                    debugger
+                                    var duration = data.SongLength
+                                    var minutes = Math.floor(duration / 60);
+                                    var seconds = Math.floor(duration % 60);
+
+                                    // Ensure seconds are displayed with two digits
+                                    var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                                    return duration != null ? minutes + ':' + formattedSeconds : "";
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.SongGenres;
+
+                                }
+
+                            }
+                        ]
+
+
+                    });
+                    //rowCount = dataTable.rows().count();
+                }
+            </script>
+        }

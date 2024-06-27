@@ -18,6 +18,7 @@ namespace Project123Api.Repositories
         Task<ResponseModel> CreateSong(SongModel SongData);
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
+        Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
         
     }
 
@@ -71,7 +72,7 @@ namespace Project123Api.Repositories
         {
             ResponseModel response = new ResponseModel();
             string sqlCreateSong = @"INSERT INTO Albums (AlbumName, ArtistName, AlbumImage) 
-                             VALUES (@AlbumName, @ArtistName, @AlbumImage,)";
+                             VALUES (@AlbumName, @ArtistName, @AlbumImage)";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -151,7 +152,7 @@ namespace Project123Api.Repositories
             ResponseModel response = new ResponseModel();
 
             // Check if all fields in UserData are null or empty
-            if (string.IsNullOrEmpty(SongData.SongName) && string.IsNullOrEmpty(SongData.ArtistName))
+            if (string.IsNullOrEmpty(SongData.SongName) && string.IsNullOrEmpty(SongData.ArtistName)&&SongData.AlbumId ==null)
             {
                 response.Status = "E";
                 response.Message = "Error: Cant'find song";
@@ -270,6 +271,109 @@ namespace Project123Api.Repositories
             }
 
             return songList;
+        }
+
+
+        public async Task<IEnumerable<AlbumModel>> SearchAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            // Check if all fields in UserData are null or empty
+            if (string.IsNullOrEmpty(AlbumData.AlbumName) && string.IsNullOrEmpty(AlbumData.ArtistName))
+            {
+                response.Status = "E";
+                response.Message = "Error: Cant'find Album";
+
+                return new List<AlbumModel>(); // Return empty list indicating no data found
+            }
+
+            List<AlbumModel> albumList = new List<AlbumModel>();
+            string sqlSelect = @"SELECT s.AlbumId,s.AlbumName, s.ArtistName,s.AlbumImage
+                     FROM dbo.Albums s";
+
+            List<string> sqlWhereClauses = new List<string>();
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+            if (AlbumData.AlbumId.HasValue)
+            {
+                sqlWhereClauses.Add("s.SoAlbumIdngId = @AlbumId");
+                sqlParameters.Add(new SqlParameter("@AlbumId", AlbumData.AlbumId.Value));
+            }
+
+
+
+            if (!string.IsNullOrEmpty(AlbumData.AlbumName))
+            {
+                sqlWhereClauses.Add("s.AlbumName = @AlbumName");
+                sqlParameters.Add(new SqlParameter("@AlbumName", AlbumData.AlbumName));
+            }
+
+            if (!string.IsNullOrEmpty(AlbumData.ArtistName))
+            {
+                sqlWhereClauses.Add("s.ArtistName = @ArtistName");
+                sqlParameters.Add(new SqlParameter("@ArtistName", AlbumData.ArtistName));
+            }
+
+            if (!string.IsNullOrEmpty(AlbumData.AlbumImagePath))
+            {
+                sqlWhereClauses.Add("s.AlbumImage = @AlbumImage");
+                sqlParameters.Add(new SqlParameter("@AlbumImage", AlbumData.AlbumImagePath));
+            }
+
+
+
+
+            string sqlWhere = sqlWhereClauses.Count > 0 ? " WHERE " + string.Join(" AND ", sqlWhereClauses) : "";
+            sqlSelect += sqlWhere;
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                AlbumModel album = new AlbumModel
+                                {
+                                    AlbumId = reader.GetInt32("AlbumId"),                            
+                                    AlbumName = reader["AlbumName"].ToString(),
+                                    ArtistName = reader["ArtistName"].ToString(),                                                             
+                                    AlbumImagePath = reader["AlbumImage"].ToString(),
+                                };
+                                albumList.Add(album);
+                            }
+                        }
+                    }
+                }
+
+                if (albumList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return albumList;
         }
 
 
