@@ -226,11 +226,11 @@
             // Handle row click in the song table
             $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
                 var rowData = $('#tblDataTableSongAlbum').DataTable().row(this).data();
-               
+
                 // Check if rowData is not null
                 if (rowData) {
                     // Set the audio source
-                    debugger
+
                     $('#songAudioPreview').attr('src', rowData.SongFilePath);
 
                     // Load the new audio source
@@ -286,7 +286,7 @@
      data: frmSearch,
      dataType: "json",
      success: function (result) {
-         debugger
+
          bindingTableAlbum(result.Data);
          /* bindingTable(result.Data); */
      },
@@ -309,7 +309,7 @@
                 data: frmSearch,
                 dataType: "json",
                 success: function (result) {
-                    debugger
+
                     bindingTableSong(result.Data);
                     /* bindingTable(result.Data); */
                 },
@@ -370,7 +370,17 @@
                     console.error(error);
                 }
             });
-        }
+                }
+
+                function clearAlbumValue() {
+
+
+                };
+                function clearValue() {
+
+
+                };
+              
 
         function bindingTableSong(songData) {
 
@@ -435,7 +445,7 @@
                     data: null, className: 'text-center', orderable: false,
 
                     render: function (data, type, row) {
-                        debugger
+
                         var duration = data.SongLength
                         var minutes = Math.floor(duration / 60);
                         var seconds = Math.floor(duration % 60);
@@ -463,36 +473,66 @@
 
             });
             //rowCount = dataTable.rows().count();
-        }
+                }
+
+
 
         $('#tblDataTableAlbum').on('click', '.btn-edit', function () {
             SaveStatus = "Update";
             rowData = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
-            debugger
+
             $('#h1Album').text(rowData.AlbumName);
             $(".nav button#createTab").tab('show');
-            
+
             frmSearch = {
 
                 ArtistName: rowData.ArtistName,
                 AlbumId: rowData.AlbumId
             }
 
-          
+
  $.ajax({
      type: 'POST',
      url: '@Url.Action("SearchSong1", "Spot")',
      data: frmSearch,
      dataType: "json",
      success: function (result) {
-         debugger
+          
          bindingTableSongAlbum(result.Data);
+         bindingTableArtistSongAlbum(result.Data.ArtistName);
+
          /* bindingTable(result.Data); */
      },
      error: function (request, status, error) {
          console.log(error);
      }
  });
+
+
+             frmSearchArtist = {
+
+                ArtistName: rowData.ArtistName,
+             
+            }
+
+
+ $.ajax({
+     type: 'POST',
+     url: '@Url.Action("SearchSong1", "Spot")',
+     data: frmSearchArtist,
+     dataType: "json",
+     success: function (result) {
+          
+         debugger
+         bindingTableArtistSongAlbum(result.Data);
+
+         /* bindingTable(result.Data); */
+     },
+     error: function (request, status, error) {
+         console.log(error);
+     }
+ });
+
 
 
         });
@@ -605,14 +645,14 @@
                                 }
 
                             },
-                           
+
 
 
                             {
                                 data: null, className: 'text-center', orderable: false,
 
                                 render: function (data, type, row) {
-                                    debugger
+
                                     var duration = data.SongLength
                                     var minutes = Math.floor(duration / 60);
                                     var seconds = Math.floor(duration % 60);
@@ -634,7 +674,117 @@
 
                                 }
 
+                            },
+
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                data: null,
+                                defaultContent: '<i class="fa-solid fa-delete btn-remove">remove</i>',
+
                             }
+                        ]
+
+
+                    });
+                    //rowCount = dataTable.rows().count();
+                }
+
+
+                function bindingTableArtistSongAlbum(songAlbumData) {
+
+                    $('#dvSearchArtistSongAlbum').show();
+                    // Initialize DataTable
+                    dataTable = $('#tblDataTableSearchArtistSongAlbum').DataTable({
+
+                        destroy: true, //ล้างข้อมูลก่อนหน้า
+                        data: songAlbumData,
+                        searching: false,
+                        lengthchange: false,
+                        scrollx: false,
+                        info: false,
+
+                        columns: [
+
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                data: null,
+                                defaultContent: '<i class="fa-solid fa-delete btn-add-song">Add</i>',
+
+                            },
+
+                            {
+                                data: null, className: 'text-center', orderable: false, sortable: false,
+
+                                render: function (data, type, row, meta) {
+
+
+                                    return (meta.row + 1)
+                                }
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+                                render: function (data, type, row) {
+
+                                    if (data.SongName == null) {
+                                        return "";
+                                    }
+                                    else {
+                                        return data.SongName;
+                                    }
+                                 
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    if (data.ArtistName == null) {
+                                        return "";
+                                    }
+                                    else {
+                                        return data.ArtistName;
+                                    }
+
+                                }
+
+                            },
+
+
+
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    var duration = data.SongLength
+                                    var minutes = Math.floor(duration / 60);
+                                    var seconds = Math.floor(duration % 60);
+
+                                    // Ensure seconds are displayed with two digits
+                                    var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                                    return duration != null ? minutes + ':' + formattedSeconds : "";
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.SongGenres == null ? "" : data.SongGenres;
+
+                                }
+
+                            },
+
+                        
                         ]
 
 

@@ -247,7 +247,7 @@ namespace Project123.Controllers
 
             if (AlbumId != null)
             {
-                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString(), sanitizedName);
+                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString());
             }
             else
             {
@@ -259,6 +259,7 @@ namespace Project123.Controllers
 
             // Check for duplicate file
             var existingFiles = Directory.GetFiles(albumFolderPath, file.FileName);
+            var FileName = "";
 
             if (existingFiles.Length > 0)
             {
@@ -266,7 +267,14 @@ namespace Project123.Controllers
             }
 
             // Generate a unique file name and get the full file path
-            var FileName = file.FileName;
+            if (file.ContentType == "audio/mpeg")
+            {
+                 FileName = Name + ".mp3";
+            }
+            else
+            {
+                 FileName = file.FileName;
+            }
             var filePath = Path.Combine(albumFolderPath, FileName);
 
             // Save the file to the generated path
@@ -377,6 +385,57 @@ namespace Project123.Controllers
         }
 
 
+        [HttpPost("Spot/GetAlbum1")]
+        public async Task<IActionResult> GetAlbum(AlbumModel albumData)
+        {
+            List<AlbumModel> albumList = new List<AlbumModel>();
+            
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+
+                    string requestJson = JsonConvert.SerializeObject(albumData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetAlbum", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        albumList = await response.Content.ReadAsAsync<List<AlbumModel>>();
+
+                        if (albumList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Success";
+                        }
+
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error:";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error:";
+                    }
+                }
+
+
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = albumList });
+        }
 
         [HttpPost("Spot/SearchAlbum1")]
         public async Task<IActionResult> SearchAlbum(AlbumModel AlbumData)

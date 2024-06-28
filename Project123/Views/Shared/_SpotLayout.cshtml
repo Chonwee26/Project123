@@ -323,7 +323,7 @@
                     $('#main').css('margin-left', ui.size.width + 'px');
                 }
             });
-     
+
             function changeIconClass(activeIcon, inactiveIcon) {
                 $(activeIcon).addClass('active-icon').removeClass('inactive-icon');
                 $(inactiveIcon).addClass('inactive-icon').removeClass('active-icon');
@@ -342,7 +342,21 @@
                 changeIconClass('#iconLove', '#iconHome, #iconSearch');
             });
         });
-       
+            function getAlbum() {
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("GetAlbum1", "Spot")',
+             dataType: "json",
+             success: function (result) {
+                 debugger
+                 bindingTableSongAlbum(result.Data);
+                 /* bindingTable(result.Data); */
+             },
+             error: function (request, status, error) {
+                 console.log(error);
+             }
+         });
+     }
 
 
     </script>

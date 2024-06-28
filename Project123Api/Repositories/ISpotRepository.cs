@@ -19,6 +19,7 @@ namespace Project123Api.Repositories
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
+        Task<IEnumerable<AlbumModel>>GetAlbum(AlbumModel AlbumData);
         
     }
 
@@ -377,7 +378,71 @@ namespace Project123Api.Repositories
         }
 
 
+        public async Task<IEnumerable<AlbumModel>> GetAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel response = new ResponseModel();
 
+            // Check if all fields in UserData are null or empty
+          
+
+            List<AlbumModel> albumList = new List<AlbumModel>();
+            string sqlSelect = @"SELECT s.AlbumId,s.AlbumName, s.ArtistName,s.AlbumImage
+                     FROM dbo.Albums s";
+
+           
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+         
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                AlbumModel album = new AlbumModel
+                                {
+                                    AlbumId = reader.GetInt32("AlbumId"),
+                                    AlbumName = reader["AlbumName"].ToString(),
+                                    ArtistName = reader["ArtistName"].ToString(),
+                                    AlbumImagePath = reader["AlbumImage"].ToString(),
+                                };
+                                albumList.Add(album);
+                            }
+                        }
+                    }
+                }
+
+                if (albumList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return albumList;
+        }
 
 
     }

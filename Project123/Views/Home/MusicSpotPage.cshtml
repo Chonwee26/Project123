@@ -184,11 +184,8 @@
 @section Scripts{
     <script type="text/javascript">
         $(document).ready(function () {
-            function toggleAsideDisplay() {
-                $('#aside').toggle();
-                $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
-            }
-
+            getAlbum();
+         
             $('.img-music-content').on('click', function () {
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
@@ -201,6 +198,11 @@
                 toggleAsideDisplay();
             });
         });
+        function toggleAsideDisplay() {
+            $('#aside').toggle();
+            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+        }
+
 
         //$('#aside').on('change', function () {
 

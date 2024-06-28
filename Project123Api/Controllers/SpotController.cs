@@ -74,6 +74,18 @@ namespace Project123Api.Controllers
             return songList;
         }
 
+
+        [HttpPost("GetAlbum")]
+        public async Task<IEnumerable<AlbumModel>> GetAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<AlbumModel> albumList = await _spotRepo.GetAlbum(AlbumData);
+
+            return albumList;
+        }
+
+
         [HttpPost("SearchAlbum")]
         public async Task<IEnumerable<AlbumModel>> SearchAlbum(AlbumModel AlbumData)
         {
