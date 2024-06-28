@@ -230,6 +230,84 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+
+        [HttpPost("Spot/UpdateSong1")]
+        public async Task<IActionResult> UpdateSong(SongModel SongData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        // Save files and update paths in SongData
+                        if (SongData.SongFile != null)
+                        {
+                            var (filePath, error) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+
+                            SongData.SongFilePath = filePath;
+                        }
+
+                        if (SongData.SongImage != null)
+                        {
+                            var (filePath, error) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+
+                            SongData.SongImagePath = filePath;
+                        }
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var songDataCopy = new
+                        {
+                            SongData.AlbumId,
+                            SongData.ArtistName,
+                            SongData.SongFilePath,
+                            SongData.SongGenres,
+                            SongData.SongId,
+                            SongData.SongImagePath,
+                            SongData.SongName,
+                            SongData.SongLength
+                        };
+
+                        string requestJson = JsonConvert.SerializeObject(songDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/CreateSong123", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+
+
         private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string Name, int? AlbumId)
         {
             if (file == null || file.Length == 0)

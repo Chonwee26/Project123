@@ -87,7 +87,7 @@
         table.dataTable thead .sorting_asc{
            background-image:none!important;
         }
-        .btn-edit{
+        .btn-edit,.btn-delete{
             cursor:pointer;
         }
 
@@ -98,7 +98,8 @@
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
         <button class="nav-link active" id="searchTab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Search</button>
-        <button class="nav-link" id="createTab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Create</button>
+        <button class="nav-link" id="albumTab" data-bs-toggle="tab" data-bs-target="#nav-album" type="button" role="tab" aria-controls="nav-album" aria-selected="false">Album</button>
+        <button class="nav-link" id="songTab" data-bs-toggle="tab" data-bs-target="#nav-song" type="button" role="tab" aria-controls="nav-song" aria-selected="false">Song</button>
     </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -131,6 +132,7 @@
                                         <th>#</th>
                                         <th>Album</th>
                                         <th>Artist</th>
+                                        <th style="width:80px!important;">Delete</th>
 
 
 
@@ -158,7 +160,9 @@
                             <input type="text" id="txtSongGenres" placeholder="Genres">
                             <input type="file" id="fileSongImage" placeholder="Song Image URL">
                             <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
+                            
                             <button type="button" onclick="createSong()">Create Song</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearValue()">Clear Value</button>
                             <button type="button" onclick="searchSong()">Search Song</button>
 
 
@@ -168,12 +172,14 @@
                                     <thead>
                                         <tr class=" ">
 
+                                            <th>Edit</th>
                                             <th>#</th>
                                             <th>Title</th>
                                             <th>Artist</th>
                                             <th>Album</th>
                                             <th>Duration</th>
                                             <th>Genres</th>
+                                            <th>Delete</th>
 
 
                                         </tr>
@@ -188,24 +194,31 @@
             </div>
         </div>
     </div>
-    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-        <partial name="_SpotAdminView" />
+    <div class="tab-pane fade" id="nav-album" role="tabpanel" aria-labelledby="nav-album-tab">
+        <partial name="_SpotAdminAlbumView" />
     </div>
-    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+    <div class="tab-pane fade" id="nav-song" role="tabpanel" aria-labelledby="nav-song-tab">
+
+        <partial name="_SpotAdminSongView" />
+    </div>
 </div>
 
         @section Scripts{
             <script>
-        var duration;
-        var audioControl;
-        var audioDurationElement;
+                var duration;
+                var audioControl;
+                var audioDurationElement;
+                var audioControlEdit;
+                var audioDurationElementEdit;
+                var durationEdit;
 
         $(document).ready(function () {
 
             audioControl = $('#audiocontrolPreview')[0];
             audioDurationElement = $('#duration');
-
+         
             $('#fileSongFile').change(function (e) {
+                debugger
                 var file = e.target.files[0];
                 var url = URL.createObjectURL(file);
 
@@ -219,7 +232,15 @@
                     $('#durationInput').val(parseInt(duration));
                     console.log(audioDurationElement.text());
                 });
-                $('#songAudioPreview').attr('src', url);
+                debugger
+                if  ($('#fileSongFile').val() != null) {
+                    $('#songAudioPreview').attr('src', url);
+
+                }
+                else {
+                    $('#songAudioPreview').removeAttribute('src')
+
+                }
                 audioControl.load(); // Reload audio player to apply the new source
                 $('#audiocontrolPreview').show();
             });
@@ -374,11 +395,20 @@
 
                 function clearAlbumValue() {
 
-
+                    $('#albumSongForm')[0].reset();
+                    $('#albumArtistSongForm')[0].reset();
+                    $('#tblDataTableSongAlbum').dataTable().empty();
+                    $('#tblDataTableSearchArtistSongAlbum').dataTable().empty();
                 };
                 function clearValue() {
-
-
+                    $('#fileSongFile').val(null)
+                    $('#albumForm')[0].reset();
+                    $('#songForm')[0].reset();
+                    $('#tblDataTableAlbum').dataTable().empty();
+                    $('#tblDataTableSong').dataTable().empty();
+                    $('#songAudioPreview').attr('src', '#');
+                    $('#audiocontrolPreview').hide();
+                 
                 };
               
 
@@ -397,6 +427,13 @@
 
                 columns: [
 
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+
+                    },
 
 
                     {
@@ -467,7 +504,14 @@
 
                     }
 
-                }
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                    }
              ]
 
 
@@ -482,7 +526,7 @@
             rowData = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
 
             $('#h1Album').text(rowData.AlbumName);
-            $(".nav button#createTab").tab('show');
+            $(".nav button#albumTab").tab('show');
 
             frmSearch = {
 
@@ -491,7 +535,7 @@
             }
 
 
- $.ajax({
+  $.ajax({
      type: 'POST',
      url: '@Url.Action("SearchSong1", "Spot")',
      data: frmSearch,
@@ -499,7 +543,7 @@
      success: function (result) {
           
          bindingTableSongAlbum(result.Data);
-         bindingTableArtistSongAlbum(result.Data.ArtistName);
+       
 
          /* bindingTable(result.Data); */
      },
@@ -538,6 +582,15 @@
         });
 
 
+
+
+                $('#tblDataTableSong').on('click', '.btn-edit', function () {
+                    SaveStatus = "Update";
+                    rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+
+
+                    $(".nav button#songTab").tab('show');
+                });
 
         function bindingTableAlbum(albumData) {
 
@@ -589,6 +642,13 @@
                             return data.ArtistName;
 
                         }
+
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
 
                     }
                 ]
@@ -692,104 +752,72 @@
 
 
                 function bindingTableArtistSongAlbum(songAlbumData) {
-
                     $('#dvSearchArtistSongAlbum').show();
+
                     // Initialize DataTable
                     dataTable = $('#tblDataTableSearchArtistSongAlbum').DataTable({
-
-                        destroy: true, //ล้างข้อมูลก่อนหน้า
+                        destroy: true, // Clear previous data
                         data: songAlbumData,
                         searching: false,
                         lengthchange: false,
                         scrollx: false,
                         info: false,
-
                         columns: [
-
                             {
                                 className: 'text-center',
                                 orderable: false,
                                 data: null,
-                                defaultContent: '<i class="fa-solid fa-delete btn-add-song">Add</i>',
-
+                                defaultContent: '<input type="checkbox" class="select-row">',
                             },
-
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
-
                                 render: function (data, type, row, meta) {
-
-
-                                    return (meta.row + 1)
+                                    return (meta.row + 1);
                                 }
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
                                 render: function (data, type, row) {
-
-                                    if (data.SongName == null) {
-                                        return "";
-                                    }
-                                    else {
-                                        return data.SongName;
-                                    }
-                                 
-
+                                    return data.SongName == null ? "" : data.SongName;
                                 }
-
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
-
                                 render: function (data, type, row) {
-
-                                    if (data.ArtistName == null) {
-                                        return "";
-                                    }
-                                    else {
-                                        return data.ArtistName;
-                                    }
-
+                                    return data.ArtistName == null ? "" : data.ArtistName;
                                 }
-
                             },
-
-
-
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
-                                    var duration = data.SongLength
+                                    var duration = data.SongLength;
                                     var minutes = Math.floor(duration / 60);
                                     var seconds = Math.floor(duration % 60);
-
-                                    // Ensure seconds are displayed with two digits
                                     var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-                                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
                                     return duration != null ? minutes + ':' + formattedSeconds : "";
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.SongGenres == null ? "" : data.SongGenres;
-
                                 }
-
                             },
-
-                        
                         ]
-
-
                     });
-                    //rowCount = dataTable.rows().count();
+
+                    // Event listener for checkbox change
+                    $('#tblDataTableSearchArtistSongAlbum tbody').on('change', '.select-row', function () {
+                        var data = dataTable.row($(this).closest('tr')).data();
+                        if (this.checked) {
+                            // Handle the row being checked
+                            console.log('Selected:', data);
+                        } else {
+                            // Handle the row being unchecked
+                            console.log('Unselected:', data);
+                        }
+                    });
                 }
+
             </script>
         }
