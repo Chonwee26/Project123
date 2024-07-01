@@ -83,6 +83,16 @@ namespace Project123Api.Controllers
         }
 
 
+        [HttpPost("DeleteSong")]
+        public async Task<ResponseModel> DeleteSong(SongModel SongData)
+        {
+            ResponseModel resp = await _spotRepo.DeleteSong(SongData);
+            return resp;
+
+
+        }
+
+
         [HttpPost("SearchSong")]
         public async Task<IEnumerable<SongModel>> SearchSong(SongModel SongData)
         {

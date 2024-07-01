@@ -17,6 +17,7 @@ namespace Project123Api.Repositories
     {
         Task<ResponseModel> CreateSong(SongModel SongData);
         Task<ResponseModel> UpdateSong(SongModel SongData);
+        Task<ResponseModel> DeleteSong(SongModel SongData);
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
@@ -194,6 +195,39 @@ namespace Project123Api.Repositories
             }
 
             return response;
+        }
+
+        public async Task<ResponseModel> DeleteSong(SongModel SongData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlCreateUser = @"DELETE dbo.Song WHERE SongId = @SongId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlCreateUser, connection);
+                    command.Parameters.AddWithValue("@SongId", SongData.SongId);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Song Delete successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(response);
         }
 
 
