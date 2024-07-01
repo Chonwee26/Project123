@@ -16,6 +16,7 @@ namespace Project123Api.Repositories
     public interface ISpotRepository
     {
         Task<ResponseModel> CreateSong(SongModel SongData);
+        Task<ResponseModel> UpdateSong(SongModel SongData);
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
@@ -121,6 +122,54 @@ namespace Project123Api.Repositories
                 {
                     SqlCommand command = new SqlCommand(sqlCreateSong, connection);
                     command.Parameters.AddWithValue("@AlbumId", SongData.AlbumId ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@ArtistName", SongData.ArtistName ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongName", SongData.SongName ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongFile", SongData.SongFilePath ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongGenres", SongData.SongGenres ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongImage", SongData.SongImagePath ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongLength", SongData.SongLength ?? (object)DBNull.Value);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "User created successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return response;
+        } 
+        public async Task<ResponseModel> UpdateSong(SongModel SongData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlUpdateSong = @"UPDATE Song 
+                        SET AlbumId = @AlbumId,                          
+                            ArtistName = @ArtistName, 
+                            SongName = @SongName, 
+                            SongFile = @SongFile, 
+                            SongGenres = @SongGenres, 
+                            SongImage = @SongImage, 
+                            SongLength = @SongLength 
+                        WHERE SongId = @SongId";
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlUpdateSong, connection);
+                    command.Parameters.AddWithValue("@AlbumId", SongData.AlbumId ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@SongId", SongData.SongId);
                     command.Parameters.AddWithValue("@ArtistName", SongData.ArtistName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@SongName", SongData.SongName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@SongFile", SongData.SongFilePath ?? (object)DBNull.Value);

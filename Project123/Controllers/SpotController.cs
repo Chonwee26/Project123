@@ -112,7 +112,7 @@ namespace Project123.Controllers
                       
                         if (AlbumData.AlbumImage != null)
                         {
-                            var (filePath, error) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId);
+                            var (filePath, error, oldFolderPath) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId,AlbumData.AlbumImagePath);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -172,7 +172,7 @@ namespace Project123.Controllers
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            var (filePath, error, oldFolderPath) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId, SongData.SongFilePath);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -183,7 +183,7 @@ namespace Project123.Controllers
 
                         if (SongData.SongImage != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            var (filePath, error, oldFolderPath) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId,SongData.SongImagePath);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -248,7 +248,7 @@ namespace Project123.Controllers
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            var (filePath, error, oldFolderPath) = await SaveFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId, SongData.SongFilePath);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -259,7 +259,7 @@ namespace Project123.Controllers
 
                         if (SongData.SongImage != null)
                         {
-                            var (filePath, error) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId);
+                            var (filePath, error, oldFolderPath) = await SaveFile(SongData.SongImage, SongData.ArtistName, SongData.SongName, SongData.AlbumId, SongData.SongImagePath);
                             if (error != null)
                             {
                                 return Json(new { status = "E", success = false, message = error });
@@ -284,7 +284,7 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Spot/CreateSong123", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -306,26 +306,24 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-
-
-        private async Task<(string filePath, string error)> SaveFile(IFormFile file, string artistName, string Name, int? AlbumId)
+        private async Task<(string filePath, string error, string oldFolderPath)> SaveFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
         {
             if (file == null || file.Length == 0)
             {
-                return (null, "File is empty");
+                return (null, "File is empty", null);
             }
 
             // Sanitize artist name and song name for use in file paths
             var sanitizedArtistName = SanitizeFileName(artistName);
-            var sanitizedName = SanitizeFileName(Name);
+            var sanitizedName = SanitizeFileName(name);
 
             // Create the directory path for the artist and song
             var artistFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", sanitizedArtistName);
             var albumFolderPath = "";
 
-            if (AlbumId != null)
+            if (albumId != null)
             {
-                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString());
+                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + albumId.ToString());
             }
             else
             {
@@ -335,26 +333,43 @@ namespace Project123.Controllers
             // Ensure the directories exist
             Directory.CreateDirectory(albumFolderPath);
 
-            // Check for duplicate file
-            var existingFiles = Directory.GetFiles(albumFolderPath, file.FileName);
-            var FileName = "";
-
-            if (existingFiles.Length > 0)
-            {
-                return (null, "Song already exists");
-            }
+            // Variable to store the old folder path
+         
 
             // Generate a unique file name and get the full file path
-            if (file.ContentType == "audio/mpeg")
-            {
-                 FileName = Name + ".mp3";
-            }
-            else
-            {
-                 FileName = file.FileName;
-            }
-            var filePath = Path.Combine(albumFolderPath, FileName);
+            var fileName = file.ContentType == "audio/mpeg" ? $"{name}.mp3" : file.FileName;
+            var filePath = Path.Combine(albumFolderPath, fileName);
 
+            var existingFiles = Directory.GetFiles(albumFolderPath, fileName);
+            if (existingFiles.Length > 0)
+            {
+                return (null, "Song already exists", null);
+            }
+            string oldFolderPath = null;
+
+            // Check if there's an existing file and delete it
+            if (!string.IsNullOrEmpty(existingFilePath))
+            {
+                var fullExistingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingFilePath.TrimStart('/').Replace("/", "\\"));
+                if (System.IO.File.Exists(fullExistingFilePath))
+                {
+                    oldFolderPath = Path.GetDirectoryName(fullExistingFilePath);
+                    if (albumId != null)
+                    {
+
+
+                        // Delete the existing file
+                        System.IO.File.Delete(fullExistingFilePath);
+                    }
+                    // Get the old folder path
+                    else
+                    {
+                        System.IO.File.Delete(fullExistingFilePath);
+                        System.IO.Directory.Delete(oldFolderPath);
+                    }
+
+                }
+            }
             // Save the file to the generated path
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -362,26 +377,27 @@ namespace Project123.Controllers
             }
 
             // Move file to album if AlbumId is provided
-            if (AlbumId != null)
+            if (albumId != null)
             {
-                var (newFilePath, moveError) = MoveFileToAlbum(filePath, artistFolderPath, sanitizedName, AlbumId.Value);
+                var (newFilePath, moveError) = MoveFileToAlbum(filePath, artistFolderPath, sanitizedName, albumId.Value);
                 if (moveError != null)
                 {
-                    return (null, moveError);
+                    return (null, moveError, oldFolderPath);
                 }
                 filePath = newFilePath;
             }
 
             // Return the relative path to the saved file
-            return (Path.Combine("/uploads", sanitizedArtistName, AlbumId != null ? $"Album_{AlbumId}" : sanitizedName, FileName).Replace("\\", "/"), null);
+            return (Path.Combine("/uploads", sanitizedArtistName, albumId != null ? $"Album_{albumId}" : sanitizedName, fileName).Replace("\\", "/"), null, oldFolderPath);
         }
 
+
         // Helper method to move file to album
-        private (string newFilePath, string error) MoveFileToAlbum(string filePath, string artistFolderPath, string sanitizedName, int AlbumId)
+        private (string newFilePath, string error) MoveFileToAlbum(string filePath, string artistFolderPath, string sanitizedName, int albumId)
         {
             try
             {
-                var albumFolderPath = Path.Combine(artistFolderPath, "Album_" + AlbumId.ToString());
+                var albumFolderPath = Path.Combine(artistFolderPath, "Album_" + albumId.ToString());
                 Directory.CreateDirectory(albumFolderPath);
                 var newFilePath = Path.Combine(albumFolderPath, Path.GetFileName(filePath));
                 System.IO.File.Move(filePath, newFilePath);
@@ -402,6 +418,7 @@ namespace Project123.Controllers
             }
             return name;
         }
+
 
 
 

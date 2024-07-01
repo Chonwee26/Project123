@@ -211,76 +211,157 @@
                 var audioControlEdit;
                 var audioDurationElementEdit;
                 var durationEdit;
+            /*    var rowDataEdit;*/
 
         $(document).ready(function () {
-
             audioControl = $('#audiocontrolPreview')[0];
             audioDurationElement = $('#duration');
-         
-            $('#fileSongFile').change(function (e) {
-                debugger
-                var file = e.target.files[0];
-                var url = URL.createObjectURL(file);
-
-                $(audioControl).on('loadedmetadata', function () {
-                    duration = audioControl.duration;
-                    var minutes = Math.floor(duration / 60);
-                    var seconds = Math.floor(duration % 60);
-                    // Ensure seconds are displayed with two digits
-                    var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
-                    $('#durationInput').val(parseInt(duration));
-                    console.log(audioDurationElement.text());
-                });
-                debugger
-                if  ($('#fileSongFile').val() != null) {
-                    $('#songAudioPreview').attr('src', url);
-
-                }
-                else {
-                    $('#songAudioPreview').removeAttribute('src')
-
-                }
-                audioControl.load(); // Reload audio player to apply the new source
-                $('#audiocontrolPreview').show();
-            });
-            // Handle row click in the song table
-            $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
-                var rowData = $('#tblDataTableSongAlbum').DataTable().row(this).data();
-
-                // Check if rowData is not null
-                if (rowData) {
-                    // Set the audio source
-
-                    $('#songAudioPreview').attr('src', rowData.SongFilePath);
-
-                    // Load the new audio source
-                    audioControl.load();
-
-                    // Display the audio control
-                    $('#audiocontrolPreview').show();
-
-                    // Play the audio (optional)
-                    // audioControl.play();
-                } else {
-                    console.error('Row data is null or undefined');
-                }
-            });
-
-
-            $('#fileAlbumImage').change(function () {
-                showPreview(this, '#albumImagePreview', 'image');
-            });
-
-            $('#fileSongImage').change(function () {
-                showPreview(this, '#songImagePreview', 'image');
-            });
-
-
-            $('#btnCancel').click(function () {
-                $(".nav button#searchTab").tab('show');
-            });
+            audioControlEdit = $('#audiocontrolPreviewEdit')[0];
+            audioDurationElementEdit = $('#durationEdit');        
         });
+            //Edit section Start
+                $('#fileSongImageEdit').change(function () {
+                    showPreview(this, '#songImagePreviewEdit', 'image');
+                });
+
+                $('#btnCancelEdit').click(function () {
+                    $(".nav button#searchTab").tab('show');
+                });
+                $('#fileSongFileEdit').change(function (e) {
+                    var file = e.target.files[0];
+                    var url = URL.createObjectURL(file);
+
+                    $(audioControlEdit).on('loadedmetadata', function () {
+                        durationEdit = audioControlEdit.duration;
+                        var minutes = Math.floor(durationEdit / 60);
+                        var seconds = Math.floor(durationEdit % 60);
+                        var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                        audioDurationElementEdit.text('Duration: ' + minutes + ':' + formattedSeconds);
+                        $('#durationInputEdit').val(parseInt(durationEdit));
+                    });
+
+                    if ($('#fileSongFileEdit').val() != null) {
+                        debugger
+                        $('#songAudioPreviewEdit').attr('src', url);
+                    } else {
+                        $('#songAudioPreviewEdit').removeAttr('src');
+                    }
+                    audioControlEdit.load();
+                    $('#audiocontrolPreviewEdit').show();
+                });
+
+
+
+                function EditSongSave() {
+                    debugger
+                    if (!durationEdit) {
+                        alert("Please wait until the audio duration is loaded.");
+                        return;
+                    }
+
+                    var formData = new FormData();
+                    formData.append("AlbumId", $("#txtSongAlbumIdEdit").val());
+                    formData.append("SongId", rowData.SongId);
+                    formData.append("ArtistName", $("#txtSongArtistEdit").val());
+                    formData.append("SongName", $("#txtSongNameEdit").val());
+                    formData.append("SongFile", $("#fileSongFileEdit")[0].files[0]);
+                    formData.append("SongFilePath", rowData.SongFilePath);
+                    formData.append("SongGenres", $("#txtSongGenresEdit").val());
+                    formData.append("SongImage", $("#fileSongImageEdit")[0].files[0]);
+                    formData.append("SongImagePath", rowData.SongImagePath);
+                    formData.append("SongLength", $('#durationInputEdit').val());
+
+                    console.log(durationEdit);
+                    console.log(formData);
+
+                    $.ajax({
+                        url: '@Url.Action("UpdateSong1", "Spot")',
+                        contentType: false,
+                        type: 'POST',
+                        processData: false,
+                        data: formData,
+                        success: function (result) {
+                            alert('Edit saved successfully');
+                        },
+                        error: function (error) {
+                            console.error(error);
+                        }
+                    });
+                }
+
+                $('#tblDataTableSong').on('click', '.btn-edit', function () {
+                    SaveStatus = "Update";
+                    rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+
+                    $('#txtSongAlbumIdEdit').val(rowData.AlbumId == null || rowData.AlbumId == undefined ? "" : rowData.AlbumId);
+                    $('#txtSongArtistEdit').val(rowData.ArtistName);
+                    $('#txtSongNameEdit').val(rowData.SongName);
+                    $('#txtSongGenresEdit').val(rowData.SongGenres);
+               //     /*      $('#fileSongFileEdit').val(rowData.SongFilePath);*/
+               //     $('#audiocontrolPreviewEdit').val();
+               ///*     $('#songAudioPreviewEdit').val(rowData.SongFilePath);*/
+               //    /* $('#songAudioPreview').attr('src', rowData.SongFilePath);*/
+               //     $('#durationEdit').val();
+               //     $('#durationInputEdit').val();
+               //     $('#fileSongImageEdit').val();
+               //     $('#songImagePreviewEdit').val();
+
+                    $(".nav button#songTab").tab('show');
+                });
+
+                //Edit section End
+
+                
+                $('#fileSongFile').change(function (e) {              
+                    var file = e.target.files[0];
+                    var url = URL.createObjectURL(file);
+
+                    $(audioControl).on('loadedmetadata', function () {
+                        duration = audioControl.duration;
+                        var minutes = Math.floor(duration / 60);
+                        var seconds = Math.floor(duration % 60);
+                        // Ensure seconds are displayed with two digits
+                        var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                        audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                        $('#durationInput').val(parseInt(duration));                   
+                    });
+                
+                    if ($('#fileSongFile').val() != null) {
+                        $('#songAudioPreview').attr('src', url);
+                    }
+                    else {
+                        $('#songAudioPreview').removeAttribute('src')
+                    }
+                    audioControl.load(); // Reload audio player to apply the new source
+                    $('#audiocontrolPreview').show();
+                });
+            
+                $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
+                    var rowData = $('#tblDataTableSongAlbum').DataTable().row(this).data();
+
+                    if (rowData) {
+                        $('#songAudioPreview').attr('src', rowData.SongFilePath);
+                        // Load the new audio source
+                        audioControl.load();                 
+                        $('#audiocontrolPreview').show();
+                        // Play the audio (optional)
+                        // audioControl.play();
+                    } else {
+                        console.error('Row data is null or undefined');
+                    }
+                });
+
+                $('#fileAlbumImage').change(function () {
+                    showPreview(this, '#albumImagePreview', 'image');
+                });
+
+                $('#fileSongImage').change(function () {
+                    showPreview(this, '#songImagePreview', 'image');
+                });
+
+                $('#btnCancel').click(function () {
+                    $(".nav button#searchTab").tab('show');
+                });
 
         function showPreview(input, previewSelector, type) {
             if (input.files && input.files[0]) {
@@ -292,10 +373,10 @@
                         $(previewSelector).show();
                     }
                 }
-
                 reader.readAsDataURL(input.files[0]);
             }
-        }
+                }
+
         function searchAlbum() {
             frmSearch = {
                 AlbumName: $("#txtAlbumName").val(),
@@ -412,185 +493,179 @@
                 };
               
 
-        function bindingTableSong(songData) {
+                function bindingTableSong(songData) {
 
-            $('#dvTableSong').show();
-            // Initialize DataTable
-            dataTable = $('#tblDataTableSong').DataTable({
+                    $('#dvTableSong').show();
+                    // Initialize DataTable
+                    dataTable = $('#tblDataTableSong').DataTable({
 
-                destroy: true, //ล้างข้อมูลก่อนหน้า
-                data: songData,
-                searching: false,
-                lengthchange: false,
-                scrollx: false,
-                info: false,
+                        destroy: true, //ล้างข้อมูลก่อนหน้า
+                        data: songData,
+                        searching: false,
+                        lengthchange: false,
+                        scrollx: false,
+                        info: false,
 
-                columns: [
+                        columns: [
 
-                    {
-                        className: 'text-center',
-                        orderable: false,
-                        data: null,
-                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                data: null,
+                                defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
 
-                    },
-
-
-                    {
-                        data: null, className: 'text-center', orderable: false,sortable:false,
-
-                        render: function (data, type, row, meta) {
+                            },
 
 
-                            return (meta.row + 1)
-                        }
-                    },
-                    {
-                        data: null, className: 'text-left', orderable: false,
-                        render: function (data, type, row) {
+                            {
+                                data: null, className: 'text-center', orderable: false, sortable: false,
 
-                            return data.SongName;
-
-                        }
-
-                    },
-                    {
-                        data: null, className: 'text-left', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.ArtistName;
-
-                        }
-
-                    },
-                    {
-                        data: null, className: 'text-left', orderable: false,
-
-                        render: function (data, type, row) {
-
-                            return data.AlbumId
+                                render: function (data, type, row, meta) {
 
 
-                        }
+                                    return (meta.row + 1)
+                                }
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+                                render: function (data, type, row) {
+
+                                    return data.SongName;
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.ArtistName;
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-left', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.AlbumId
 
 
-                    },
+                                }
 
 
-                {
-                    data: null, className: 'text-center', orderable: false,
-
-                    render: function (data, type, row) {
-
-                        var duration = data.SongLength
-                        var minutes = Math.floor(duration / 60);
-                        var seconds = Math.floor(duration % 60);
-
-                        // Ensure seconds are displayed with two digits
-                        var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-                        audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
-                        return duration != null ? minutes + ':' + formattedSeconds : "";
-
-                    }
-
-                },
-                {
-                    data: null, className: 'text-center', orderable: false,
-
-                    render: function (data, type, row) {
-
-                        return data.SongGenres;
-
-                    }
-
-                    },
-                    {
-                        className: 'text-center',
-                        orderable: false,
-                        data: null,
-                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
-
-                    }
-             ]
+                            },
 
 
-            });
-            //rowCount = dataTable.rows().count();
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    var duration = data.SongLength
+                                    var minutes = Math.floor(duration / 60);
+                                    var seconds = Math.floor(duration % 60);
+
+                                    // Ensure seconds are displayed with two digits
+                                    var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                                    audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                                    return duration != null ? minutes + ':' + formattedSeconds : "";
+
+                                }
+
+                            },
+                            {
+                                data: null, className: 'text-center', orderable: false,
+
+                                render: function (data, type, row) {
+
+                                    return data.SongGenres;
+
+                                }
+
+                            },
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                data: null,
+                                defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                            }
+                        ]
+
+
+                    });
+                    //rowCount = dataTable.rows().count();
                 }
 
 
 
-        $('#tblDataTableAlbum').on('click', '.btn-edit', function () {
-            SaveStatus = "Update";
-            rowData = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
-
-            $('#h1Album').text(rowData.AlbumName);
-            $(".nav button#albumTab").tab('show');
-
-            frmSearch = {
-
-                ArtistName: rowData.ArtistName,
-                AlbumId: rowData.AlbumId
-            }
-
-
-  $.ajax({
-     type: 'POST',
-     url: '@Url.Action("SearchSong1", "Spot")',
-     data: frmSearch,
-     dataType: "json",
-     success: function (result) {
-          
-         bindingTableSongAlbum(result.Data);
-       
-
-         /* bindingTable(result.Data); */
-     },
-     error: function (request, status, error) {
-         console.log(error);
-     }
- });
-
-
-             frmSearchArtist = {
-
-                ArtistName: rowData.ArtistName,
-             
-            }
-
-
- $.ajax({
-     type: 'POST',
-     url: '@Url.Action("SearchSong1", "Spot")',
-     data: frmSearchArtist,
-     dataType: "json",
-     success: function (result) {
-          
-         debugger
-         bindingTableArtistSongAlbum(result.Data);
-
-         /* bindingTable(result.Data); */
-     },
-     error: function (request, status, error) {
-         console.log(error);
-     }
- });
-
-
-
-        });
-
-
-
-
-                $('#tblDataTableSong').on('click', '.btn-edit', function () {
+                $('#tblDataTableAlbum').on('click', '.btn-edit', function () {
                     SaveStatus = "Update";
-                    rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+                    rowData = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+
+                    $('#h1Album').text(rowData.AlbumName);
+                    $(".nav button#albumTab").tab('show');
+
+                    frmSearch = {
+
+                        ArtistName: rowData.ArtistName,
+                        AlbumId: rowData.AlbumId
+                    }
 
 
-                    $(".nav button#songTab").tab('show');
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SearchSong1", "Spot")',
+                        data: frmSearch,
+                        dataType: "json",
+                        success: function (result) {
+
+                            bindingTableSongAlbum(result.Data);
+
+
+                            /* bindingTable(result.Data); */
+                        },
+                        error: function (request, status, error) {
+                            console.log(error);
+                        }
+                    });
+
+
+                    frmSearchArtist = {
+
+                        ArtistName: rowData.ArtistName,
+
+                    }
+
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SearchSong1", "Spot")',
+                        data: frmSearchArtist,
+                        dataType: "json",
+                        success: function (result) {
+
+                            debugger
+                            bindingTableArtistSongAlbum(result.Data);
+
+                            /* bindingTable(result.Data); */
+                        },
+                        error: function (request, status, error) {
+                            console.log(error);
+                        }
+                    });
+
+
+
                 });
+
+
+
+
+         
 
         function bindingTableAlbum(albumData) {
 
