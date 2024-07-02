@@ -107,21 +107,59 @@
         <div class="d-flex container-fluid content">
             <div class="content main-content">
                 <div>
-                    <h1 style="color:white">Hello World</h1>
-                    <p>
+                    <h1 style="color:white">Add Song Page</h1>
+                    @*<p>
                         John Doe John Doe John Doe John Doe John Doe John Doe John Doe
                         John Doe John Doe John Doe John Doe John Doe John Doe
                         John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-                    </p>
+                    </p>*@
                     <div class="main-content-music row">
 
                         <form id="albumForm">
-                            <input type="text" id="txtAlbumArtist" placeholder="Artist Name">
-                            <input type="text" id="txtAlbumName" placeholder="Album Name">
-                            <input type="file" id="fileAlbumImage" placeholder="Image URL">
-                            <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
-                            <button type="button" onclick="createAlbum()">Create Album</button>
-                            <button type="button" onclick="searchAlbum()">Search Album</button>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>Artist name</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtAlbumArtist" placeholder="Artist Name">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>Album name</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtAlbumName" placeholder="Album Name">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-6 mt-2 ">
+                                        <h6>Add album image</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="file" id="fileAlbumImage" placeholder="Image URL">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-6 mt-4">
+                                        <div class="input-group" style=" width: 168px; height: 168px;">
+                                            <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                             <div class="row"style="">
+                                        <div class="col-8">
+                                        </div>
+
+                                        <div class="col-4 d-flex justify-content-end">
+                                            <button class="btn btn-secondary me-3" type="button" onclick="createAlbum()">Create Album</button>
+                                            <button class="btn btn-secondary" type="button" onclick="searchAlbum()">Search Album</button>
+                                        </div>
+                                </div>
+                            </div>                          
                         </form>
 
                         <div class="col-12" id="dvTableAlbum" style="display:none">
@@ -133,60 +171,112 @@
                                         <th>Album</th>
                                         <th>Artist</th>
                                         <th style="width:80px!important;">Delete</th>
-
-
-
                                     </tr>
                                 </thead>
+
                                 <tbody>
+
                                 </tbody>
                             </table>
                         </div>
 
                         <form id="songForm">
-                            <input type="text" id="txtSongAlbumId" placeholder="Album ID">
-                            <input type="text" id="txtSongArtist" placeholder="Artist Name">
-                            <input type="text" id="txtSongName" placeholder="Song Name">
-                            <input type="file" id="fileSongFile" placeholder="File URL">
-                            <audio id="audiocontrolPreview" controls style="display: none;">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>AlbumId</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtSongAlbumId" placeholder="Album ID">
+                                        </div>
+                                    </div>
 
-                                <source id="songAudioPreview" src="#" type="audio/mp3" />
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>Album name</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtSongArtist" placeholder="Artist Name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
 
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-6 mt-2">
+                                        <h6>Song name</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtSongName" placeholder="Song Name">
 
-                                Your brownser does not support this audio elemento
-                            </audio>
-                            <p id="duration"></p>
-                            <input type="number" id="durationInput" placeholder="Duration input" hidden>
-                            <input type="text" id="txtSongGenres" placeholder="Genres">
-                            <input type="file" id="fileSongImage" placeholder="Song Image URL">
-                            <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
-                            
-                            <button type="button" onclick="createSong()">Create Song</button>
-                            <button type="button" class="btn btn-secondary" onclick="clearValue()">Clear Value</button>
-                            <button type="button" onclick="searchSong()">Search Song</button>
+                                        </div>
+                                    </div>
 
-
-
-                            <div class="col-12" id="dvTableSong" style="display:none">
-                                <table id="tblDataTableSong" class="table table-bordered" width="100%">
-                                    <thead>
-                                        <tr class=" ">
-
-                                            <th>Edit</th>
-                                            <th>#</th>
-                                            <th>Title</th>
-                                            <th>Artist</th>
-                                            <th>Album</th>
-                                            <th>Duration</th>
-                                            <th>Genres</th>
-                                            <th>Delete</th>
+                                    <div class="col-12 col-sm-12 col-md-6 mt-2 row">
+                                        <h6>Add Song</h6>
+                                        <div class=" col-6">
+                                            <input class="form-control col-6" type="file" id="fileSongFile" placeholder="File URL">
 
 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                        </div>
+                                        <div class="col-6">
+                                            <audio class="col-12" id="audiocontrolPreview" controls="" style="height:38px;display:none">
+                                                <source id="songAudioPreview" src="blob:https://localhost:7166/8ff39aa5-6817-4e13-96b1-ee45a34f97c2" type="audio/mp3">
+                                                Your brownser does not support this audio elemento
+                                            </audio>
+                                            <p id="duration"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>AlbumId</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="txtSongGenres" placeholder="Genres">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-6 ">
+                                        <h6>Album name</h6>
+                                        <div class="input-group">
+                                            <input class="form-control" type="file" id="fileSongImage" placeholder="Song Image URL">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <input class="form-control" type="number" id="durationInput" placeholder="Duration input" hidden>
+
+
+
+
+                                <img id="songImagePreview" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px; " />
+
+                                <button type="button" onclick="createSong()">Create Song</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearValue()">Clear Value</button>
+                                <button type="button" onclick="searchSong()">Search Song</button>
+
+
+
+                                <div class="col-12" id="dvTableSong" style="display:none">
+                                    <table id="tblDataTableSong" class="table table-bordered" width="100%">
+                                        <thead>
+                                            <tr class=" ">
+
+                                                <th>Edit</th>
+                                                <th>#</th>
+                                                <th>Title</th>
+                                                <th>Artist</th>
+                                                <th>Album</th>
+                                                <th>Duration</th>
+                                                <th>Genres</th>
+                                                <th>Delete</th>
+
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -211,6 +301,7 @@
                 var audioControlEdit;
                 var audioDurationElementEdit;
                 var durationEdit;
+                var AlbumIdData
             /*    var rowDataEdit;*/
 
         $(document).ready(function () {
@@ -320,10 +411,10 @@
                     formDataDelete.append("SongId", rowDataSong.SongId);
                     formDataDelete.append("ArtistName", rowDataSong.ArtistName);
                     formDataDelete.append("SongName", rowDataSong.SongName);
-                 
+
                     formDataDelete.append("SongFilePath", rowDataSong.SongFilePath);
                     formDataDelete.append("SongGenres", rowDataSong.SongGenres);
-                  
+
                     formDataDelete.append("SongImagePath", rowDataSong.SongImagePath);
                     formDataDelete.append("SongLength", rowDataSong.SongLength);
 
@@ -637,65 +728,159 @@
 
 
 
-                $('#tblDataTableAlbum').on('click', '.btn-edit-album', async function () {
-                    SaveStatus = "Update";
-                    rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+    $('#tblDataTableAlbum').on('click', '.btn-edit-album', async function () {
+        SaveStatus = "Update";
+        rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+        AlbumIdData = rowDataAlbum.AlbumId;
+        $('#h1Album').text(rowDataAlbum.AlbumName);
+        $(".nav button#albumTab").tab('show');
 
-                    $('#h1Album').text(rowDataAlbum.AlbumName);
-                    $(".nav button#albumTab").tab('show');
+        async function searchSongs() {
+            let frmSearch = {
+                ArtistName: rowDataAlbum.ArtistName,
+                AlbumId: rowDataAlbum.AlbumId
+            };
 
-                    frmSearch = {
-
-                        ArtistName: rowDataAlbum.ArtistName,
-                        AlbumId: rowDataAlbum.AlbumId
+            await $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchSong1", "Spot")',
+                data: frmSearch,
+                dataType: "json",
+                success: function (result) {
+                    bindingTableSongAlbum(result.Data);
+                    if (result.status == "S") {
+                       
                     }
-
-
-                  await  $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("SearchSong1", "Spot")',
-                        data: frmSearch,
-                        dataType: "json",
-                        success: function (result) {
-
-                            bindingTableSongAlbum(result.Data);
-                         
-
-                            /* bindingTable(result.Data); */
-                        },
-                        error: function (request, status, error) {
-                            console.log(error);
-                        }
-                    });
-
-
-                    frmSearchArtist = {
-
-                        ArtistName: rowDataAlbum.ArtistName,
-
+                    else {
+                       
                     }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
 
+            let frmSearchArtist = {
+                ArtistName: rowDataAlbum.ArtistName,
+                AlbumId: rowDataAlbum.AlbumId
+            };
 
-                   await $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("SearchSong1", "Spot")',
-                        data: frmSearchArtist,
-                        dataType: "json",
-                        success: function (result) {
+            await $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchSongNotInAlbum1", "Spot")',
+                data: frmSearchArtist,
+                dataType: "json",
+                success: function (result) {
+                    bindingTableArtistSongAlbum(result.Data);
+                    if (result.status == "S") {
+                      
+                    }
+                    else {
+                      
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
-                            debugger
-                            bindingTableArtistSongAlbum(result.Data);
+        await searchSongs();
 
-                            /* bindingTable(result.Data); */
-                        },
-                        error: function (request, status, error) {
-                            console.log(error);
+        $('#tblDataTableSearchArtistSongAlbum ').on('click', '.btn-add', function () {
+            var data = dataTable.row($(this).closest('tr')).data();
+            if (this.click) {
+                var formDataAddsong = new FormData();
+                formDataAddsong.append("AlbumId", AlbumIdData);
+                formDataAddsong.append("SongId", data.SongId);
+                formDataAddsong.append("ArtistName", data.ArtistName);
+                formDataAddsong.append("SongName", data.SongName);
+                formDataAddsong.append("SongFilePath", data.SongFilePath);
+                formDataAddsong.append("SongGenres", data.SongGenres);
+                formDataAddsong.append("SongImagePath", data.SongImagePath);
+                formDataAddsong.append("SongLength", data.SongLength);
+
+                $.ajax({
+                    url: '@Url.Action("AddSong123", "Spot")',
+                    contentType: false,
+                    type: 'POST',
+                    processData: false,
+                    data: formDataAddsong,
+                    success: async function (result) {
+                        if (result.status == "S") {
+                            await searchSongs(); // Re-trigger the search after a successful update
+                           
+                           
+                       
                         }
-                    });
-
-
-
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
                 });
+            } else {
+                console.log('Unselected:', data);
+            }
+        });
+
+        $('#tblDataTableSongAlbum').on('click', '.btn-remove', async function () {
+            var rowDataSongAlbum = $('#tblDataTableSongAlbum').DataTable().row($(this).closest('tr')).data();
+
+            var frmRemoveSong = {
+                AlbumId: rowDataSongAlbum.AlbumId,
+                SongId: rowDataSongAlbum.SongId
+            };
+
+            await $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RemoveSong1", "Spot")',
+                data: frmRemoveSong,
+                dataType: "json",
+                success: async function (result) {
+                    if (result.status == "S") {
+                   
+                        await searchSongs(); // Re-trigger the search after a successful update
+                  
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+
+
+
+                      $('#tblDataTableAlbum').on('click', '.btn-delete', async function () {
+
+          rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+
+
+          frmDelete = {
+              AlbumId: rowDataAlbum.AlbumId
+          }
+
+
+        await  $.ajax({
+              type: 'POST',
+              url: '@Url.Action("DeleteAlbum1", "Spot")',
+            data: frmDelete,
+              dataType: "json",
+              success: function (result) {
+
+               alert("Delete Album Success")
+
+                  /* bindingTable(result.Data); */
+              },
+              error: function (request, status, error) {
+                  console.log(error);
+              }
+          });
+      });
+
+
 
 
 
@@ -873,12 +1058,7 @@
                         scrollx: false,
                         info: false,
                         columns: [
-                            {
-                                className: 'text-center',
-                                orderable: false,
-                                data: null,
-                                defaultContent: '<input type="checkbox" class="select-row">',
-                            },
+                           
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
                                 render: function (data, type, row, meta) {
@@ -913,20 +1093,17 @@
                                     return data.SongGenres == null ? "" : data.SongGenres;
                                 }
                             },
+
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                data: null,
+                                defaultContent: '<i class="fa-solid fa-delete btn-add">Add Song</i>',
+
+                            }
                         ]
                     });
 
-                    // Event listener for checkbox change
-                    $('#tblDataTableSearchArtistSongAlbum tbody').on('change', '.select-row', function () {
-                        var data = dataTable.row($(this).closest('tr')).data();
-                        if (this.checked) {
-                            // Handle the row being checked
-                            console.log('Selected:', data);
-                        } else {
-                            // Handle the row being unchecked
-                            console.log('Unselected:', data);
-                        }
-                    });
                 }
 
             </script>

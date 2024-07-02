@@ -81,6 +81,25 @@ namespace Project123Api.Controllers
 
             return response;
         }
+        [HttpPost("RemoveSong")]
+        public async Task<ResponseModel> RemoveSong(SongModel SongData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _spotRepo.RemoveSong(SongData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
 
 
         [HttpPost("DeleteSong")]
@@ -92,6 +111,16 @@ namespace Project123Api.Controllers
 
         }
 
+        [HttpPost("DeleteAlbum")]
+        public async Task<ResponseModel> DeleteAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel resp = await _spotRepo.DeleteAlbum(AlbumData);
+            return resp;
+
+
+        }
+
+
 
         [HttpPost("SearchSong")]
         public async Task<IEnumerable<SongModel>> SearchSong(SongModel SongData)
@@ -99,6 +128,17 @@ namespace Project123Api.Controllers
             ResponseModel resp = new ResponseModel();      
       
             IEnumerable<SongModel> songList = await _spotRepo.SearchSong(SongData);
+
+            return songList;
+        }
+
+
+        [HttpPost("SearchSongNotInAlbum")]
+        public async Task<IEnumerable<SongModel>> SearchSongNotInAlbum(SongModel SongData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<SongModel> songList = await _spotRepo.SearchSongNotInAlbum(SongData);
 
             return songList;
         }
