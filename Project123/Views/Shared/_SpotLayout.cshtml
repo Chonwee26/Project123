@@ -29,8 +29,8 @@
         html, body {
             height: 100%;
             margin: 0;
-            overflow:hidden;
-           
+            overflow: hidden;
+         
         }
 
         body {
@@ -48,8 +48,8 @@
         .sidebar {
             position: fixed;
             left: 0;
-            bottom: 0px;
-            height: 100vh;
+         
+            height: calc(100vh - 75px);
             display: flex !important;
             flex-direction: column;
             z-index: 1; /* Ensure sideBar is below bottomBar */
@@ -57,11 +57,11 @@
             min-width: 90px !important; /* Minimum width to match your input range */
             max-width: 420px; /* Maximum width to match your input range */
             overflow-y: auto;
+            overflow-x:hidden;
             scrollbar-color: black gray;
             padding: 10px;
             box-sizing: border-box;
-            z-index:2;
-            
+            z-index: 2;
         }
 
         .search-sidebar {
@@ -205,34 +205,12 @@
                     <div class="iconlove">
                         <a href="#" class="btn" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
                     </div>
-                    <div class="imgArtist">
+                    @*<div class="imgArtist">
                         <img src="~/picture/shipment_pic3.jpg" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic4.jpg" />
-                    </div>
+                    </div>*@
+             
 
-                    <div class="imgArtist">
-                        <img src="~/picture/logistics.png" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic1.jpg" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic3.jpg" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic4.jpg" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic2.jpg" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/logistics.png" />
-                    </div>
-                    <div class="imgArtist">
-                        <img src="~/picture/shipment_pic1.jpg" />
-                    </div>
+                 
                 </div>
             </nav>
         </div>
@@ -323,6 +301,7 @@
                     $('#main').css('margin-left', ui.size.width + 'px');
                 }
             });
+            getAlbumSideLayout();
 
             function changeIconClass(activeIcon, inactiveIcon) {
                 $(activeIcon).addClass('active-icon').removeClass('inactive-icon');
@@ -349,7 +328,7 @@
              dataType: "json",
              success: function (result) {
                  debugger
-                 bindingTableSongAlbum(result.Data);
+                 //bindingTableSongAlbum(result.Data);
                  /* bindingTable(result.Data); */
              },
              error: function (request, status, error) {
@@ -357,7 +336,29 @@
              }
          });
      }
-
+             function getAlbumSideLayout() {
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetAlbum1", "Spot")',
+        dataType: "json",
+        success: function (result) {
+            debugger
+            result.Data.forEach(function (album, index) {
+                debugger
+                 count = index + 1;
+                var albumHtml = `
+                    <div class="imgArtist">
+                    <img src="${album.AlbumImagePath}"/>
+                    </div>`;
+               
+                $('.lib-sidebar').append(albumHtml);
+            });
+        },
+        error: function (request, status, error) {
+            console.log(error);
+        }
+    });
+}
 
     </script>
     @await RenderSectionAsync("Scripts", required: false)

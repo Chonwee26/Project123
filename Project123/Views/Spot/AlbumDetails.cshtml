@@ -1,0 +1,12 @@
+﻿@model Project123.Dto.AlbumModel;
+
+@{
+    Layout = "~/Views/Shared/_SpotLayout.cshtml";
+    ViewBag.Title = Model.AlbumName;
+}
+
+<div class="album-details">
+    <h1>@Model.AlbumName</h1>
+    <img src="@Model.AlbumImagePath" alt="@Model.AlbumName" />
+    <p>Artist: @Model.ArtistName</p>
+    

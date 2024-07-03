@@ -25,9 +25,10 @@ namespace Project123.Controllers
         {
             return View();
         }
+   
+    
 
-     
-        [HttpPost("Spot/CreateAlbum1")]
+    [HttpPost("Spot/CreateAlbum1")]
         public async Task<IActionResult> CreateAlbum(AlbumModel AlbumData)
         {
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -265,12 +266,17 @@ namespace Project123.Controllers
                         songData.SongFilePath = songFilePath;
 
                         // Update song image path
-                        var (imageFilePath, imageFileError) = MoveFileToAlbumUpdate(songData.SongImagePath, songData.ArtistName, songData.SongName, songData.AlbumId);
-                        if (imageFileError != null)
+                        if (songData.SongImagePath != null)
                         {
-                            return Json(new { status = "E", success = false, message = imageFileError });
+                            var (imageFilePath, imageFileError) = MoveFileToAlbumUpdate(songData.SongImagePath, songData.ArtistName, songData.SongName, songData.AlbumId);
+                            if (imageFileError != null)
+                            {
+                                return Json(new { status = "E", success = false, message = imageFileError });
+                            }
+                            songData.SongImagePath = imageFilePath;
                         }
-                        songData.SongImagePath = imageFilePath;
+                    
+                   
 
                         // Create a copy of songData with nullified IFormFile properties for serialization
                         var songDataCopy = new
