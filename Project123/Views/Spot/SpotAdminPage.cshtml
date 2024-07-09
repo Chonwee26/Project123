@@ -72,10 +72,20 @@
         .music-content:active {
             background-color: black;
         }
-        #dvTableSong #tblDataTableSong th,tr ,td{
+
+        .dv-icon-edit {
+            border-radius:5%;
+            padding: 3px 3px 3px 6px;
+            background-color: dimgray;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            margin: 5px 5px 4px 3px !important;
+        }
+        #dvTableSong #tblDataTableSong th, tr, td {
             color: white !important;
             background-color: black !important;
-            border:none!important;
+            border: none !important;
         }
 
         #dvTableAlbum #tblDataTableAlbum th, tr, td {
@@ -84,16 +94,93 @@
             border: none !important;
         }
 
-        table.dataTable thead .sorting_asc{
-           background-image:none!important;
-        }
-        .btn-edit-album,.btn-delete,btn-edit-song{
-            cursor:pointer;
+        table.dataTable thead .sorting_asc {
+            background-image: none !important;
         }
 
-     
+        .btn-edit-album, .btn-delete, btn-edit-song {
+            cursor: pointer;
+        }
+        
     </style>
 }
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background-color: #2b2b2b; border-radius: 10px;">
+
+            <div class="modal-body p-4">
+                <h1>Edit Album Info</h1>
+
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>Album Name</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditAlbumName" placeholder="Album Name">
+                                    </div>
+
+                                </div>
+                                <div class="col-12">
+                                    <h6>Artist Name</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditAlbumArtist" placeholder="Artist Name">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+
+                                <div class="col-12">
+                                    <div class="album-art d-flex justify-content-center">
+                                        <div class="input-group" style="width: 202px; height: 202px; position: relative;">
+                                            <input class="form-control" type="file" id="fileEditAlbumImage" placeholder="Image URL" style="width: 100%; height: 100%; position: absolute; opacity: 0; cursor: pointer;">
+                                            <img id="albumEditModalImagePreview" src="/picture/music_note_icon.png" alt="Album Image Preview" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+                                            <div class="dv-icon-edit">
+                                                <i class="fa-solid fa-pen-to-square" style="font-size:20px; color:white;"></i>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         
+
+
+                <div class="row">
+                
+                </div>
+
+
+                <div class="col-12 mt-4">
+                    <div class="row">
+                        <div class="col-6 d-flex justify-content-center ">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+
+                        </div>
+                        <div class="col-6 d-flex justify-content-center ">
+                            <button type="button" class="btn w-100" style="background-color:#762676a8;color:white;" onclick="saveEditAlbum()">Save changes</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
@@ -109,10 +196,14 @@
                 <div>
                     <h1 style="color:white">Add Song Page</h1>
                     @*<p>
-            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-            John Doe John Doe John Doe John Doe John Doe John Doe
-            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-        </p>*@
+                            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
+                            John Doe John Doe John Doe John Doe John Doe John Doe
+                            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
+                        </p>*@
+                    @*<button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Edit Album
+                    </button>*@
+
                     <div class="main-content-music row">
 
                         <form id="albumForm">
@@ -147,6 +238,7 @@
 
                                     <div class="col-12 col-sm-12 col-md-6 mt-4">
                                         <div class="input-group" style=" width: 168px; height: 168px;">
+                                           
                                             <img id="albumImagePreview" src="#" alt="Album Image Preview" style="display: none; width: 168px; height: 168px;" />
                                         </div>
                                     </div>
@@ -292,8 +384,8 @@
     </div>
 </div>
 
-        @section Scripts{
-            <script>
+@section Scripts{
+    <script>
                 var duration;
                 var audioControl;
                 var audioDurationElement;
@@ -301,6 +393,7 @@
                 var audioDurationElementEdit;
                 var durationEdit;
                 var AlbumIdData
+                var BtnAlbumData
             /*    var rowDataEdit;*/
 
         $(document).ready(function () {
@@ -309,10 +402,28 @@
             audioControlEdit = $('#audiocontrolPreviewEdit')[0];
             audioDurationElementEdit = $('#durationEdit');
         });
+                $(document).on('click','#btnEditAlbum',function () {
+                    
+                    console.log(BtnAlbumData);
+                    $('#txtEditAlbumName').val(BtnAlbumData.AlbumName); 
+                    $('#txtEditAlbumArtist').val(BtnAlbumData.ArtistName);
+                    $('#albumEditModalImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+                    $('#modal').modal('show');
+                });
+        $('#albumEditImagePreview').click(function () {
+            
+            $('#fileEditAlbumImage').click();
+        });
             //Edit section Start
                 $('#fileSongImageEdit').change(function () {
                     showPreview(this, '#songImagePreviewEdit', 'image');
                 });
+        $('#fileEditAlbumImage').change(function () {
+            showPreview(this, '#albumEditModalImagePreview', 'image');
+            showPreview(this, '#albumEditImagePreview', 'image');
+        });
+      
+
 
                 $('#btnCancelEdit').click(function () {
                     $(".nav button#searchTab").tab('show');
@@ -331,7 +442,7 @@
                     });
 
                     if ($('#fileSongFileEdit').val() != null) {
-                        debugger
+                        
                         $('#songAudioPreviewEdit').attr('src', url);
                     } else {
                         $('#songAudioPreviewEdit').removeAttr('src');
@@ -343,7 +454,7 @@
 
 
                 function EditSongSave() {
-                    debugger
+                    
                     if (!durationEdit) {
                         alert("Please wait until the audio duration is loaded.");
                         return;
@@ -462,7 +573,7 @@
 
                 $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
                     var rowDataAlbum = $('#tblDataTableSongAlbum').DataTable().row(this).data();
-                    debugger
+                    
                     if (rowDataAlbum) {
                         $('#songAudioPreview').attr('src', rowDataAlbum.SongFilePath);
                         // Load the new audio source
@@ -487,6 +598,12 @@
                     $(".nav button#searchTab").tab('show');
 
                 });
+
+        $(document).on('click', 'btnSaveEditAlbum', function () {
+            debugger
+            saveEditAlbum();
+
+        });
 
         function showPreview(input, previewSelector, type) {
             if (input.files && input.files[0]) {
@@ -566,6 +683,33 @@
                 }
             });
         }
+
+
+                function saveEditAlbum() {
+
+                    var formData = new FormData();
+                    formData.append("AlbumName", $("#txtEditAlbumName").val());
+                    formData.append("ArtistName", $("#txtEditAlbumArtist").val());
+                    formData.append("AlbumImage", $("#fileEditAlbumImage")[0].files[0]);
+                    formData.append("AlbumId", BtnAlbumData.AlbumId);
+
+
+                    debugger
+                    $.ajax({
+                        url: '@Url.Action("EditAlbum1", "Spot")',
+                        type: 'POST',
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        success: function (result) {
+                            alert('Album edit successfully');
+                        },
+                        error: function (error) {
+                            console.error(error);
+                        }
+                    });
+
+                }
 
         function createSong() {
             if (!duration) {
@@ -751,6 +895,7 @@
     $('#tblDataTableAlbum').on('click', '.btn-edit-album', async function () {
         SaveStatus = "Update";
         rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+        BtnAlbumData = rowDataAlbum;     
         AlbumIdData = rowDataAlbum.AlbumId;
         $('#h1Album').text(rowDataAlbum.AlbumName);
         $(".nav button#albumTab").tab('show');
@@ -768,11 +913,12 @@
                 dataType: "json",
                 success: function (result) {
                     bindingTableSongAlbum(result.Data);
+                    $('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
                     if (result.status == "S") {
                        
                     }
                     else {
-                       
+
                     }
                 },
                 error: function (request, status, error) {
@@ -792,11 +938,12 @@
                 dataType: "json",
                 success: function (result) {
                     bindingTableArtistSongAlbum(result.Data);
+                  
                     if (result.status == "S") {
-                      
+                       
                     }
                     else {
-                      
+
                     }
                 },
                 error: function (request, status, error) {
@@ -829,9 +976,9 @@
                     success: async function (result) {
                         if (result.status == "S") {
                             await searchSongs(); // Re-trigger the search after a successful update
-                           
-                           
-                       
+
+
+
                         }
                     },
                     error: function (error) {
@@ -858,9 +1005,9 @@
                 dataType: "json",
                 success: async function (result) {
                     if (result.status == "S") {
-                   
+
                         await searchSongs(); // Re-trigger the search after a successful update
-                  
+
                     }
                 },
                 error: function (request, status, error) {
@@ -1081,7 +1228,7 @@
                         info: false,
                         paging: false,
                         columns: [
-                           
+
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
                                 render: function (data, type, row, meta) {
@@ -1129,5 +1276,5 @@
 
                 }
 
-            </script>
-        }
+    </script>
+}

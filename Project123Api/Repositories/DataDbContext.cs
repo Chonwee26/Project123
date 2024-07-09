@@ -20,8 +20,23 @@ namespace Project123Api.Repositories
         {
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Project123Api"));
+
         }
-     
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AlbumModel>()
+                .Ignore(a => a.AlbumImage);
+
+
+            modelBuilder.Entity<SongModel>()
+             .Ignore(a => a.SongImage); 
+            modelBuilder.Entity<SongModel>()
+             .Ignore(a => a.SongFile);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+
 
 
 

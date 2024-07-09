@@ -150,7 +150,7 @@
          
 
             $('.img-music-content').on('click', function () {
-                debugger
+                
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
@@ -158,7 +158,7 @@
                 }
             });
             $(document).on('click', '.dv-content', function () {
-                debugger;
+                ;
                 var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
@@ -183,9 +183,9 @@
         url: '@Url.Action("GetAlbum1", "Spot")',
         dataType: "json",
         success: function (result) {
-            debugger
+            
             result.Data.forEach(function (album, index) {
-                debugger
+                
                  count = index + 1;
                 var albumHtml = `
                     <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumID}">

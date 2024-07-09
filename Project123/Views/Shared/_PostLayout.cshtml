@@ -18,6 +18,10 @@
     @await RenderSectionAsync("Styles", required: false)
     <style>
 
+         html body{
+          /*  height:100vh;*/
+          margin-top:57px;
+         }
         .btn-swal-primary {
             min-width: 83px !important;
             font-size: 11px !important;
@@ -82,7 +86,7 @@
                                     <a class="nav-link text-dark " asp-area="" asp-controller="Admin" asp-action="LoginPage">Login</a>
                                     <a class="nav-link  text-dark" asp-area="" asp-controller="Admin" asp-action="RegisterPage">Register </a>
                                 </li>
-                                </ul>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white-100" asp-area="" asp-controller="Admin" asp-action="RegisterPage">Register </a>
@@ -103,15 +107,16 @@
     </header>
     @*<div class="container">
         <main role="main" class="pb-3">*@
+    <partial name="~/Views/Home/Privacy.cshtml" />
     @RenderBody()
     @*</main>
         </div>*@
 
-      <footer class="border-top footer text-muted bg-primary"style="position: fixed; bottom: 0;width:100%;padding:15px 0;z-index:1000;">
-            <div class="d-flex justify-content-center container" style="color:white;">
-                &copy; 2023 - Resume - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </div>
-        </footer>  
+    <footer class="border-top footer text-muted bg-primary" style="position: fixed; bottom: 0;width:100%;padding:15px 0;z-index:1000;">
+        <div class="d-flex justify-content-center container" style="color:white;">
+            &copy; 2023 - Resume - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -119,7 +124,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
     <script src="~/lib/datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>  
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
     <script>
 
@@ -155,7 +160,25 @@
             }
             $(".swal2-confirm").addClass('btn-swal-primary');
         }
+
+
+
+        jQuery(document).ajaxStart(function () {
+            
+            jQuery('div.dv-animation').show();
+        });
+
+        jQuery(document).ajaxStop(function () {
+            // jQuery('div.theme-loader').fadeOut('slow');
+            jQuery('div.dv-animation').fadeOut('slow');
+        });
+
+        $(document).ready(function () {
+            // or wherever you store the token
+            jQuery('div.dv-animation').fadeOut('slow');
+        });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

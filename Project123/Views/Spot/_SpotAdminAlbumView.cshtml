@@ -1,7 +1,17 @@
-﻿<form id="albumSongForm">
-    <h1 id="h1Album"></h1>
+﻿<!-- Button trigger modal -->
 
-    <div class="col-12" id="dvTableSongAlbum" style="display:none">
+
+
+
+
+<form id="albumSongForm">
+    <h1 style="margin-top:72px;" id="h1Album"></h1>
+    <img id="albumEditImagePreview" class="" style="width:202px;height:202px" src="#" />
+    <button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Edit Album
+    </button>
+
+    <div class="col-12 mt-4" id="dvTableSongAlbum" style="display:none">
         <table id="tblDataTableSongAlbum" class="table table-bordered" width="100%">
             <thead>
                 <tr class="text-center">
@@ -11,7 +21,7 @@
                     <th>Artist</th>
                     <th>Duration</th>
                     <th>Genres</th>
-                    <th>Remove</th>
+                    <th  style="width:80px!important;">Remove</th>
 
 
                 </tr>
@@ -21,27 +31,34 @@
         </table>
     </div>
 
-    </form>
-    <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 " onclick="clearAlbumValue()">ยกเลิก</button>
+</form>
 
 
-    <form id="albumArtistSongForm">
 
-        <div class="col-12" id="dvSearchArtistSongAlbum" style="display:none">
-            <table id="tblDataTableSearchArtistSongAlbum" class="table table-bordered" width="100%">
-                <thead>
-                    <tr class="text-center">
+<form id="albumArtistSongForm">
 
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Artist</th>
-                        <th>Duration</th>
-                        <th>Genres</th>
-                        <th>AddSong</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </form>
+    <div class="col-12" id="dvSearchArtistSongAlbum" style="display:none">
+        <table id="tblDataTableSearchArtistSongAlbum" class="table table-bordered" width="100%">
+            <thead>
+                <tr class="text-center">
+
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                    <th>Genres</th>
+                    <th style="width:80px!important;">AddSong</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</form>
+<hr />
+<div class="col-12 mt-4">
+    <div class="col-4 offset-8 d-flex justify-content-end">
+        <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 " onclick="clearAlbumValue()">Cancel</button>
+        <button type="button" id="btnSaveEditAlbum" class="btn btn-secondary m-2 px-4 " onclick="saveEditAlbum()">Save</button>
+    </div>
+</div>

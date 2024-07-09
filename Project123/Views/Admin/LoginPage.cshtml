@@ -6,12 +6,26 @@
 }
 @section Styles{
     <style type="text/css">
-
+        body {
+          height:100vh;
+       justify-content:center;
+            overflow: hidden;
+            
+        }
         .imgShow {
             border-radius: 10%;
         }
+        #frmLogin {
+            height: calc(100vh - 107px);
+            display: flex;
+            justify-content: center;
+            align-items:center;
+            margin: auto;
+        }
     </style>
 }
+<partial name="~/Views/Home/Privacy.cshtml" />
+
 <form id="frmLogin">
     <div class="container">
         <div class="row">
@@ -22,18 +36,19 @@
 
             <div class="col-6 d-flex flex-column justify-content-center align-items-center">
                 @*<h3 id="loginTitle">Log in</h3>
-                    <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
-                    <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
-                    <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>*@
+        <input type="email" class="form-control" id="emailInput" placeholder="Enter your Email" />
+        <input type="password" class="form-control" id="passwordInput" placeholder="Enter your Password" />
+        <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>*@
                 <h3 id="loginTitle" data-i18n="login.title">Log in</h3>
                 <div class="form-group mb-4">
                     <input type="email" class="form-control" id="txtEmail" placeholder="Enter your Email" />
                 </div>
 
-                <div class="form-group mb-4">
+                <div class="form-group mb-2">
                     <input type="password" class="form-control" id="txtPassword" placeholder="Enter your Password" />
-                </div>
 
+                </div>
+                <span id="txtErrorLogin" class="mb-2" style="display:none; color:red;">กรุณาใส่ข้อมูลให้ถูกต้อง</span>
                 <div class="form-group mb-4">
                     <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>
                     <a href="#">Forgot Password?</a>
@@ -49,8 +64,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.i18n/1.0.9/jquery.i18n.min.js" integrity="sha512-EkS8Kq86l7dHt/dOBniHgtYvAScDqFw/lIPX5VCwaVKsufs0pY44I2cguqZ45QaFOGGwVd3T1nXvVJYIEjRsjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
 
+
+        jQuery(document).ajaxStart(function () {
+            
+            jQuery('div.dv-animation').show();
+        });
+
+        jQuery(document).ajaxStop(function () {
+            // jQuery('div.theme-loader').fadeOut('slow');
+            jQuery('div.dv-animation').fadeOut('slow');
+        });
+
         $(document).ready(function () {
-         // or wherever you store the token
+            // or wherever you store the token
+            jQuery('div.dv-animation').fadeOut('slow');
         });
 
         //$('.Layout').hide();
@@ -67,13 +94,13 @@
             },
 
             submitHandler: function (form) {
-             
+
                 var userName = $('#txtEmail').val();
 
                 var formData = {
 
-                            Email: $('#txtEmail').val(),
-                            Password: $('#txtPassword').val(),
+                    Email: $('#txtEmail').val(),
+                    Password: $('#txtPassword').val(),
 
 
 
@@ -82,25 +109,28 @@
                 $.ajax
                     ({
                         type: 'POST',
-                     url:"/Admin/Login1",
+                        url: "/Admin/Login1",
                         data: formData,
                         dataType: 'json',
                         success: function (result) {
-                         
+
                             if (result.status == "S") {
                                 SweetAlert('success', userName);
                                 localStorage.setItem('access_token', result.message);
                                 var token = localStorage.getItem('access_token');
-                                window.location.href = "https://localhost:7166/Shipment/SearchShipment";
+                                window.location.href = "https://localhost:7166/Shipment/SearchShipmentPage";
 
                                 /*    bindingTable(result.Data);*/
                             }
                             else {
-                                SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                jQuery('div.theme-loader').fadeOut('slow');
+                                /*  SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');*/
+                                $('#txtErrorLogin').text(result.message);
+                                $('#txtErrorLogin').show();
                             }
                         },
                         error: function (request, status, error) {
-                           
+                            jQuery('div.theme-loader').fadeOut('slow');
                             SweetAlert('error', error);
                         }
                     });

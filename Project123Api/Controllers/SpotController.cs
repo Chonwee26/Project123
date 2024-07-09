@@ -43,6 +43,27 @@ namespace Project123Api.Controllers
             return response;
         }
 
+
+        [HttpPost("EditAlbum")]
+        public async Task<ResponseModel> EditAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _spotRepo.EditAlbum(AlbumData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
         [HttpPost("CreateSong123")]
         public async Task<ResponseModel> CreateSong(SongModel SongData)
         {

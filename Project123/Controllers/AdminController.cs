@@ -44,6 +44,12 @@ namespace Project123.Controllers
             return View();
         }
 
+
+        public IActionResult TabletLoginPage()
+        {
+            return View();
+        }
+
         public IActionResult RegisterPage()
         {
             return View();

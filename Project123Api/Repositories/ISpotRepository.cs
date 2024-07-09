@@ -21,6 +21,7 @@ namespace Project123Api.Repositories
         Task<ResponseModel> RemoveSong(SongModel SongData);
      
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
+        Task<ResponseModel>EditAlbum(AlbumModel AlbumData);
         Task<ResponseModel> DeleteAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
         Task<IEnumerable<SongModel>> SearchSongNotInAlbum(SongModel SongData);
@@ -97,6 +98,46 @@ namespace Project123Api.Repositories
 
                     response.Status = "S";
                     response.Message = "User created successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return response;
+        }
+        public async Task<ResponseModel> EditAlbum(AlbumModel AlbumData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlCreateSong = @" UPDATE Albums
+                                    SET AlbumName = @AlbumName,
+                                    ArtistName = @ArtistName,
+                                    AlbumImage = @AlbumImage
+                                    WHERE AlbumId = @AlbumId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlCreateSong, connection);
+                    command.Parameters.AddWithValue("@AlbumName", AlbumData.AlbumName ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@ArtistName", AlbumData.ArtistName ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@AlbumImage", AlbumData.AlbumImagePath ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@AlbumId", AlbumData.AlbumId ?? (object)DBNull.Value);
+                   
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Edit Album successfully.";
                 }
                 catch (Exception ex)
                 {

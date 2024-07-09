@@ -217,9 +217,10 @@
     </header>
     @*<div class="container">
         <main role="main" class="pb-3">*@
-    <div id="main">
-        @RenderBody()
-    </div>
+<div id="main">
+    <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
+    @RenderBody()
+</div>
     @*</main>
         </div>*@
 
@@ -292,7 +293,22 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
 
+
+        jQuery(document).ajaxStart(function () {
+            
+            jQuery('div.dv-animation').show();
+        });
+
+        jQuery(document).ajaxStop(function () {
+            // jQuery('div.theme-loader').fadeOut('slow');
+            jQuery('div.dv-animation').fadeOut('slow');
+        });
+
+      
         $(document).ready(function () {
+
+         
+            jQuery('div.dv-animation').fadeOut('slow');
             $(".sidebar").resizable({
                 handles: 'e', // Enable resizing from the east (right) edge
                 minWidth: 107,
@@ -327,7 +343,7 @@
              url: '@Url.Action("GetAlbum1", "Spot")',
              dataType: "json",
              success: function (result) {
-                 debugger
+                  
                  //bindingTableSongAlbum(result.Data);
                  /* bindingTable(result.Data); */
              },
@@ -342,9 +358,9 @@
         url: '@Url.Action("GetAlbum1", "Spot")',
         dataType: "json",
         success: function (result) {
-            debugger
+             
             result.Data.forEach(function (album, index) {
-                debugger
+                 
                  count = index + 1;
                 var albumHtml = `
                     <div class="imgArtist">

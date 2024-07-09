@@ -90,7 +90,70 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-      
+        [HttpPost("Spot/EditAlbum1")]
+        public async Task<IActionResult> EditAlbum(AlbumModel AlbumData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        // Save files and update paths in SongData
+
+                        if (AlbumData.AlbumImage != null)
+                        {
+                            var (filePath, error, oldFolderPath) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId, AlbumData.AlbumImagePath);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            AlbumData.AlbumImagePath = filePath;
+                        }
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var AlbumDataCopy = new
+                        {
+                            AlbumData.AlbumId,
+                            AlbumData.ArtistName,
+                            AlbumData.AlbumName,
+                            AlbumData.AlbumImagePath
+
+
+                        };
+
+                        string requestJson = JsonConvert.SerializeObject(AlbumDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/EditAlbum", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+
+
 
         [HttpPost("Spot/CreateSong1")]
         public async Task<IActionResult> CreateSong(SongModel SongData)
@@ -489,7 +552,8 @@ namespace Project123.Controllers
             var existingFiles = Directory.GetFiles(albumFolderPath, fileName);
             if (existingFiles.Length > 0)
             {
-                return (null, "Song already exists", null);
+                System.IO.File.Delete(existingFiles[0]);
+                //return (null, "Song already exists", null);
             }
             string oldFolderPath = null;
 
