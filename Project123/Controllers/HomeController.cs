@@ -40,6 +40,10 @@ namespace Project123.Controllers
             return View();
         }
 
-     
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
     }
 }

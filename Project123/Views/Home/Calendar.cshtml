@@ -1,0 +1,100 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+@section Styles{
+    <style type="text/css">
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+}
+<div class="container">
+    <div class="row">
+       
+        <div class="col-4 add-event">
+            <h2>Add New Event</h2>
+            <form id="eventForm">
+                <label for="title">Event Title:</label>
+                <input type="text" id="title" name="title" required><br><br>
+                <label for="start">Start Date:</label>
+                <input type="date" id="start" name="start" required><br><br>
+                <label for="end">End Date:</label>
+                <input type="date" id="end" name="end"><br><br>
+                <input type="submit" value="Add Event">
+            </form>
+        </div>
+        <div class="col-8" id="calendar"></div>
+    </div>
+   
+
+</div>
+
+<!-- Form to add new event -->
+
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            let draggableEl = document.getElementById('mydraggable');
+            var calendarEl = document.getElementById('calendar');
+            var dataCalendar = [
+                {
+                    title: 'Event 1',
+                    start: '2024-07-01'
+                },
+                {
+                    title: 'day off peem',
+                    start: '2024-07-11',
+                    end: '2024-07-15'
+                }
+            ];
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                plugins: [interactionPlugin],
+                droppable: true,
+                events: dataCalendar,
+                eventClick: function (info) {
+                    alert('Event: ' + info.event.title);
+                    info.el.style.borderColor = 'red';
+                }
+            });
+
+            calendar.render();
+
+            let draggable = new Draggable(draggableEl);
+
+            // Handle form submission
+            document.getElementById('eventForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                var title = document.getElementById('title').value;
+                var start = document.getElementById('start').value;
+                var end = document.getElementById('end').value;
+
+                var newEvent = {
+                    title: title,
+                    start: start
+                };
+
+                if (end) {
+                    newEvent.end = end;
+                }
+
+                dataCalendar.push(newEvent);
+                calendar.addEvent(newEvent);
+            });
+        });
+        function getEvent() {
+
+
+        }
+    </script>
+}
