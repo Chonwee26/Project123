@@ -18,6 +18,8 @@ namespace Project123.Dto
         public string? ArtistName { get; set; }
         [NotMapped]
         public IFormFile? AlbumImage { get; set; }
+
+        [Column("AlbumImage")]
         public string? AlbumImagePath { get; set; }
 
     }

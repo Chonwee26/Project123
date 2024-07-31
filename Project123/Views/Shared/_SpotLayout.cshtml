@@ -241,6 +241,10 @@
                     <div class="content bottomside-control col-4">
 
                         <div class="col-12 d-flex justify-content-center">
+                            <audio class="col-12" id="audiocontrol" controls="" style="height:38px;display:block">
+                                <source id="songAudio" src="blob:https://localhost:7166/8ff39aa5-6817-4e13-96b1-ee45a34f97c2" type="audio/mp3">
+                                Your brownser does not support this audio elemento
+                            </audio>
                             <button class="button-control" type="button"><i class="fa-solid icon-control fa-shuffle"></i></button>
 
                             <button class="button-control"><i class="fa-solid icon-control fa-backward"></i></button>
@@ -295,7 +299,7 @@
 
 
         jQuery(document).ajaxStart(function () {
-            
+
             jQuery('div.dv-animation').show();
         });
 
@@ -304,10 +308,11 @@
             jQuery('div.dv-animation').fadeOut('slow');
         });
 
-      
+        audioControl = $('#audiocontrol')[0];
+       
         $(document).ready(function () {
 
-         
+
             jQuery('div.dv-animation').fadeOut('slow');
             $(".sidebar").resizable({
                 handles: 'e', // Enable resizing from the east (right) edge
@@ -337,13 +342,100 @@
                 changeIconClass('#iconLove', '#iconHome, #iconSearch');
             });
         });
+
+        $('#fileSongFile').change(function (e) {
+            var file = e.target.files[0];
+            var url = URL.createObjectURL(file);
+
+            $(audioControl).on('loadedmetadata', function () {
+                duration = audioControl.duration;
+                var minutes = Math.floor(duration / 60);
+                var seconds = Math.floor(duration % 60);
+                // Ensure seconds are displayed with two digits
+                var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
+                $('#durationInput').val(parseInt(duration));
+            });
+
+            if ($('#fileSongFile').val() != null) {
+                $('#songAudio').attr('src', url);
+            }
+            else {
+                $('#songAudio').removeAttribute('src')
+            }
+            audioControl.load(); // Reload audio player to apply the new source
+            $('#audiocontrol').show();
+        });
+
+
+        $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
+            var rowDataAlbum = $('#tblDataTableSongAlbum').DataTable().row(this).data();
+            if (rowDataAlbum) {
+                $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
+                // Load the new audio source
+                audioControl.load();
+                $('#audiocontrol').show();
+                // Play the audio (optional)
+                // audioControl.play();
+            } else {
+                console.error('Row data is null or undefined');
+            }
+        });
+
+
+
+        function getAlbumContainer() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetAlbum1", "Spot")',
+                dataType: "json",
+                success: function (result) {
+
+                    result.Data.forEach(function (album, index) {
+                        debugger
+                        count = index + 1;
+                        var albumHtml = `
+                    <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                        <div class="music-content">
+                            <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+                        </div>
+                        <div class="music-content-title">
+                            <h6 class="link-opacity-100-hover" href="#">${album.AlbumName}</h6>
+                            <p class="link-opacity-100-hover" href="#">${album.ArtistName}</p>
+                        </div>
+                    </div>
+                `;
+                        $('.main-content-music').append(albumHtml);
+                    });
+
+                    $('.dv-content').on('click', function () {
+                        debugger
+                        var albumId = $(this).data('album-id');
+                        window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+                    });
+
+
+
+
+
+                },
+
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+
+
+            });
+
+        }
+
             function getAlbum() {
          $.ajax({
              type: 'POST',
              url: '@Url.Action("GetAlbum1", "Spot")',
              dataType: "json",
              success: function (result) {
-                  
+
                  //bindingTableSongAlbum(result.Data);
                  /* bindingTable(result.Data); */
              },
@@ -358,17 +450,23 @@
         url: '@Url.Action("GetAlbum1", "Spot")',
         dataType: "json",
         success: function (result) {
-             
+
             result.Data.forEach(function (album, index) {
-                 
+
                  count = index + 1;
                 var albumHtml = `
-                    <div class="imgArtist">
+                    <div class="imgArtist" data-album-id="${album.AlbumId}">
                     <img src="${album.AlbumImagePath}"/>
                     </div>`;
-               
+
                 $('.lib-sidebar').append(albumHtml);
             });
+
+            $('.imgArtist').on('click', function () {
+       debugger
+       var albumId = $(this).data('album-id');
+       window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+   });
         },
         error: function (request, status, error) {
             console.log(error);

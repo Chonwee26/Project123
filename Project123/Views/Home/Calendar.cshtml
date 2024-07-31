@@ -7,6 +7,23 @@
 @section Styles{
     <style type="text/css">
 
+
+        .fc .fc-bg-event {
+            opacity: 1;
+        }
+
+        .fc-event.main {
+            color: var(--fc-event-text-color, inherit)!important;
+        }
+      /*  .fc-bgevent {
+            color: black !important;
+            background-color: #ff1a1a !important;
+        }*/
+
+        #calendar a {
+            color: black !important;
+        }
+
         #calendar {
             max-width: 900px;
             margin: 0 auto;
@@ -15,86 +32,77 @@
 }
 <div class="container">
     <div class="row">
-       
-        <div class="col-4 add-event">
-            <h2>Add New Event</h2>
-            <form id="eventForm">
-                <label for="title">Event Title:</label>
-                <input type="text" id="title" name="title" required><br><br>
-                <label for="start">Start Date:</label>
-                <input type="date" id="start" name="start" required><br><br>
-                <label for="end">End Date:</label>
-                <input type="date" id="end" name="end"><br><br>
-                <input type="submit" value="Add Event">
-            </form>
-        </div>
-        <div class="col-8" id="calendar"></div>
-    </div>
-   
+        @*<div class="col-4 add-event">
+                <h2>Add New Event</h2>
+                <form id="eventForm">
+                    <label for="title">Event Title:</label>
+                    <input type="text" id="title" name="title" required><br><br>
+                    <label for="start">Start Date:</label>
+                    <input type="date" id="start" name="start" required><br><br>
+                    <label for="end">End Date:</label>
+                    <input type="date" id="end" name="end"><br><br>
+                    <input type="submit" value="Add Event">
+                </form>
+            </div>*@
+        <div class="col-12" id="calendar"></div>
 
+    </div>
+    <input type="text" id="monthyearpicker">
 </div>
 
-<!-- Form to add new event -->
-
-
-
 @section Scripts{
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
-            let draggableEl = document.getElementById('mydraggable');
             var calendarEl = document.getElementById('calendar');
-            var dataCalendar = [
-                {
-                    title: 'Event 1',
-                    start: '2024-07-01'
-                },
-                {
-                    title: 'day off peem',
-                    start: '2024-07-11',
-                    end: '2024-07-15'
-                }
-            ];
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                plugins: [interactionPlugin],
-                droppable: true,
-                events: dataCalendar,
-                eventClick: function (info) {
-                    alert('Event: ' + info.event.title);
-                    info.el.style.borderColor = 'red';
+                headerToolbar: {
+                    start: "prev",
+                    center: "title",
+                    end: "next"
+                },
+                events: [
+                    {
+                        title: 'Event 1',
+                        start: '2024-07-01',
+                        display: 'background',
+                        textColor: 'black',
+                        backgroundColor: '#ff1a1a'
+                    },
+                    {
+                        title: 'Event 2',
+                        start: '2024-07-02',
+                        end: '2024-07-04',
+                        display: 'background',
+                        textColor: 'black',
+                        backgroundColor: '#ff1a1a'
+                    }
+                ],
+                eventDidMount: function (info) {
+                    if (info.event.textColor) {
+                        info.el.style.color = info.event.textColor;
+                    }
                 }
             });
 
             calendar.render();
+        });
 
-            let draggable = new Draggable(draggableEl);
 
-            // Handle form submission
-            document.getElementById('eventForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                var title = document.getElementById('title').value;
-                var start = document.getElementById('start').value;
-                var end = document.getElementById('end').value;
-
-                var newEvent = {
-                    title: title,
-                    start: start
-                };
-
-                if (end) {
-                    newEvent.end = end;
+        $(function () {
+            $('#monthyearpicker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'MM yy',
+                onClose: function (dateText, inst) {
+                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
                 }
-
-                dataCalendar.push(newEvent);
-                calendar.addEvent(newEvent);
             });
         });
-        function getEvent() {
-
-
-        }
     </script>
 }

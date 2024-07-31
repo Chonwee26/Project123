@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Player Example</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+
+        #miniPlayer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+            #miniPlayer video {
+                width: 100%;
+            }
+
+            #miniPlayer button {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+            }
+
+        #mainPlayer {
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="mainPlayer">
+        <video id="video" width="600" controls>
+            <source src="path_to_your_video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button id="miniPlayerButton">Open Mini Player</button>
+    </div>
+
+    <div id="miniPlayer">
+        <video id="miniVideo" controls>
+            <source src="/video/Japan.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button id="closeMiniPlayerButton">Close Mini Player</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        $(document).ready(function () {
+            const mainPlayer = $('#mainPlayer');
+            const miniPlayer = $('#miniPlayer');
+            const mainVideo = $('#video')[0];
+            const miniVideo = $('#miniVideo')[0];
+            const miniPlayerButton = $('#miniPlayerButton');
+            const closeMiniPlayerButton = $('#closeMiniPlayerButton');
+
+            miniPlayerButton.on('click', function () {
+                mainPlayer.hide();
+                miniPlayer.show();
+                miniVideo.currentTime = mainVideo.currentTime;
+                miniVideo.play();
+            });
+
+            closeMiniPlayerButton.on('click', function () {
+                miniPlayer.hide();
+                mainPlayer.show();
+                mainVideo.currentTime = miniVideo.currentTime;
+                mainVideo.play();
+            });
+
+            // Synchronize playback between main and mini players
+            mainVideo.addEventListener('timeupdate', function () {
+                if (!miniPlayer.is(':hidden')) {
+                    miniVideo.currentTime = mainVideo.currentTime;
+                }
+            });
+
+            miniVideo.addEventListener('timeupdate', function () {
+                if (!mainPlayer.is(':hidden')) {
+                    mainVideo.currentTime = miniVideo.currentTime;
+                }
+            });
+
+            // Drag functionality for the mini-player
+            miniPlayer.on('mousedown', function (e) {
+                var posX = e.clientX, posY = e.clientY,
+                    miniPlayerLeft = miniPlayer.offset().left,
+                    miniPlayerTop = miniPlayer.offset().top;
+
+                $(document).on('mousemove', function (e) {
+                    var dx = e.clientX - posX, dy = e.clientY - posY;
+                    miniPlayer.css({
+                        top: miniPlayerTop + dy + 'px',
+                        left: miniPlayerLeft + dx + 'px'
+                    });
+                });
+
+                $(document).on('mouseup', function () {
+                    $(document).off('mousemove');
+                    $(document).off('mouseup');
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>

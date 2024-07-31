@@ -143,14 +143,14 @@
 
 @section Scripts{
     <script type="text/javascript">
-        
+
         $(document).ready(function () {
-            getAlbum();
+         /*   getAlbum();*/
             getAlbumContainer();
-         
+
 
             $('.img-music-content').on('click', function () {
-                
+
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
@@ -176,36 +176,11 @@
             $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
         }
 
-    
-        function getAlbumContainer() {
-    $.ajax({
-        type: 'POST',
-        url: '@Url.Action("GetAlbum1", "Spot")',
-        dataType: "json",
-        success: function (result) {
-            
-            result.Data.forEach(function (album, index) {
-                
-                 count = index + 1;
-                var albumHtml = `
-                    <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumID}">
-                        <div class="music-content">
-                            <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
-                        </div>
-                        <div class="music-content-title">
-                            <h6 class="link-opacity-100-hover" href="#">${album.AlbumName}</h6>
-                            <p class="link-opacity-100-hover" href="#">${album.ArtistName}</p>
-                        </div>
-                    </div>
-                `;
-                $('.main-content-music').append(albumHtml); 
-            });
-        },
-        error: function (request, status, error) {
-            console.log(error);
-        }
-    });
-}
+
+
+
+
+
 
 
         //$('#aside').on('change', function () {

@@ -105,8 +105,6 @@
     </style>
 }
 
-
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -132,12 +130,10 @@
                                         <input class="form-control" type="text" id="txtEditAlbumArtist" placeholder="Artist Name">
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="row">
-
                                 <div class="col-12">
                                     <div class="album-art d-flex justify-content-center">
                                         <div class="input-group" style="width: 202px; height: 202px; position: relative;">
@@ -145,33 +141,25 @@
                                             <img id="albumEditModalImagePreview" src="/picture/music_note_icon.png" alt="Album Image Preview" style="display: block; width: 100%; height: 100%; object-fit: cover;">
                                             <div class="dv-icon-edit">
                                                 <i class="fa-solid fa-pen-to-square" style="font-size:20px; color:white;"></i>
-                                            </div>
-                                           
+                                            </div>                                     
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
          
-
-
-                <div class="row">
-                
+                <div class="row">             
                 </div>
-
 
                 <div class="col-12 mt-4">
                     <div class="row">
                         <div class="col-6 d-flex justify-content-center ">
                             <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
-
                         </div>
                         <div class="col-6 d-flex justify-content-center ">
                             <button type="button" class="btn w-100" style="background-color:#762676a8;color:white;" onclick="saveEditAlbum()">Save changes</button>
-
                         </div>
                     </div>
                 </div>
@@ -179,8 +167,6 @@
         </div>
     </div>
 </div>
-
-
 
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist" hidden>
@@ -195,14 +181,6 @@
             <div class="content main-content">
                 <div>
                     <h1 style="color:white">Add Song Page</h1>
-                    @*<p>
-                            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-                            John Doe John Doe John Doe John Doe John Doe John Doe
-                            John Doe John Doe John Doe John Doe John Doe John Doe John Doe
-                        </p>*@
-                    @*<button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Edit Album
-                    </button>*@
 
                     <div class="main-content-music row">
 
@@ -225,8 +203,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
 
                                 <div class="row">
                                     <div class="col-12 col-sm-12 col-md-6 mt-2 ">
@@ -267,7 +243,6 @@
                                         <th style="width:80px!important;">Delete</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                 </tbody>
                             </table>
@@ -299,7 +274,6 @@
                                         <h6>Song Name</h6>
                                         <div class="input-group">
                                             <input class="form-control" type="text" id="txtSongName" placeholder="Song Name">
-
                                         </div>
                                     </div>
 
@@ -307,8 +281,6 @@
                                         <h6>Add Song</h6>
                                         <div class=" col-6">
                                             <input class="form-control col-6" type="file" id="fileSongFile" placeholder="File URL">
-
-
                                         </div>
                                         <div class="col-6">
                                             <audio class="col-12" id="audiocontrolPreview" controls="" style="height:38px;display:none">
@@ -379,7 +351,6 @@
         <partial name="_SpotAdminAlbumView" />
     </div>
     <div class="tab-pane fade" id="nav-song" role="tabpanel" aria-labelledby="nav-song-tab">
-
         <partial name="_SpotAdminSongView" />
     </div>
 </div>
@@ -402,14 +373,13 @@
             audioControlEdit = $('#audiocontrolPreviewEdit')[0];
             audioDurationElementEdit = $('#durationEdit');
         });
-                $(document).on('click','#btnEditAlbum',function () {
-                    
-                    console.log(BtnAlbumData);
-                    $('#txtEditAlbumName').val(BtnAlbumData.AlbumName); 
-                    $('#txtEditAlbumArtist').val(BtnAlbumData.ArtistName);
-                    $('#albumEditModalImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
-                    $('#modal').modal('show');
-                });
+        $(document).on('click', '#btnEditAlbum', function () {
+            console.log(BtnAlbumData);
+            $('#txtEditAlbumName').val(BtnAlbumData.AlbumName);
+            $('#txtEditAlbumArtist').val(BtnAlbumData.ArtistName);
+            $('#albumEditModalImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+            $('#modal').modal('show');
+        });
         $('#albumEditImagePreview').click(function () {
             
             $('#fileEditAlbumImage').click();
@@ -423,8 +393,6 @@
             showPreview(this, '#albumEditImagePreview', 'image');
         });
       
-
-
                 $('#btnCancelEdit').click(function () {
                     $(".nav button#searchTab").tab('show');
                 });
@@ -451,10 +419,7 @@
                     $('#audiocontrolPreviewEdit').show();
                 });
 
-
-
-                function EditSongSave() {
-                    
+                function EditSongSave() {                 
                     if (!durationEdit) {
                         alert("Please wait until the audio duration is loaded.");
                         return;
@@ -498,36 +463,22 @@
                     $('#txtSongArtistEdit').val(rowDataSong.ArtistName);
                     $('#txtSongNameEdit').val(rowDataSong.SongName);
                     $('#txtSongGenresEdit').val(rowDataSong.SongGenres);
-               //     /*      $('#fileSongFileEdit').val(rowData.SongFilePath);*/
-               //     $('#audiocontrolPreviewEdit').val();
-               ///*     $('#songAudioPreviewEdit').val(rowData.SongFilePath);*/
-               //    /* $('#songAudioPreview').attr('src', rowData.SongFilePath);*/
-               //     $('#durationEdit').val();
-               //     $('#durationInputEdit').val();
-               //     $('#fileSongImageEdit').val();
-               //     $('#songImagePreviewEdit').val();
-
                     $(".nav button#songTab").tab('show');
                 });
-
 
                 $('#tblDataTableSong').on('click', '.btn-delete', function () {
                     SaveStatus = "Update";
                     rowDataSong = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
-
 
                     var formDataDelete = new FormData();
                     formDataDelete.append("AlbumId", rowDataSong.AlbumId);
                     formDataDelete.append("SongId", rowDataSong.SongId);
                     formDataDelete.append("ArtistName", rowDataSong.ArtistName);
                     formDataDelete.append("SongName", rowDataSong.SongName);
-
                     formDataDelete.append("SongFilePath", rowDataSong.SongFilePath);
                     formDataDelete.append("SongGenres", rowDataSong.SongGenres);
-
                     formDataDelete.append("SongImagePath", rowDataSong.SongImagePath);
                     formDataDelete.append("SongLength", rowDataSong.SongLength);
-
 
                     $.ajax({
                         url: '@Url.Action("DeleteSong1", "Spot")',
@@ -545,7 +496,6 @@
                 });
 
                 //Edit section End
-
 
                 $('#fileSongFile').change(function (e) {
                     var file = e.target.files[0];
@@ -572,8 +522,7 @@
                 });
 
                 $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
-                    var rowDataAlbum = $('#tblDataTableSongAlbum').DataTable().row(this).data();
-                    
+                    var rowDataAlbum = $('#tblDataTableSongAlbum').DataTable().row(this).data();                 
                     if (rowDataAlbum) {
                         $('#songAudioPreview').attr('src', rowDataAlbum.SongFilePath);
                         // Load the new audio source
@@ -596,13 +545,10 @@
 
                 $('#btnCancel').click(function () {
                     $(".nav button#searchTab").tab('show');
-
                 });
 
         $(document).on('click', 'btnSaveEditAlbum', function () {
-            debugger
             saveEditAlbum();
-
         });
 
         function showPreview(input, previewSelector, type) {
@@ -617,27 +563,26 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
-                }
+        }
 
         function searchAlbum() {
             frmSearch = {
                 AlbumName: $("#txtAlbumName").val(),
                 ArtistName: $("#txtAlbumArtist").val(),
             }
-             $.ajax({
-     type: 'POST',
-     url: '@Url.Action("SearchAlbum1", "Spot")',
-     data: frmSearch,
-     dataType: "json",
-     success: function (result) {
-
-         bindingTableAlbum(result.Data);
-         /* bindingTable(result.Data); */
-     },
-     error: function (request, status, error) {
-         console.log(error);
-     }
- });
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchAlbum1", "Spot")',
+                data: frmSearch,
+                dataType: "json",
+                success: function (result) {
+                    bindingTableAlbum(result.Data);
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
         }
 
         function searchSong() {
@@ -653,7 +598,6 @@
                 data: frmSearch,
                 dataType: "json",
                 success: function (result) {
-
                     bindingTableSong(result.Data);
                     /* bindingTable(result.Data); */
                 },
@@ -684,17 +628,13 @@
             });
         }
 
-
                 function saveEditAlbum() {
-
                     var formData = new FormData();
                     formData.append("AlbumName", $("#txtEditAlbumName").val());
                     formData.append("ArtistName", $("#txtEditAlbumArtist").val());
                     formData.append("AlbumImage", $("#fileEditAlbumImage")[0].files[0]);
                     formData.append("AlbumId", BtnAlbumData.AlbumId);
-
-
-                    debugger
+          
                     $.ajax({
                         url: '@Url.Action("EditAlbum1", "Spot")',
                         type: 'POST',
@@ -708,10 +648,7 @@
                             console.error(error);
                         }
                     });
-
-                }
-
-        function createSong() {
+                } {
             if (!duration) {
                 alert("Please wait until the audio duration is loaded.");
                 return;
@@ -725,7 +662,6 @@
             formData.append("SongGenres", $("#txtSongGenres").val());
             formData.append("SongImage", $("#fileSongImage")[0].files[0]);
             formData.append("SongLength", $('#durationInput').val());
-
             console.log(duration);
 
             $.ajax({
@@ -741,27 +677,15 @@
                     console.error(error);
                 }
             });
-                }
+        }
 
                 function clearAlbumValue() {
-
                     $('#albumSongForm')[0].reset();
                     $('#albumArtistSongForm')[0].reset();
                     $('#tblDataTableSongAlbum').dataTable().empty();
                     $('#tblDataTableSearchArtistSongAlbum').dataTable().empty();
                 };
-                //function clearValue() {
-                //    $('#fileSongFile').val(null)
-                //    $('#albumForm')[0].reset();
-                //    $('#songForm')[0].reset();
-                //    $('#tblDataTableAlbum').dataTable().empty();
-                //    $('#tblDataTableSong').dataTable().empty();
-                //    $('#songAudioPreview').attr('src', '#');
-                //    $('#audiocontrolPreview').hide();
-
-
-
-                //};
+ 
                 function clearValue() {
                     $('#fileSongFile').val(null);
                     $('#albumForm')[0].reset();
@@ -779,118 +703,77 @@
 
                     // Clear any text related to the duration
                     $('#duration').text('');
-
                 }
                 function bindingTableSong(songData) {
-
                     $('#dvTableSong').show();
                     // Initialize DataTable
                     dataTable = $('#tblDataTableSong').DataTable({
-
                         destroy: true, //ล้างข้อมูลก่อนหน้า
                         data: songData,
                         searching: false,
                         lengthchange: false,
                         scrollx: false,
-
                         paging:false,
                         info: false,
-
                         columns: [
-
                             {
                                 className: 'text-center',
                                 orderable: false,
                                 data: null,
                                 defaultContent: '<i class="fa-solid fa-edit btn-edit-song"></i>',
-
                             },
-
-
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
-
                                 render: function (data, type, row, meta) {
-
-
                                     return (meta.row + 1)
                                 }
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
                                 render: function (data, type, row) {
-
                                     return data.SongName;
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.ArtistName;
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.AlbumId
-
-
                                 }
-
-
                             },
-
-
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     var duration = data.SongLength
                                     var minutes = Math.floor(duration / 60);
                                     var seconds = Math.floor(duration % 60);
-
                                     // Ensure seconds are displayed with two digits
                                     var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                                     audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
                                     return duration != null ? minutes + ':' + formattedSeconds : "";
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.SongGenres;
-
                                 }
-
                             },
                             {
                                 className: 'text-center',
                                 orderable: false,
                                 data: null,
                                 defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
-
                             }
                         ]
-
-
                     });
                     //rowCount = dataTable.rows().count();
-                }
-
-
+        }
 
     $('#tblDataTableAlbum').on('click', '.btn-edit-album', async function () {
         SaveStatus = "Update";
@@ -940,10 +823,9 @@
                     bindingTableArtistSongAlbum(result.Data);
                   
                     if (result.status == "S") {
-                       
+                        
                     }
                     else {
-
                     }
                 },
                 error: function (request, status, error) {
@@ -953,7 +835,6 @@
         }
 
         await searchSongs();
-
         $('#tblDataTableSearchArtistSongAlbum ').on('click', '.btn-add', function () {
             var data = dataTable.row($(this).closest('tr')).data();
             if (this.click) {
@@ -974,11 +855,9 @@
                     processData: false,
                     data: formDataAddsong,
                     success: async function (result) {
+
                         if (result.status == "S") {
                             await searchSongs(); // Re-trigger the search after a successful update
-
-
-
                         }
                     },
                     error: function (error) {
@@ -992,7 +871,6 @@
 
         $('#tblDataTableSongAlbum').on('click', '.btn-remove', async function () {
             var rowDataSongAlbum = $('#tblDataTableSongAlbum').DataTable().row($(this).closest('tr')).data();
-
             var frmRemoveSong = {
                 AlbumId: rowDataSongAlbum.AlbumId,
                 SongId: rowDataSongAlbum.SongId
@@ -1004,10 +882,9 @@
                 data: frmRemoveSong,
                 dataType: "json",
                 success: async function (result) {
+
                     if (result.status == "S") {
-
                         await searchSongs(); // Re-trigger the search after a successful update
-
                     }
                 },
                 error: function (request, status, error) {
@@ -1017,49 +894,31 @@
         });
     });
 
+        $('#tblDataTableAlbum').on('click', '.btn-delete', async function () {
+            rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
+            frmDelete = {
+                AlbumId: rowDataAlbum.AlbumId
+            }
 
-
-
-                      $('#tblDataTableAlbum').on('click', '.btn-delete', async function () {
-
-          rowDataAlbum = $('#tblDataTableAlbum').DataTable().row($(this).closest('tr')).data();
-
-
-          frmDelete = {
-              AlbumId: rowDataAlbum.AlbumId
-          }
-
-
-        await  $.ajax({
-              type: 'POST',
-              url: '@Url.Action("DeleteAlbum1", "Spot")',
-            data: frmDelete,
-              dataType: "json",
-              success: function (result) {
-
-               alert("Delete Album Success")
-
-                  /* bindingTable(result.Data); */
-              },
-              error: function (request, status, error) {
-                  console.log(error);
-              }
-          });
-      });
-
-
-
-
-
-
-
+            await $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteAlbum1", "Spot")',
+                data: frmDelete,
+                dataType: "json",
+                success: function (result) {
+                    alert("Delete Album Success")
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
 
         function bindingTableAlbum(albumData) {
-
             $('#dvTableAlbum').show();
             // Initialize DataTable
             dataTable = $('#tblDataTableAlbum').DataTable({
-
                 destroy: true, //ล้างข้อมูลก่อนหน้า
                 data: albumData,
                 searching: false,
@@ -1067,68 +926,46 @@
                 scrollx: false,
                 paging: false,
                 info: false,
-
                 columns: [
-
-
                     {
                         className: 'text-center',
                         orderable: false,
                         data: null,
                         defaultContent: '<i class="fa-solid fa-edit btn-edit-album"></i>',
-
                     },
-
                     {
                         data: null, className: 'text-center', orderable: false, sortable: false,
-
                         render: function (data, type, row, meta) {
-
-
                             return (meta.row + 1)
                         }
                     },
                     {
                         data: null, className: 'text-left', orderable: false,
                         render: function (data, type, row) {
-
                             return data.AlbumName;
-
                         }
-
                     },
                     {
                         data: null, className: 'text-left', orderable: false,
-
                         render: function (data, type, row) {
-
                             return data.ArtistName;
-
                         }
-
                     },
                     {
                         className: 'text-center',
                         orderable: false,
                         data: null,
                         defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
-
                     }
                 ]
-
-
             });
             //rowCount = dataTable.rows().count();
-                }
-
-
+        }
 
                 function bindingTableSongAlbum(songAlbumData) {
-
                     $('#dvTableSongAlbum').show();
                     // Initialize DataTable
                     dataTable = $('#tblDataTableSongAlbum').DataTable({
-
                         destroy: true, //ล้างข้อมูลก่อนหน้า
                         data: songAlbumData,
                         searching: false,
@@ -1136,88 +973,56 @@
                         scrollx: false,
                         paging: false,
                         info: false,
-
                         columns: [
-
-
-
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
-
                                 render: function (data, type, row, meta) {
-
-
                                     return (meta.row + 1)
                                 }
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
                                 render: function (data, type, row) {
-
                                     return data.SongName;
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-left', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.ArtistName;
-
                                 }
-
                             },
-
-
-
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     var duration = data.SongLength
                                     var minutes = Math.floor(duration / 60);
                                     var seconds = Math.floor(duration % 60);
-
                                     // Ensure seconds are displayed with two digits
                                     var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                                     audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
                                     return duration != null ? minutes + ':' + formattedSeconds : "";
-
                                 }
-
                             },
                             {
                                 data: null, className: 'text-center', orderable: false,
-
                                 render: function (data, type, row) {
-
                                     return data.SongGenres;
-
                                 }
-
                             },
-
                             {
                                 className: 'text-center',
                                 orderable: false,
                                 data: null,
                                 defaultContent: '<i class="fa-solid fa-delete btn-remove">remove</i>',
-
                             }
                         ]
-
-
                     });
                     //rowCount = dataTable.rows().count();
                 }
 
-
                 function bindingTableArtistSongAlbum(songAlbumData) {
                     $('#dvSearchArtistSongAlbum').show();
-
                     // Initialize DataTable
                     dataTable = $('#tblDataTableSearchArtistSongAlbum').DataTable({
                         destroy: true, // Clear previous data
@@ -1228,7 +1033,6 @@
                         info: false,
                         paging: false,
                         columns: [
-
                             {
                                 data: null, className: 'text-center', orderable: false, sortable: false,
                                 render: function (data, type, row, meta) {
@@ -1269,12 +1073,9 @@
                                 orderable: false,
                                 data: null,
                                 defaultContent: '<i class="fa-solid fa-delete btn-add">Add Song</i>',
-
                             }
                         ]
                     });
-
                 }
-
     </script>
 }

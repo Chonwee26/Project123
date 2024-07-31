@@ -45,5 +45,11 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult PictureInPicture()
+        {
+            return View();
+        }
+
+
     }
 }

@@ -3,19 +3,23 @@ using Project123.Dto;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Project123Api.Repositories;
 
 
 namespace Project123.Controllers
 {
     public class SpotController : BaseController
     {
-
+        private readonly DataDbContext _db;
+        private readonly string connectionString;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<SpotController> _logger;
-        public SpotController(IHttpClientFactory httpClientFactory, ILogger<SpotController> logger)
+        public SpotController(IHttpClientFactory httpClientFactory, ILogger<SpotController> logger, DataDbContext db)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _db = db;
         }
         public IActionResult Index()
         {
@@ -25,10 +29,121 @@ namespace Project123.Controllers
         {
             return View();
         }
-   
-    
 
-    [HttpPost("Spot/CreateAlbum1")]
+        public IActionResult AlbumDetails(int albumId)
+        {
+            if (albumId <= 0)
+            {
+                return Json(new { status = "E", success = false, message = "Invalid Album ID" });
+            }
+
+            var album = _db.Albums
+                           .Where(s => s.AlbumId == albumId)
+                           .Select(s => new Project123.Dto.AlbumModel
+                           {
+                               AlbumId = s.AlbumId,
+                               AlbumName = s.AlbumName,
+                               AlbumImagePath = s.AlbumImagePath,
+                               ArtistName = s.ArtistName
+                           })
+                           .FirstOrDefault();
+
+            if (album == null)
+            {
+                return Json(new { status = "E", success = false, message = "Album not found" });
+            }
+
+            // Debugging statement
+            System.Diagnostics.Debug.WriteLine($"Album details: {album.AlbumName}, {album.AlbumImagePath}");
+
+            return View("AlbumDetails", album);
+        }
+
+
+        //[HttpGet("Spot/AlbumDetails/{id}")]
+        //public async Task<IActionResult> AlbumDetails()
+        //{
+        //    List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
+        //    using (HttpClientHandler handler = new HttpClientHandler())
+        //    {
+        //        // Temporarily bypass SSL certificate validation (not for production use)
+        //        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+        //        using (HttpClient client = new HttpClient(handler))
+        //        {
+        //            client.BaseAddress = new Uri("https://localhost:7061/");
+
+        //            try
+        //            {
+        //                var response = await client.GetAsync("/api/Test/GetShipmentLocationAsync");
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    storageList = await response.Content.ReadAsAsync<List<ShipmentLocationModel>>();
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                this.response.Status = "E";
+        //                this.response.Message = ex.Message;
+        //            }
+        //        }
+
+        //        return Json(new { success = this.response.Success, message = this.response.Message, Data = storageList });
+        //    }
+        //}
+
+        //[HttpGet("Spot/AlbumDetails/{id}")]
+        //public async Task<IActionResult> AlbumDetails(int id)
+        //{
+        //    ResponseModel resp = new ResponseModel();
+
+        //    using (HttpClientHandler handler = new HttpClientHandler())
+        //    {
+        //        // Temporarily bypass SSL certificate validation (not for production use)
+        //        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+        //        var client = _httpClientFactory.CreateClient();
+        //        client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+        //        try
+        //        {
+        //            //string requestJson = JsonConvert.SerializeObject(id);
+        //            //HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+        //            // Log the request URL
+        //            var requestUrl = $"/api/Spot/SearchAlbum/{id}";
+
+        //            var response = await client.GetAsync(requestUrl);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                resp = await response.Content.ReadAsAsync<ResponseModel>();
+
+        //                ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //                resp.Status = "S";
+        //                resp.Message = "Delete Success";
+        //            }
+        //            else
+        //            {
+        //                resp.Status = "E";
+        //                resp.Message = $"Error:";
+        //            }
+        //        }
+
+        //        catch (Exception ex)
+        //        {
+        //            this.response.Status = "E";
+        //            this.response.Message = ex.Message;
+        //        }
+        //    }
+
+        //    return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
+        //}
+
+
+
+
+        [HttpPost("Spot/CreateAlbum1")]
         public async Task<IActionResult> CreateAlbum(AlbumModel AlbumData)
         {
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -61,8 +176,7 @@ namespace Project123.Controllers
                             AlbumData.ArtistName,
                             AlbumData.AlbumName,
                             AlbumData.AlbumImagePath
-                            
-
+                           
                         };
 
                         string requestJson = JsonConvert.SerializeObject(AlbumDataCopy);

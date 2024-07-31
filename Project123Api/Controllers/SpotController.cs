@@ -23,6 +23,8 @@ namespace Project123Api.Controllers
             _spotRepo = spotRepository;
         }
 
+      
+
         [HttpPost("CreateAlbum123")]
         public async Task<ResponseModel> CreateAlbum(AlbumModel AlbumData)
         {
