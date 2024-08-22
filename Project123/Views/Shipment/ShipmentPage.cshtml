@@ -500,10 +500,7 @@
         var SaveUrl;
         var DataShipment;
         var rowData;
-        var oldInput = -1;
         $(document).ready(function () {
-
-            $('#tblDataTable').DataTable();
 
             $('#ddlSearchStorage').on('select2:select', function () {
 
@@ -515,60 +512,7 @@
             getShipmentLocationAsync('','#ddlSearchStorage');
 
         });
-      
 
-        $(document).on('click', '#tblDataTable .btn-edit-storage', function () {
-            debugger
-            checkSearchCheckMove = true;
-
-            var table = $('#tblDataTable').DataTable();
-            var rowIndex = table.row($(this).parents('tr')).index();
-            var rowData = table.row($(this).parents('tr')).data();
-
-            if ($("#dvCheckMove" + rowData.OrderNumber).attr("data-input") != "true") {
-                debugger
-                var html = `<div class="d-flex">
-                  <select class='form-control' style="height: 40px !important;" id="selCheckMove${rowIndex}">
-            <option value="Option1">Option 1</option>
-            <option value="Option2">Option 2</option>
-            <option value="Option3">Option 3</option>
-        </select>
-                <button type="button" class="btn btn-danger ml-2 mr-2" style="width: 75px; height: 40px !important; padding: 5px 10px;" id="btnDeleteInput${rowIndex}" onclick="deleteInput(${rowIndex})"><i class="fa fa-times m-0" aria-hidden="true"></i></button>
-                <button type="button" class="btn btn-success" style="width: 75px; height: 40px !important; padding: 5px 10px;" id="btnSaveInput${rowIndex}" onclick="saveInput(${rowIndex}, '${rowData[0]}')"><i class="fa fa-check m-0" aria-hidden="true"></i></button>
-            </div>`;
-
-                if (oldInput >= 0) {
-                    debugger
-                    deleteInput(oldInput);
-                }
-
-                $("#dvCheckMove" + rowData.OrderNumber).attr("data-input", "true");
-                $("#dvCheckMove" + rowData.OrderNumber).append(html);
-                oldInput = rowIndex;
-            }
-            $(this).closest('tr').find('td:eq(4)').hide(); // Hide the second cell (Product Name) in the row
-
-            // $("#checkProductName" + rowIndex).hide();
-        });
-
-
-        function deleteInput(rowIndex) {
-            debugger
-            $("#dvCheckMove" + rowData.OrderNumber).attr("data-input", "false").empty();
-            //$("#checkProductName" + rowIndex).show();
-            $("#tblCheckMove").find('tr').eq(rowIndex + 1).find('td:eq(1)').show(); // Show the second cell (Product Name) in the row
-
-            oldInput = -1;
-        }
-
-        function saveInput(rowIndex, checkId) {
-            debugger
-            var inputValue = $("#txtCheckMove" + rowIndex).val();
-            console.log("Saving input:", inputValue, "for Check ID:", checkId);
-
-            // Handle saving input value here (e.g., AJAX request to the server)
-            deleteInput(rowIndex);
-        }
 
         $('.select2').select2({
             width: 'resolve'
@@ -892,12 +836,16 @@
           dataType: "json",
           success: function (result) {
 
+              if (result.status == "S") {
 
 
-
-
+                  $('#tblDataTable').dataTable().empty();
                   bindingTableAll(result.Data);
               /*    bindingTable(result.Data);*/
+              }
+              else {
+                  SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+              }
 
 
 
@@ -1233,7 +1181,7 @@
                 })
             },
             timepicker: false,
-        })
+        });
 
         $('#txtShipDate').datetimepicker({
             format: 'd/m/Y',
@@ -1307,7 +1255,7 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                           
+
                             return data.Storage;
 
                         }
@@ -1358,7 +1306,7 @@
 
         function clearSearchValue() {
             $('#frmSearchShipment')[0].reset();
-            $('#tblDataTable').dataTable().empty();
+
             $('#ddlSearchShipmentStatus').val('').trigger('change');
             $('#ddlSearchStorage').val('').trigger('change');
 
@@ -1425,40 +1373,8 @@
                         data: null, className: 'text-center', orderable: false,
 
                         render: function (data, type, row) {
-                            //if (data.ShipmentLocation[0].ShipmentItemText == "Bangsue") {
-                            //    debugger
-                            //    return '<span style="color:blue">' + data.ShipmentLocation[0].ShipmentItemText + '</span>'
-                            //}
-                            //else {
-                            //    return data.ShipmentLocation[0].ShipmentItemText
-                            //}
 
-                            switch (data.ShipmentLocation[0].ShipmentItemText) {
-
-                                case "Saraburi":
-                                    return '<div id='+"dvCheckMove"+ data.OrderNumber+' > <span style="color:brown">' + data.ShipmentLocation[0].ShipmentItemText +'	&nbsp; <i class="fa-solid fa-edit btn-edit-storage"></i>'+ '</span></div > ';
-                                    break
-
-                                case "Bangsue":
-                                    return '<span style="color:blue">' + data.ShipmentLocation[0].ShipmentItemText + '	&nbsp; <i class="fa-solid fa-edit  btn-edit-storage"></i>' + '</span>';
-                                    break
-
-                                case "Wangnoi":
-                                    return '<span style="color:red">' + data.ShipmentLocation[0].ShipmentItemText + '	&nbsp; <i class="fa-solid fa-edit btn-edit-storage"></i>' + '</span>';
-                                    break
-
-                                case "Rangsit":
-                                    return '<span style="color:Orange">' + data.ShipmentLocation[0].ShipmentItemText + '	&nbsp; <i class="fa-solid fa-edit btn-edit-storage"></i>' +  '</span>';
-                                    break
-
-
-
-                                default:
-                                    return data.ShipmentLocation[0].ShipmentItemText;
-
-
-                            }
-
+                            return data.ShipmentLocation[0].ShipmentItemText
 
                         }
 
@@ -1507,3 +1423,5 @@
         }
     </script>
 }
+
+

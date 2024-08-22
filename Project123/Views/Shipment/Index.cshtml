@@ -1,141 +1,747 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editable Table with DataTables</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-</head>
-<body>
+﻿
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
 
-    <div class="container mt-5">
-        <table id="tblCheckMove" class="display">
+@section Styles{
+    <style type="text/css">
+        body {
+            height: calc(100vh-107px) !important;
+            background-color: #f9fbfd;
+        }
+        .size-btn{
+            font-size:10px;
+        }
+        .container {
+        }
+
+        .card {
+            background-color: white;
+        }
+
+        .carousel-item img {
+            height: 400px;
+            width: 1600px;
+            min-width: auto;
+            object-fit: cover;
+        }
+
+        #carouselExampleCaptions {
+            margin: 0; /* Reset margin for the carousel container */
+        }
+
+        #chatbot {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 300px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        #chatbotHeader {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbotBody {
+            display: none;
+            padding: 10px;
+        }
+
+        #messages {
+            height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        #userInput {
+            width: calc(100% - 70px);
+            padding: 5px;
+            outline: none;
+            margin-right: 10px;
+        }
+
+        #btnSend {
+            padding: 5px 10px;
+            outline: none;
+        }
+
+        .bubble-message {
+            border-radius: 10px;
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            max-width: 80%; /* Ensures the bubbles don't exceed a certain width */
+            word-wrap: break-word; /* Ensures long text wraps */
+        }
+
+        .bot-bubble-message {
+            background-color: grey;
+        }
+
+        .user-bubble-message {
+            background-color: #007bff;
+        }
+
+        #progressCard {
+            margin: auto;
+            max-width: 800px;
+            border: none;
+        }
+
+        #progressBar {
+            color: blue;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            justify-content: space-between; /* Distributes the space between the items */
+        }
+
+            #progressBar li {
+                list-style-type: none;
+                font-weight: 400;
+                color: rgb(160, 159, 159);
+                padding: 10px;
+                position: relative;
+                flex: 1; /* Allows the items to grow and shrink as needed */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+                #progressBar li:before {
+                    content: "";
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: currentColor;
+                    position: absolute;
+                    top: -5px; /* Adjust the position as needed */
+                    z-index: -1;
+                }
+
+                /*หลอดbar*/ #progressBar li:after {
+                    content: '';
+                    height: 8px;
+                    background: #ddd;
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    width: 100%;
+                    z-index: 1;
+                    transform: translateX(-50%);
+                }
+
+
+
+                #progressBar li.active {
+                    color: black;
+                }
+
+                    #progressBar li.active:before,
+                    #progressBar li.active:after {
+                        background-color: blue;
+                    }
+
+        #step3 {
+            width: 100% !important;
+            white-space: nowrap;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" hidden></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2" hidden></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3" hidden></button>
+            </div>
+            <div class="carousel-inner d-flex" style="border-radius:15px;">
+                <div class="carousel-item active">
+                    <img src="~/picture/rsz_pexels-pixabay-262353.jpg" />
+                    @*<div class="carousel-caption d-none d-md-block">
+                            <h5>First slide label</h5>
+                            <p>Some representative placeholder content for the first slide.</p>
+                        </div>*@
+                </div>
+                <div class="carousel-item">
+
+                    <img src="~/picture/shipment_pic2.jpg" class="d-block w-100" style="object-fit:cover" alt="shipmentpic1" />
+
+                </div>
+                <div class="carousel-item">
+                    <img src="~/picture/shipment_pic3.jpg" class="d-block w-100" style="object-fit:cover" />
+
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <form id="frmSearchShipment">
+        <div class="col-9 offset-3 mt-3">
+            <h1 class="">เช็คเลขพัสดุ Chowii Express</h1>
+            <div class="col-12">
+                <div class="row">
+
+                    <div class="col-8">
+                        @*<input type="text" id="txtOrderNumber" class="form-control" name="OrderNumber" placeholder="ใส่หมายเลขพัสดุ" />*@
+                        <select class="form-select select2 select2-select" id="ddlSearchStorage" style="width:100%" name="Storage">
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary px-4" id="btnSearch">Tracking</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="col-12" id="dvTable" style="display:none">
+        <table id="tblDataTable" class="table table-bordered" width="100%">
             <thead>
-                <tr>
-                    <th>Check ID</th>
-                    <th>Product Name</th>
-                    <th>Edit</th>
+                <tr class="text-center">
+                    <th style="min-width:40px;">แก้ไขสินค้า</th>
+                    <th>หมายเลขออเดอร์</th>
+                    <th>ชื่อ</th>
+                    <th>เบอร์โทรศัพท์</th>
+                    <th>ที่เก็บสินค้า</th>
+                    <th style="width:400px!important;">สถานะสินค้า</th>
+                    <th>วันจัดส่ง</th>
+                    <th style="min-width:40px;">ลบสินค้า</th>
+                    <th style="min-width:200px;">Storage select</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td id="checkProductName0">Product A</td>
-                    <td id="dvTxtCheckMove0"></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td id="checkProductName1">Product B</td>
-                    <td id="dvTxtCheckMove1"></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td id="checkProductName2">Product C</td>
-                    <td id="dvTxtCheckMove2"></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td id="checkProductName3">Product D</td>
-                    <td id="dvTxtCheckMove3"></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td id="checkProductName4">Product E</td>
-                    <td id="dvTxtCheckMove4"></td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td id="checkProductName5">Product F</td>
-                    <td id="dvTxtCheckMove5"></td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td id="checkProductName6">Product G</td>
-                    <td id="dvTxtCheckMove6"></td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td id="checkProductName7">Product H</td>
-                    <td id="dvTxtCheckMove7"></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td id="checkProductName8">Product I</td>
-                    <td id="dvTxtCheckMove8"></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td id="checkProductName9">Product J</td>
-                    <td id="dvTxtCheckMove9"></td>
-                </tr>
-                <!-- Add more rows as needed -->
             </tbody>
         </table>
     </div>
+</div>
 
-    <script>
-        var oldInput = -1;
+<div id="storageInfo" class="mt-3"></div>
 
+<div class="container mt-5" id="containerSection">
+    <div class="card">
+        <div id="cardAccordion">
+
+        </div>
+        <div class="card-body">
+            <div class="d-flex mt-4 card justify-content-center" id="progressCard">
+                <div class="tracking">
+
+                    <div class="progress-track">
+                        <ul id="progressBar">
+                            <li class="step0" id="step1">กำลังเตรียมพัสดุ</li>
+                            <li class="step0  text-center" id="step2">กำลังจัดส่ง</li>
+                            <li class="step0  text-right" id="step3">ถึงศูนย์คัดแยกโกดังสินค้า</li>
+                            <li class="step0  text-right" id="step4">กำลังจัดส่งให้ลูกค้า</li>
+                            <li class="step0  text-right" id="step5">จัดส่งเสร็จสิ้น</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="shipmentInfo" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+
+<div id="chatbot">
+    <div id="chatbotHeader">
+        <span>Live Chat</span>
+    </div>
+
+    <div id="chatbotBody">
+        <div id="messages"></div>
+        <div class="d-flex col-12">
+            <input type="text" class="form-control" id="userInput" placeholder="Type a message...">
+            <button class="btn btn-outline-primary" id="btnSend">Send</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+      
+    <script type="text/javascript">
+        var dataStorage = [];
+        var datatableStorage = [];
         $(document).ready(function () {
-            $('#tblCheckMove').DataTable();
+            $("#containerSection").hide();
+            $('#ddlSearchStorage').on('select2:select', function () {
+              
 
-            $(document).on('click', '#tblCheckMove td', function () {
-                debugger
-                checkSearchCheckMove = true;
-
-                var table = $('#tblCheckMove').DataTable();
-                var rowIndex = table.row($(this).parents('tr')).index();
-                var rowData = table.row($(this).parents('tr')).data();
-
-                if ($("#dvTxtCheckMove" + rowIndex).attr("data-input") != "true") {
-                    debugger
-                    var html = `<div class="d-flex">
-                          <select class='form-control' style="height: 40px !important;" id="selCheckMove${rowIndex}">
-                    <option value="Option1">Option 1</option>
-                    <option value="Option2">Option 2</option>
-                    <option value="Option3">Option 3</option>
-                </select>
-                        <button type="button" class="btn btn-danger ml-2 mr-2" style="width: 75px; height: 40px !important; padding: 5px 10px;" id="btnDeleteInput${rowIndex}" onclick="deleteInput(${rowIndex})"><i class="fa fa-times m-0" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success" style="width: 75px; height: 40px !important; padding: 5px 10px;" id="btnSaveInput${rowIndex}" onclick="saveInput(${rowIndex}, '${rowData[0]}')"><i class="fa fa-check m-0" aria-hidden="true"></i></button>
-                    </div>`;
-
-                    if (oldInput >= 0) {
-                        debugger
-                        deleteInput(oldInput);
-                    }
-
-                    $("#dvTxtCheckMove" + rowIndex).attr("data-input", "true");
-                    $("#dvTxtCheckMove" + rowIndex).append(html);
-                    oldInput = rowIndex;
-                }
-                 $(this).closest('tr').find('td:eq(1)').hide(); // Hide the second cell (Product Name) in the row
-  
-               // $("#checkProductName" + rowIndex).hide();
             });
+            $('.select2').select2({
+                width: 'resolve'
+
+            });
+
+            getShipmentLocationAsync('', '#ddlSearchStorage');
+
         });
 
-        function deleteInput(rowIndex) {
+        $(document).on('click', '#tblDataTable .btn-search', function () {
             debugger
-            $("#dvTxtCheckMove" + rowIndex).attr("data-input", "false").empty();
-            //$("#checkProductName" + rowIndex).show();
-            $("#tblCheckMove").find('tr').eq(rowIndex + 1).find('td:eq(1)').show(); // Show the second cell (Product Name) in the row
+            console.log("Button clicked.");
+            var table = $('#tblDataTable').DataTable();
+            var rowIndex = table.row($(this).parents('tr')).index();
+            var rowData = table.row($(this).parents('tr')).data();
+            $('#btnTblSearch' + rowData.OrderNumber).hide();
+            $('#btnTblCancle' + rowData.OrderNumber).show();
+            $('#txtStorageName' + rowData.OrderNumber).hide();
 
-            oldInput = -1;
+           
+
+            $(this).parents('tr').find('.dv-storage').show();
+            /*$(this).parents('tr').find('.dv-button').hide();*/
+        });
+
+        $(document).on('click', '#tblDataTable .btn-cancle', function () {
+            debugger
+            console.log("Button clicked.");
+            var table = $('#tblDataTable').DataTable();
+            var rowIndex = table.row($(this).parents('tr')).index();
+            var rowData = table.row($(this).parents('tr')).data();
+            $('#btnTblSearch' + rowData.OrderNumber).show();
+            $('#btnTblCancle' + rowData.OrderNumber).hide();
+            $('#txtStorageName' + rowData.OrderNumber).show();
+
+            $(this).parents('tr').find('.dv-storage').hide();
+            /*$(this).parents('tr').find('.dv-button').hide();*/
+        });
+        $(document).on('click', '#tblDataTable .btn-return', function () {
+           
+            console.log("Button clicked.");
+            var table = $('#tblDataTable').DataTable();
+            var rowIndex = table.row($(this).parents('tr')).index();
+            var rowData = table.row($(this).parents('tr')).data();
+
+            rowData.ShipmentLocation.ShipmentItemID = $('#ddlTblStorage' + rowData.OrderNumber).val();
+            rowData.ShipmentLocation.ShipmentItemText = $('#ddlTblStorage' + rowData.OrderNumber + ' option:selected').text();
+
+            var storageLocaiton = {
+                ShipmentItemID: $('#ddlTblStorage' + rowData.OrderNumber).val(),
+                ShipmentItemText: $('#ddlTblStorage' + rowData.OrderNumber + ' option:selected').text()
+
+            }
+            if (!datatableStorage.some(item => item.ShipmentItemID === storageLocaiton.ShipmentItemID) && storageLocaiton.ShipmentItemID != null) {
+                datatableStorage.push(storageLocaiton);
+            }
+           
+                debugger
+                        var html = `
+
+    <p id="storage${ rowData.ShipmentLocation.ShipmentItemID}"data-storage="${rowData.ShipmentLocation.ShipmentItemID}">Storage:${rowData.ShipmentLocation.ShipmentItemText}</p>
+
+`;
+                $('#storageInfo').append(html);
+                table.row(rowIndex).data(rowData).draw();
+            displayStorageInfo(datatableStorage);
+
+            $('#txtStorageName' + rowData.OrderNumber).val('').trigger('change').hide();
+        });
+
+        $(document).on('click', '#tblDataTable .btn-accept', function () {
+            var table = $('#tblDataTable').DataTable();
+            var rowIndex = table.row($(this).parents('tr')).index();
+            var rowData = table.row($(this).parents('tr')).data();
+            debugger
+            $('#dvEditDriver' + rowData.OrderNumber).show();
+            rowData.ShipmentLocation.ShipmentItemID = $('#ddlTblStorage' + rowData.OrderNumber).val();
+            rowData.ShipmentLocation.ShipmentItemText = $('#ddlTblStorage' + rowData.OrderNumber + ' option:selected').text();
+            table.row(rowIndex).data(rowData).draw();
+
+            $(this).parents('tr').find('.dv-storage').hide();
+            /*       $(this).parents('tr').find('.dv-button').show();*/
+            $('#btnTblSearch' + rowData.OrderNumber).show();
+            $('#btnTblCancle' + rowData.OrderNumber).hide();
+            $('#txtStorageName' + rowData.OrderNumber).show();
+            var taskToDelete = $("#storageInfo").find(`[data-storage='${rowData.ShipmentLocation.ShipmentItemID}']`);
+            debugger
+            
+            datatableStorage = dataStorage.filter(d => d.ShipmentItemID != rowData.ShipmentLocation.ShipmentItemID);
+            taskToDelete.remove();
+          
+        });
+        function getShipmentLocationAsyncCall(id, elementId) {
+            id = id == null ? "" : id
+            debugger         
+           
+            $(elementId).html('');
+             //$(elementId).append('<option value="">Select</option>'); //ถ้าจะappendต้องลบ placeholder
+            $(elementId).select2({
+                placeholder: '--- ทั้งหมด ---',
+                allowClear: true,
+                data: $.map(dataStorage, function (item) {
+                    return {
+                        id: item.ShipmentItemID,
+                        text: item.ShipmentItemText
+                    };
+                })
+            });
+            if (id != '') {
+                $(elementId).val(id).change();
+            }
+            else {
+                $(elementId).val(null).change();
+            }
+
+
+        }
+        function getShipmentLocationAsync(id, elementId) {
+
+    id = id == null ? "" : id
+
+    $.ajax({
+        type: 'GET',
+      /*  url: '/Test/GetShipmentLocationAsync',*/
+          url: '@Url.Action("GetShipmentLocationAsync","Test")',
+        datatype: 'json',
+        success: function (result) {
+            debugger
+            dataStorage = result.Data
+            //displayStorageInfo(result.Data)
+            $(elementId).html('');
+            $(elementId).select2({
+                placeholder:'--- ทั้งหมด ---',
+                allowClear: true,
+                data: $.map(result.Data, function (item) {
+                    return {
+                        id: item.ShipmentItemID,
+                        text: item.ShipmentItemText
+                    };
+                })
+            });
+            if (id != '') {
+                $(elementId).val(id).change();
+            }
+            else {
+                $(elementId).val(null).change();
+            }
+        }
+    });
+}
+        $('#liveChat').click(function () {
+            var liveChat = $('#liveChat');
+            liveChat.toggle();
+        });
+        $('#frmSearchShipment').validate({
+            rules: {
+
+            },
+            messages: {
+
+            },
+            errorPlacement: function (error, element) {
+
+            },
+            submitHandler: function (form) {
+                var inputDate = $('#txtSearchShipDateFR').val();
+                var formattedDate = "";
+
+                // Check if inputDate is a valid date in the format DD/MM/YYYY
+                if (moment(inputDate, 'DD/MM/YYYY', true).isValid()) {
+                    // If valid, format the date as YYYY-MM-DD
+                    formattedDate = moment(inputDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+                    inputDate = formattedDate;
+                }
+                var frmSearch = $('#frmSearchShipment').serialize();
+
+                var frmSearch1 = {
+                    Storage: $('#ddlSearchStorage').val()
+                }
+                  var token = localStorage.getItem('access_token');
+
+                $.ajax
+                    ({
+                        type: 'POST',
+                        url: '@Url.Action("SearchShipmentAsync", "Test")',
+                        data: frmSearch1,
+                        dataType: "json",
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        success: function (result) {
+                            debugger
+                            if (result.status == "S") {
+
+                                if (result.Data.length > 0) {
+                                    $("#containerSection").show();
+                                    bindingTableAll(result.Data);
+                                    displayStorageInfo(dataStorage)
+                                    displayShipmentInfo(result.Data);
+                                }
+                                else {
+                                    SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                                }
+                            }
+
+                            else {
+                                SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
+                            }
+                        },
+                        error: function (request, status, error) {
+                            SweetAlert('error', error);
+                        }
+                    });
+                }
+        });
+
+        function bindingTableAll(newShipment) {
+
+            $('#dvTable').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTable').DataTable({
+
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: newShipment,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
+
+                columns: [
+
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-edit btn-edit"></i>',
+
+                    },
+
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+
+                            return data.OrderNumber;
+                        }
+                    },
+                    {
+                        data: null, className: 'text-left', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.FullName;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.MobileNumber;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipmentLocation[0].ShipmentItemText
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipmentStatusList[0].ShipmentItemText
+
+                        }
+
+                    }
+                    , {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row) {
+
+                            return data.ShipDate;
+
+                        }
+
+                    },
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
+
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            var select = "<select class='from-control select2' style='width:60%;display:none;' id='ddlTblStorage" + data.OrderNumber + "'></select>";
+                            var html = data.ShipmentLocation.ShipmentItemText == null || data.ShipmentLocation.ShipmentItemText == "" ? `<div class= "slect-container d-flex">
+
+                             <div class="dv-button">
+                                <button id="btnTblSearch${data.OrderNumber}" class="btn btn-primary btn-search size-btn">S</button>
+                                <button id="btnTblCancle${data.OrderNumber}" class="btn btn-danger btn-cancle size-btn"style="display:none;">C</button>
+                                   <span id="txtStorageName${ data.OrderNumber }"></span>
+                             </div>
+
+                                <div class="dv-storage" style="display:none;">
+                            ${select}
+                             <button id="btnAccept${data.OrderNumber}" class="btn btn-success btn-accept size-btn">A</button>
+                               <button id="btnReturn${data.OrderNumber}" class="btn btn-secondary btn-return size-btn">R</button>
+                            </div>
+                             </div>`:
+                                                        `<div class= "slect-container d-flex">
+
+                            <div class="dv-button">
+                               <button id="btnTblSearch${data.OrderNumber}" class="btn btn-primary btn-search size-btn">S</button>
+ <button id="btnTblCancle${data.OrderNumber}" class="btn btn-danger btn-cancle size-btn"style="display:none;">C</button>
+                                  <span id="txtStorageName${data.OrderNumber}">${data.ShipmentLocation.ShipmentItemText}</span>
+                            </div>
+
+                               <div class="dv-storage" style="display:none;">
+                           ${select}
+                            <button id="btnAccept${data.OrderNumber}" class="btn btn-success btn-accept size-btn">A</button>
+                               <button id="btnReturn${data.OrderNumber}" class="btn btn-secondary btn-return size-btn">R</button>
+                           </div>
+                            </div>`
+                            return html
+                        }
+                    },
+                ]
+                , drawCallback: function () {
+                    $('#tblDataTable tbody tr').each(function () {
+                        var rowData = $('#tblDataTable').DataTable().row(this).data();
+                        getShipmentLocationAsyncCall(rowData.ShipmentLocation.ShipmentItemID, '#ddlTblStorage' + rowData.OrderNumber);
+                    });
+                }
+
+
+            });
+            //rowCount = dataTable.rows().count();
+        }
+        function displayStorageInfo(storageInfo) {
+            debugger
+            storageInfo.sort((a, b) => a.ShipmentItemID - b.ShipmentItemID);
+            $('#storageInfo').empty();
+
+            if (storageInfo.length > 1) {
+
+                storageInfo.forEach(Data => {
+
+
+                    var html = `
+
+    <p id="storage${Data.ShipmentItemID}"data-storage="${Data.ShipmentItemID}">Storage: ${Data.ShipmentItemText}</p>
+
+`;
+                    $('#storageInfo').append(html);
+                });
+            }
+
         }
 
-        function saveInput(rowIndex, checkId) {
-            debugger
-            var inputValue = $("#txtCheckMove" + rowIndex).val();
-            console.log("Saving input:", inputValue, "for Check ID:", checkId);
+        function displayShipmentInfo(shipmentInfo) {
+            $('#cardAccordion').empty(); 
+            $('#shipmentInfo').empty(); 
 
-            // Handle saving input value here (e.g., AJAX request to the server)
-            deleteInput(rowIndex);
+            shipmentInfo.forEach(Data => {
+                var picture;
+                var choosePicture = Data.ShipmentStatusList[0].ShipmentItemID;
+
+                $('.step0').removeClass("active");
+
+                for (var i = 1; i <= choosePicture; i++) {
+                    $('#step' + i).addClass("active");
+                }
+
+                switch (choosePicture) {
+                    case "1":
+                        picture = "/picture/box.png";
+                        break;
+                    case "2":
+                        picture = "/picture/truckani.gif";
+                        break;
+                    case "3":
+                        picture = "/picture/warehouse.png";
+                        break;
+                    case "4":
+                        picture = "/picture/scooterani.gif";
+                        break;
+                    case "5":
+                        picture = "/picture/5988246.png";
+                        break;
+                    default:
+                        picture = "";
+                        break;
+                }
+                $('#shipmentPicture').attr('src', picture);
+
+                var accordion = `
+            <div class="accordion accordion-flush" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${Data.ShipmentId}" aria-expanded="true" aria-controls="collapse${Data.ShipmentId}">
+                            <!-- Button Content -->
+                        </button>
+                    </h2>
+                    <div id="collapse${Data.ShipmentId}" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div>
+                                <div class="d-flex justify-content-around">
+                                    <img src= ${picture} style="height:200px;width:200px;" class="m-3" />
+                                </div>
+                                <h3 class="text-center">${Data.ShipmentStatusList[0].ShipmentItemText}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+                $('#cardAccordion').append(accordion);
+
+                var html = `
+            <hr>
+            <h6>Shipment ID: ${Data.ShipmentId}</h6>
+            <p>Order Number: ${Data.OrderNumber}</p>
+            <p>Full Name: ${Data.FullName}</p>
+            <p>Mobile Number: ${Data.MobileNumber}</p>
+            <p>Storage: ${Data.ShipmentLocation[0].ShipmentItemText}</p>
+            <p>Shipment Status: ${Data.ShipmentStatusList[0].ShipmentItemText}</p>
+            <p>Ship Date: ${Data.ShipDate}</p>
+            <p>Create Date: ${Data.CreateDate}</p>
+        `;
+                $('#shipmentInfo').append(html);
+            });
         }
     </script>
+}
 
-</body>
-</html>
+

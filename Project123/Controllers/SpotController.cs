@@ -59,6 +59,37 @@ namespace Project123.Controllers
             return View("AlbumDetails", album);
         }
 
+        public IActionResult ArtistDetails(string artistname)
+        {
+            if (string.IsNullOrEmpty(artistname))
+            {
+                return Json(new { status = "E", success = false, message = "Could not find Artist" });
+            }
+
+            var artist = _db.Song
+                           .Where(s => s.ArtistName == artistname)
+                           .Select(s => new Project123.Dto.SongModel
+                           {
+                               SongId = s.SongId,
+                               AlbumId = s.AlbumId,
+                               ArtistName = s.ArtistName,
+                               SongName = s.SongName,
+                               SongGenres = s.SongGenres,
+                               SongLength = s.SongLength,
+                               SongFilePath = s.SongFilePath,
+                               SongImagePath = s.SongImagePath
+                           })
+                           .FirstOrDefault();
+
+            if (artistname == null)
+            {
+                return Json(new { status = "E", success = false, message = "Artist not found" });
+            }
+
+         
+            return View("ArtistDetails", artist);
+        }
+
 
         //[HttpGet("Spot/AlbumDetails/{id}")]
         //public async Task<IActionResult> AlbumDetails()

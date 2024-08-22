@@ -1,8 +1,8 @@
-﻿@model Project123.Dto.AlbumModel;
+﻿@model Project123.Dto.SongModel;
 
 @{
     Layout = "~/Views/Shared/_SpotLayout.cshtml";
-    ViewBag.Title = Model.AlbumName;
+    ViewBag.Title = Model.ArtistName;
 }
 
 
@@ -86,41 +86,23 @@
             .dv-content:active {
                 background-color: black;
             }
+
         .dv-title {
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             padding-bottom: 70px;
         }
+
         .dv-album-img {
             margin: 100px 10px 20px 20px;
         }
 
-       /* #dvTableAlbum #tblDataTableSong th, tr, td :hover {
-            background-color: purple !important;
-        }
         #dvTableAlbum #tblDataTableSong th, tr, td {
             color: white !important;
             background-color: black !important;
             border: none !important;
-        }*/
-      /*  #dvTableAlbum #tblDataTableSong tr :hover {
-            background-color: purple !important;
-        }*/
-        .table-dark {
-            --bs-table-bg: black;
-            --bs-table-striped-bg: #2c3034;
-            --bs-table-striped-color: #fff;
-            --bs-table-active-bg: #373b3e;
-            --bs-table-active-color: #fff;
-            --bs-table-hover-bg: #560156;
-            --bs-table-hover-color: #fff;
-            color: #fff;
-            border-color: #373b3e;
         }
-
-      
-
 
         table.dataTable thead .sorting_asc {
             background-image: none !important;
@@ -129,20 +111,17 @@
         .btn-edit-album, .btn-delete, btn-edit-song {
             cursor: pointer;
         }
+
         .title-artist {
             cursor: pointer;
             color: unset;
             text-decoration: none;
-            opacity:0.8;
         }
+
             .title-artist:hover {
-                
                 color: unset;
                 text-decoration: underline;
             }
-
-      
-
     </style>
 }
 
@@ -151,56 +130,54 @@
         <div>
             <div class="album-details d-flex">
                 <div class="dv-album-img">
-                    <img src="@Model.AlbumImagePath" alt="@Model.AlbumName" class="img-music-content" />
+                    <img src="/uploads/Lisa/Album_3006/music_pic6_yorushika.jpg" alt="#" class="img-music-content" />
                 </div>
 
                 <div class="dv-title">
 
 
-                    <h1>@Model.AlbumName</h1>
-                    @if (Model != null && !string.IsNullOrEmpty(Model.ArtistName))
-                    {
-                        <a class="title-artist" href="@Url.Action("ArtistDetails", "Spot", new { artistname = Model.ArtistName })">@Model.ArtistName</a>
-                    }
-                    else
-                    {
-                            <p>@Model.ArtistName</p>
-                    }
+                    <h1>@Model.ArtistName</h1>
+                    @*<p>Artist: @Model.ArtistName</p>*@
                 </div>
             </div>
 
             @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-                <div class="music-content">
-                    <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
-                </div>
-                <div class="music-content-title">
-                    <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
-                    <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
-                </div>
-            </div>*@
-            <div class="main-content-music row">
-
-                @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
-                    <div class=" music-content">
-                        <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+                    <div class="music-content">
+                        <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
                     </div>
                     <div class="music-content-title">
-                        <h6>Spice and Wolf</h6>
-                        <p>Kevin Penkin</p>
+                        <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                        <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
                     </div>
-
                 </div>*@
-
-
+        <div class="main-content-music row">
+            <div class="main-content-music-album">
+                <h3>Albums</h3>
 
             </div>
+
+            <div class="main-content-music-song">
+                <h3>Songs</h3>
+
+            </div>
+            @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
+            <div class=" music-content">
+                <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+            </div>
+            <div class="music-content-title">
+                <h6>Spice and Wolf</h6>
+                <p>Kevin Penkin</p>
+            </div>
+
+        </div>*@
+
+
+
+        </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block">
-            <span>hello</span>
-            <div class="" style="background-color:black;">
-                <span>hello</span>
-            </div>
-            <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%">
+         
+            <table id="tblDataTableSong" class="table table-bordered" width="100%" style="display:none;">
                 <thead>
                     <tr class="">
 
@@ -236,7 +213,6 @@
                     </div>
                 </div>
             </aside>
-
         </div>
     </div>
 </div>
@@ -245,14 +221,15 @@
     <script type="text/javascript">
         var AlbumId = @Model.AlbumId;
         var ArtistName = '@Model.ArtistName';
-        var songData = [];
+     debugger
 
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
          /*   getAlbum();*/
             //getAlbumContainer();
-
-            searchSongs();
+            getArtistAlbumContainer();
+            //searchAlbum();
+            //searchSongs();
 
             $('.img-music-content').on('click', function () {
 
@@ -276,149 +253,99 @@
                 toggleAsideDisplay();
             });
         });
+           function getArtistAlbumContainer() {
+       $.ajax({
+           type: 'POST',
+           url: '@Url.Action("SearchAlbum1", "Spot")',
+           data: {
+               ArtistName: ArtistName
+           },
+           dataType: "json",
+           success: function (result) {
+               debugger
+               result.Data.forEach(function (album, index) {
+                   debugger
+                   count = index + 1;
+                   var albumHtml = `
+               <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                   <div class="music-content">
+                       <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+                   </div>
+                   <div class="music-content-title">
+                       <h6 class="link-opacity-100-hover" href="#">${album.AlbumName}</h6>
+                       <p class="link-opacity-100-hover" href="#">${album.ArtistName}</p>
+                   </div>
+               </div>
+           `;
+                   $('.main-content-music-album').append(albumHtml);
+               });
 
-        $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-            debugger;
-            console.log('hello');
-            var table = $('#tblDataTableSong').DataTable();
-            var rowDataAlbum = table.row(this).data();
-            var tableAllIndex = table.rows().count() - 1;
-            var currentIndex = table.row(this).index();
-            var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+               $('.dv-content').on('click', function () {
+                   debugger
+                   var albumId = $(this).data('album-id');
+                   window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+               });
+
+
+
+
+
+           },
+
+           error: function (request, status, error) {
+               console.log(error);
+           }
+
+
+       });
+
+   }
+
+
+             function searchAlbum() {
+         frmSearch = {
+
+             ArtistName: ArtistName,
+         }
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("SearchAlbum1", "Spot")',
+             data: frmSearch,
+             dataType: "json",
+             success: function (result) {
+             /*    bindingTableAlbum(result.Data);*/
+                 /* bindingTable(result.Data); */
+             },
+             error: function (request, status, error) {
+                 console.log(error);
+             }
+         });
+     }
+
+        $('.title-Artist').on('click', function () {
+            debugger
+            var albumId = $(this).data('album-id');
+            window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + ArtistName
+        });
+
+        $('#tblDataTableSong tbody').on('click', 'tr', function () {
+            console.log('hi');
+            var rowDataAlbum = $('#tblDataTableSong').DataTable().row(this).data();
             if (rowDataAlbum) {
                 $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
                 // Load the new audio source
                 audioControl.load();
+                $('#audiocontrol').show();
                 audioControl.play();
-
-                $('.btn-media-play').addClass('hide-media-button');
-                $('.btn-media-pause').removeClass('hide-media-button');
-                $('.title-song').css('color','white');
-                $('#titleSong' + rowData.SongId).css("color", '#e52cf9');
-
-
-                $('.btn-media-backward').click(function () {
-                    if (currentIndex!= 0) {
-                        currentIndex--;
-                        if (currentIndex <= tableAllIndex) {
-                            var nextRowData = table.row(currentIndex).data();
-                            $('.title-song').css('color', 'white');
-                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-
-                            $('#songAudio').attr('src', nextRowData.SongFilePath);
-                            audioControl.load();
-                            audioControl.play();
-                        } else {
-                          
-                                var nextRowData = table.row(currentIndex).data();
-                                $('.title-song').css('color', 'white');
-                                $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-
-                                $('#songAudio').attr('src', nextRowData.SongFilePath);
-                                audioControl.load();
-                                audioControl.play();
-                            console.log('End of playlist');
-                        }
-                    }
-                  
-                });
-
-                $('.btn-media-forward').click(function () {
-                  
-                    if (currentIndex <= tableAllIndex) {
-                        if (currentIndex < tableAllIndex) {
-                            currentIndex++;
-                            var nextRowData = table.row(currentIndex).data();
-                            $('.title-song').css('color', 'white');
-                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-
-                            $('#songAudio').attr('src', nextRowData.SongFilePath);
-
-                            if ($('.btn-media-pause').hasClass('hide-media-button')) {
-                                $('.btn-media-pause').removeClass('hide-media-button');
-                                $('.btn-media-play').addClass('hide-media-button');
-                            }
-                            /* $('.btn-media-pause').addClass('hide-media-button');*/
-                            audioControl.load();
-                            audioControl.play();
-                        }
-                        else //เผื่อไว้ตอนข้าม album
-                        {          
-
-                        }
-                      
-                                                          
-                    } else {
-
-                        console.log('End of playlist');
-                    }
-                });
-
-                // Event listener for when the song ends
-                audioControl.onended = function () {
-                    debugger;
-                    currentIndex++; 
-
-                    if (currentIndex <= tableAllIndex) { 
-                        var nextRowData = table.row(currentIndex).data(); 
-                        $('.title-song').css('color', 'white');
-                        $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-                      
-                        $('#songAudio').attr('src', nextRowData.SongFilePath);
-                        audioControl.load();
-                        audioControl.play();
-                    } else {
-                       
-                        console.log('End of playlist');
-                    }
-                };
+                // Play the audio (optional)
+                // audioControl.play();
+            } else {
+                console.error('Row data is null or undefined');
             }
         });
 
-
-
-//        $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-//            console.log('hello');
-//            var rowDataAlbum = $('#tblDataTableSong').DataTable().row(this).data();
-//            if (rowDataAlbum) {
-//                $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
-//                // Load the new audio source
-//                audioControl.load();
-//            /*    $('#audiocontrol').show();*/
-//                audioControl.play();
-
-//                $('.btn-media-play').addClass('hide-media-button')
-//                $('.btn-media-pause').removeClass('hide-media-button')
-////                var html = `<aside class="aside-content px-3">
-////    <button class="btn btn-close-aside" id="btnCloseAside" style="color:white">Close</button>
-////    <p>peem</p>
-////    <div class="img-aside-content">
-////        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-////    </div>
-////    <h3>17さいのうた。</h3>
-////    <h6>Yuika</h6>
-////    <div class="aside-about-artist">
-////        <div class="aside-about-artist-img">
-////            <h6>About the artist</h6>
-////        </div>
-////        <div class="aside-about-artist-title">
-////            <h6>Yuika</h6>
-////            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-////        </div>
-////    </div>
-////</aside>
-////`
-////                $('#aside').html(html);
-
-//                // Play the audio (optional)
-//                // audioControl.play();
-//            } else {
-//                console.error('Row data is null or undefined');
-//            }
-//        });
-
         async function searchSongs() {
-            
+            debugger
             let frmSearch = {
 
                 AlbumId: AlbumId
@@ -430,14 +357,7 @@
                 data: frmSearch,
                 dataType: "json",
                 success: function (result) {
-
-                /*    songData = result.Data;*/
-                    songData = result.Data.forEach(function (song, index) {
-                    songData.push(song.SongFilePath)
-                    
-                    })
-                    
-                    bindingTableSong(result.Data);
+                  /*  bindingTableSong(result.Data);*/
                     //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
                     if (result.status == "S") {
 
@@ -465,11 +385,9 @@
             $('#dvTableAlbum').show();
             // Initialize DataTable
             dataTable = $('#tblDataTableSong').DataTable({
-               
                 destroy: true, //ล้างข้อมูลก่อนหน้า
                 data: songData,
                 searching: false,
-                hover: true,
                 lengthchange: false,
                 scrollx: false,
                 paging: false,
@@ -487,12 +405,11 @@
                         className: 'text-left',
                         orderable: false,
                         render: function (data, type, row) {
-                            var html = `<div><span class="title-song"id="titleSong${data.SongId}">${data.SongName}</span></div>
-                    <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
+                            var html = `<div><span class="title-song">${data.SongName}</span></div>
+     <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
                             return html
                         }
                     },
-
 
                     {
                         data: null, className: 'text-center',width: '60px', orderable: false,
