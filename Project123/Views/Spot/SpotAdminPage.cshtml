@@ -628,57 +628,58 @@
             });
         }
 
-                function saveEditAlbum() {
-                    var formData = new FormData();
-                    formData.append("AlbumName", $("#txtEditAlbumName").val());
-                    formData.append("ArtistName", $("#txtEditAlbumArtist").val());
-                    formData.append("AlbumImage", $("#fileEditAlbumImage")[0].files[0]);
-                    formData.append("AlbumId", BtnAlbumData.AlbumId);
-          
-                    $.ajax({
-                        url: '@Url.Action("EditAlbum1", "Spot")',
-                        type: 'POST',
-                        contentType: false,
-                        processData: false,
-                        data: formData,
-                        success: function (result) {
-                            alert('Album edit successfully');
-                        },
-                        error: function (error) {
-                            console.error(error);
-                        }
-                    });
-                } {
-            if (!duration) {
-                alert("Please wait until the audio duration is loaded.");
-                return;
-            }
-
+        function saveEditAlbum() {
             var formData = new FormData();
-            formData.append("AlbumId", $("#txtSongAlbumId").val());
-            formData.append("ArtistName", $("#txtSongArtist").val());
-            formData.append("SongName", $("#txtSongName").val());
-            formData.append("SongFile", $("#fileSongFile")[0].files[0]);
-            formData.append("SongGenres", $("#txtSongGenres").val());
-            formData.append("SongImage", $("#fileSongImage")[0].files[0]);
-            formData.append("SongLength", $('#durationInput').val());
-            console.log(duration);
+            formData.append("AlbumName", $("#txtEditAlbumName").val());
+            formData.append("ArtistName", $("#txtEditAlbumArtist").val());
+            formData.append("AlbumImage", $("#fileEditAlbumImage")[0].files[0]);
+            formData.append("AlbumId", BtnAlbumData.AlbumId);
 
             $.ajax({
-                url: '@Url.Action("CreateSong1", "Spot")',
-                contentType: false,
+                url: '@Url.Action("EditAlbum1", "Spot")',
                 type: 'POST',
+                contentType: false,
                 processData: false,
                 data: formData,
                 success: function (result) {
-                    alert('Song saved successfully');
+                    alert('Album edit successfully');
                 },
                 error: function (error) {
                     console.error(error);
                 }
             });
-        }
 
+            {
+                if (!duration) {
+                    alert("Please wait until the audio duration is loaded.");
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append("AlbumId", $("#txtSongAlbumId").val());
+                formData.append("ArtistName", $("#txtSongArtist").val());
+                formData.append("SongName", $("#txtSongName").val());
+                formData.append("SongFile", $("#fileSongFile")[0].files[0]);
+                formData.append("SongGenres", $("#txtSongGenres").val());
+                formData.append("SongImage", $("#fileSongImage")[0].files[0]);
+                formData.append("SongLength", $('#durationInput').val());
+                console.log(duration);
+
+                $.ajax({
+                    url: '@Url.Action("CreateSong1", "Spot")',
+                    contentType: false,
+                    type: 'POST',
+                    processData: false,
+                    data: formData,
+                    success: function (result) {
+                        alert('Song saved successfully');
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
+            }
+        }
                 function clearAlbumValue() {
                     $('#albumSongForm')[0].reset();
                     $('#albumArtistSongForm')[0].reset();

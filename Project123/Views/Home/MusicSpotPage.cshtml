@@ -115,7 +115,7 @@
         </div>
     </div>
     <div class=" content aside col-lg-3 col-5" id="aside">
-        <div>
+        @*<div class="dv-aside">
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
                 <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </aside>
-        </div>
+        </div>*@
     </div>
 </div>
 
@@ -143,7 +143,8 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-         /*   getAlbum();*/
+            /*   getAlbum();*/
+           
             getAlbumContainer();
 
 
@@ -152,7 +153,7 @@
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
-                    toggleAsideDisplay();
+              /*      toggleAsideDisplay();*/
                 }
             });
             $(document).on('click', '.dv-content', function () {
@@ -164,16 +165,14 @@
                 }
                 console.log(count);
             });
-
-            $('#btnCloseAside').click(function () {
+            $(document).on('click', '#btnCloseAside', function () {
                 toggleAsideDisplay();
             });
+            //$('#btnCloseAside').click(function () {
+              
+            //});
         });
-        function toggleAsideDisplay() {
-            $('#aside').toggle();
-            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
-        }
-
+      
 
 
 

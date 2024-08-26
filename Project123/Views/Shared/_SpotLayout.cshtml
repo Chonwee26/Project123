@@ -92,10 +92,11 @@
         }
 
         .bottomside-title{
-            padding-top:15px;
+          /*  padding-top:15px;*/
+            padding-top:9px;
         }
         img {
-            border: 1px solid #ddd;
+           /* border: 1px solid #ddd;*/
             border-radius: 4px;
             width: 50px;
             height: 50px;
@@ -108,6 +109,16 @@
             width: 64px;
             height: 64px;
         }
+
+        .img-aside-about {
+       
+            max-height: 90px;
+            max-width: 90px;
+            border-radius: 50%; 
+            width:100%;
+            height:100%;
+        }
+
         .iconlove {
             display: flex !important;
             justify-content: center;
@@ -145,7 +156,7 @@
             height: 56px;
         }
 
-        .dv-bottomside {
+        .dv-bottomside-image {
             margin: 3px;
         }
         .white-text {
@@ -182,7 +193,7 @@
          
         }
 
-        .hide-media-button{
+        .hide-element{
             display:none!important;
         }
        
@@ -192,6 +203,7 @@
             height: 10px;
             margin-top: 10px;
             width:83%;
+            background-color:unset;
         }
 
         .progress-bar {
@@ -205,6 +217,20 @@
         .icon-color-purple {
             color: #e52cf9 !important;
         }
+
+        .title-artist {
+            cursor: pointer;
+            color: unset;
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+            .title-artist:hover {
+                color: unset;
+                text-decoration: underline;
+            }
+
+      
          
             /*.progress-bar::-webkit-slider-thumb {
                 -webkit-appearance: none;
@@ -264,6 +290,29 @@
 <div id="main">
     <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
     @RenderBody()
+    <div class=" content aside col-lg-3 col-5" id="aside">
+        @*<div class="dv-aside">
+                <aside class="aside-content px-3">
+                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                    <div class="img-aside-content">
+                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                    </div>
+                    <h3>17さいのうた。</h3>
+                    <h6>Yuika</h6>
+
+                    <div class="aside-about-artist">
+                        <div class="aside-about-artist-img">
+                            <h6>About the artist</h6>
+                        </div>
+                        <div class="aside-about-artist-title">
+                            <h6>Yuika</h6>
+                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>*@
+    </div>
 </div>
     @*</main>
         </div>*@
@@ -272,15 +321,15 @@
         <div class="bottombar" id="bottomBar">
             <div class="col-12">
                 <div class="row">
-                    <div class="d-flex col-4">
-                        <div class="dv-bottomside" style="margin:5px 15px 0px 15px">
+                    <div class="d-flex col-4" id="dv-bottomside">
+                        @*<div class="dv-bottomside-image" style="margin:5px 15px 0px 15px">
 
                             <img class="img-bottomside" src="~/picture/Japan-2107x1406.jpg" />
                         </div>
                         <div class="bottomside-title">
                             <h6 style="color:white;margin:0" class="">Trying to stay alive</h6>
                             <p style="color:gray;">xenophuria</p>
-                        </div>
+                        </div>*@
                     </div>
                     <div class="content bottomside-control col-4" style="padding:0;">
 
@@ -371,47 +420,48 @@
         var volume;
         var progressBar = $('#progressBar');
         $(document).ready(function () {
-
-            $('.btn-media-pause').addClass('hide-media-button')
+            toggleAsideDisplay();
+            progressBar.attr('disabled', true);
+            $('.btn-media-pause').addClass('hide-element')
             audioControl.volume = audioVolume.val();
 
             $(audioVolume).on('input', function () {
-                
+
                 audioControl.volume = $(this).val();
-              
+
             })
             $('.btn-media-play').click(function () {
-                
-                if ($('#songAudio').attr('src') != 'blobdosomething') {                              
+
+                if ($('#songAudio').attr('src') != 'blobdosomething') {
                 audioControl.play(audioControl);
-                    $('.btn-media-play').addClass('hide-media-button');
-                    $('.btn-media-pause').removeClass('hide-media-button');
+                    $('.btn-media-play').addClass('hide-element');
+                    $('.btn-media-pause').removeClass('hide-element');
                 }
             });
             $('.btn-media-pause').click(function () {
                 audioControl.pause(audioControl);
-              
-                $('.btn-media-play').removeClass('hide-media-button');
-                $('.btn-media-pause').addClass('hide-media-button');
+
+                $('.btn-media-play').removeClass('hide-element');
+                $('.btn-media-pause').addClass('hide-element');
             });
 
             $('.btn-media-repeat').click(function () {
-           
+
                 $('#iconRepeat').toggleClass('icon-color-purple');
 
 
 
                 if (audioControl.loop) {
-                    audioControl.loop = false;  // Disable looping
+                    audioControl.loop = false; 
                 } else {
-                    audioControl.loop = true;   // Enable looping
-                    audioControl.play();        // Play the audio to ensure it loops
+                    audioControl.loop = true;  
+                    audioControl.play();       
                 }
             });
 
             //audioControl.addEventListener('timeupdate', function () {
             //    debugger
-            
+
             //        var currenttime = audioControl.currentTime / audioControl.duration * 100;
             //        progressBar.attr('aria-valuenow', currenttime);
 
@@ -450,6 +500,7 @@
 
             //});
 
+            
 
             audioControl.addEventListener('timeupdate', function () {
                 var currentTime = audioControl.currentTime;
@@ -461,9 +512,9 @@
                 // Ensure seconds are displayed with two digits
                 var formattedCurrentSeconds = seconds < 10 ? '0' + seconds : seconds;
                 /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
-            
+
                  currentTimeminute != null ? minutes + ':' + formattedCurrentSeconds : "";
-                
+
                 $('#startMediaTime').text(minutes + ':' + formattedCurrentSeconds);
                 ////////////////////////
 
@@ -476,11 +527,12 @@
                 /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
 
                 durationTimeminute != null ? minutes + ':' + formattedDurationSeconds : "";
-                debugger
-                if (minutes != NaN && formattedDurationSeconds != NaN) {
+              
+                if (!isNaN(minutes) && !isNaN(formattedDurationSeconds)) {
+                    debugger;
                     $('#endMediaTime').text(minutes + ':' + formattedDurationSeconds);
                 }
-            
+
 
                 ////////////////
                 if (duration > 0) {
@@ -489,7 +541,7 @@
                 }
             });
 
-        
+
             progressBar.on('input', function () {
                 var value = $(this).val();
                 var duration = audioControl.duration;
@@ -500,23 +552,23 @@
             });
 
             $('.btn-media-volume').click(function () {
-                
-                
-                var volumeElement = audioVolume 
+
+
+                var volumeElement = audioVolume
                 var currentVolume = volumeElement.val();
-              
+
                 if (currentVolume > 0) {
                     volume = currentVolume
              /*       volumeElement.data('prevVolume', currentVolume);*/
                     volumeElement.attr('data-volume', currentVolume);
                     volumeElement.val(0);
                 } else {
-                    //volumeElement.val(volumeElement.data('prevVolume') || 100); 
+                    //volumeElement.val(volumeElement.data('prevVolume') || 100);
                     volumeElement.val(volume);
 
                 }
-             
-                volumeElement.trigger('input'); 
+
+                volumeElement.trigger('input');
             });
 
             //$('.btn-media-pause').click(function () {
@@ -553,20 +605,66 @@
             });
         });
 
+        function bindingMediaLayout(data,image,albumName) {
+            debugger
+            $('#dv-bottomside').empty();
+            $('#aside').empty();
+            var bottomMedia = `
+                <div class="dv-bottomside-image" style = "margin:5px 15px 0px 15px" >
+
+                    <img class="img-bottomside" src=${image} />
+  </div >
+
+            <div class="bottomside-title" style = "margin-bottom:5px;">
+                <a class="title-artist" href="" style="color:white;margin:0;font-size:1rem; font-weight:500;" >${data.SongName}</a> <br>
+                <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
+            </div>`;
+            $('#dv-bottomside').append(bottomMedia);
+
+
+
+
+            var aside = `    <div class="dv-aside">
+    <aside class="aside-content px-3">
+        <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+        <p>${albumName}</p>
+        <div class="img-aside-content">
+            <img id="aside_pic" src=${image} class="img-aside" />
+        </div>
+        <h3>${data.SongName}</h3>
+         <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
+          
+        <div class="aside-about-artist">
+            <div class="aside-about-artist-img">
+                <h6>About the artist</h6>
+                  <img id="imgAsideAbout" src=${image} class="img-aside-about" />
+            </div>
+            <div class="aside-about-artist-title">
+            
+             <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
+                <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+            </div>
+        </div>
+    </aside>
+</div>`;
+              
+            $('#aside').append(aside);
+
+        }
         $('#fileSongFile').change(function (e) {
-           
+
             var file = e.target.files[0];
             var url = URL.createObjectURL(file);
 
             $(audioControl).on('loadedmetadata', function () {
-               
+
                 duration = audioControl.duration;
                 var minutes = Math.floor(duration / 60);
                 var seconds = Math.floor(duration % 60);
                 // Ensure seconds are displayed with two digits
                 var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                 audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
-           
+
                 $('#durationInput').val(parseInt(duration));
             });
 
@@ -606,7 +704,7 @@
                 success: function (result) {
 
                     result.Data.forEach(function (album, index) {
-                        
+
                         count = index + 1;
                         var albumHtml = `
                     <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
@@ -623,7 +721,7 @@
                     });
 
                     $('.dv-content').on('click', function () {
-                        
+
                         var albumId = $(this).data('album-id');
                         window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
                     });
@@ -658,7 +756,7 @@
              }
          });
      }
-             function getAlbumSideLayout() {
+             @*function getAlbumSideLayout() {
     $.ajax({
         type: 'POST',
         url: '@Url.Action("GetAlbum1", "Spot")',
@@ -670,14 +768,16 @@
                  count = index + 1;
                 var albumHtml = `
                     <div class="imgArtist" data-album-id="${album.AlbumId}">
+                    <a href = "#">
                     <img src="${album.AlbumImagePath}"/>
+                    </a>
                     </div>`;
 
                 $('.lib-sidebar').append(albumHtml);
             });
 
             $('.imgArtist').on('click', function () {
-       
+
        var albumId = $(this).data('album-id');
        window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
    });
@@ -686,7 +786,39 @@
             console.log(error);
         }
     });
+        }*@
+
+        function getAlbumSideLayout() {
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetAlbum1", "Spot")',
+        dataType: "json",
+        success: function (result) {
+
+            result.Data.forEach(function (album, index) {
+
+                var albumHtml = `
+                    <div class="imgArtist" data-album-id="${album.AlbumId}">
+                        <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${album.AlbumId}">
+                            <img src="${album.AlbumImagePath}" />
+                        </a>
+                    </div>`;
+
+                $('.lib-sidebar').append(albumHtml);
+            });
+        },
+        error: function (request, status, error) {
+            console.log(error);
+        }
+    });
 }
+
+
+        function toggleAsideDisplay() {
+            $('#aside').toggle();
+            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+        }
+
 
     </script>
     @await RenderSectionAsync("Scripts", required: false)

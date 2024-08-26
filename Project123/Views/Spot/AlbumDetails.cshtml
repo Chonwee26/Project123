@@ -34,7 +34,7 @@
         }
 
         .main-content-music {
-            margin-top: 100px;
+           /* margin-top: 100px;*/
             display: flex;
             /*    justify-content: center;*/
             align-items: center;
@@ -129,18 +129,7 @@
         .btn-edit-album, .btn-delete, btn-edit-song {
             cursor: pointer;
         }
-        .title-artist {
-            cursor: pointer;
-            color: unset;
-            text-decoration: none;
-            opacity:0.8;
-        }
-            .title-artist:hover {
-                
-                color: unset;
-                text-decoration: underline;
-            }
-
+   
       
 
     </style>
@@ -178,28 +167,42 @@
                     <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
                 </div>
             </div>*@
-            <div class="main-content-music row">
-
-                @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
-                    <div class=" music-content">
-                        <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
-                    </div>
-                    <div class="music-content-title">
-                        <h6>Spice and Wolf</h6>
-                        <p>Kevin Penkin</p>
-                    </div>
-
-                </div>*@
+        <div class="main-content-music">
 
 
+          
+      
 
-            </div>
+                <button class="button-control btn-media btn-album-play" style="background-color: unset; margin-left: 20px;">
+                    <i class="fa-solid  fa-circle-play" style="color:#e52cf9;  "></i>
+                </button>
+                @*<button class="button-control btn-media btn-album-pause">
+            <i class="fa-solid icon-control fa-circle-pause"></i>
+        </button>*@
+
+                <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
+                    <i class="fa-solid  fa-shuffle" style="color:#FFF;" id="iconAlbumShuffle"></i>
+                </button>
+          
+
+
+
         </div>
-        <div class="col-12" id="dvTableAlbum" style="display:block">
-            <span>hello</span>
+        </div>
+        <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
+          
+            @*<button class="button-control btn-media btn-album-shuffle" type="button">
+                <i class="fa-solid icon-control fa-shuffle"></i>
+            </button>
             <div class="" style="background-color:black;">
-                <span>hello</span>
-            </div>
+             
+                <button class="button-control btn-media btn-media-play">
+                    <i class="fa-solid icon-control fa-circle-play"></i>
+                </button>
+                <button class="button-control btn-media btn-media-pause">
+                    <i class="fa-solid icon-control fa-circle-pause"></i>
+                </button>
+            </div>*@
             <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%">
                 <thead>
                     <tr class="">
@@ -216,7 +219,7 @@
         </div>
     </div>
     <div class=" content aside col-lg-3 col-5" id="aside">
-        <div>
+        @*<div>
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
                 <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
@@ -237,7 +240,7 @@
                 </div>
             </aside>
 
-        </div>
+        </div>*@
     </div>
 </div>
 
@@ -245,13 +248,14 @@
     <script type="text/javascript">
         var AlbumId = @Model.AlbumId;
         var ArtistName = '@Model.ArtistName';
+        var AlbumName = '@Model.AlbumName';
         var songData = [];
-
+        var AlbumImage ='@Model.AlbumImagePath';
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
          /*   getAlbum();*/
             //getAlbumContainer();
-
+      /*      toggleAsideDisplay();*/
             searchSongs();
 
             $('.img-music-content').on('click', function () {
@@ -272,27 +276,48 @@
                 console.log(count);
             });
 
-            $('#btnCloseAside').click(function () {
+            $(document).on('click', '#btnCloseAside', function () {
                 toggleAsideDisplay();
             });
         });
 
+        $('.btn-album-shuffle').click(function () {
+
+            $('#iconAlbumShuffle').toggleClass('icon-color-purple');
+
+
+
+            //if (audioControl.loop) {
+            //    audioControl.loop = false;
+            //} else {
+            //    audioControl.loop = true;
+            //    audioControl.play();
+            //}
+        });
+
         $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-            debugger;
-            console.log('hello');
+           debugger
             var table = $('#tblDataTableSong').DataTable();
             var rowDataAlbum = table.row(this).data();
             var tableAllIndex = table.rows().count() - 1;
             var currentIndex = table.row(this).index();
             var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
             if (rowDataAlbum) {
+                bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
+                if ($('#aside').is(':visible')) {
+                   
+                }
+                else {
+                    toggleAsideDisplay();
+                }
                 $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
                 // Load the new audio source
+                $('#progressBar').attr('disabled', false);
                 audioControl.load();
                 audioControl.play();
 
-                $('.btn-media-play').addClass('hide-media-button');
-                $('.btn-media-pause').removeClass('hide-media-button');
+                $('.btn-media-play').addClass('hide-element');
+                $('.btn-media-pause').removeClass('hide-element');
                 $('.title-song').css('color','white');
                 $('#titleSong' + rowData.SongId).css("color", '#e52cf9');
 
@@ -309,7 +334,7 @@
                             audioControl.load();
                             audioControl.play();
                         } else {
-                          
+
                                 var nextRowData = table.row(currentIndex).data();
                                 $('.title-song').css('color', 'white');
                                 $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
@@ -320,11 +345,11 @@
                             console.log('End of playlist');
                         }
                     }
-                  
+
                 });
 
                 $('.btn-media-forward').click(function () {
-                  
+
                     if (currentIndex <= tableAllIndex) {
                         if (currentIndex < tableAllIndex) {
                             currentIndex++;
@@ -334,41 +359,47 @@
 
                             $('#songAudio').attr('src', nextRowData.SongFilePath);
 
-                            if ($('.btn-media-pause').hasClass('hide-media-button')) {
-                                $('.btn-media-pause').removeClass('hide-media-button');
-                                $('.btn-media-play').addClass('hide-media-button');
+                            if ($('.btn-media-pause').hasClass('hide-element')) {
+                                $('.btn-media-pause').removeClass('hide-element');
+                                $('.btn-media-play').addClass('hide-element');
                             }
-                            /* $('.btn-media-pause').addClass('hide-media-button');*/
+                            /* $('.btn-media-pause').addClass('hide-element');*/
                             audioControl.load();
                             audioControl.play();
                         }
                         else //เผื่อไว้ตอนข้าม album
-                        {          
+                        {
 
                         }
-                      
-                                                          
+
+
                     } else {
 
                         console.log('End of playlist');
                     }
                 });
 
+                $('.btn-media-shuffle').click(function () {
+
+                    
+
+                });
+
                 // Event listener for when the song ends
                 audioControl.onended = function () {
                     debugger;
-                    currentIndex++; 
+                    currentIndex++;
 
-                    if (currentIndex <= tableAllIndex) { 
-                        var nextRowData = table.row(currentIndex).data(); 
+                    if (currentIndex <= tableAllIndex) {
+                        var nextRowData = table.row(currentIndex).data();
                         $('.title-song').css('color', 'white');
                         $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-                      
+
                         $('#songAudio').attr('src', nextRowData.SongFilePath);
                         audioControl.load();
                         audioControl.play();
                     } else {
-                       
+
                         console.log('End of playlist');
                     }
                 };
@@ -387,8 +418,8 @@
 //            /*    $('#audiocontrol').show();*/
 //                audioControl.play();
 
-//                $('.btn-media-play').addClass('hide-media-button')
-//                $('.btn-media-pause').removeClass('hide-media-button')
+//                $('.btn-media-play').addClass('hide-element')
+//                $('.btn-media-pause').removeClass('hide-element')
 ////                var html = `<aside class="aside-content px-3">
 ////    <button class="btn btn-close-aside" id="btnCloseAside" style="color:white">Close</button>
 ////    <p>peem</p>
@@ -418,7 +449,7 @@
 //        });
 
         async function searchSongs() {
-            
+
             let frmSearch = {
 
                 AlbumId: AlbumId
@@ -434,9 +465,9 @@
                 /*    songData = result.Data;*/
                     songData = result.Data.forEach(function (song, index) {
                     songData.push(song.SongFilePath)
-                    
+
                     })
-                    
+
                     bindingTableSong(result.Data);
                     //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
                     if (result.status == "S") {
@@ -465,7 +496,7 @@
             $('#dvTableAlbum').show();
             // Initialize DataTable
             dataTable = $('#tblDataTableSong').DataTable({
-               
+
                 destroy: true, //ล้างข้อมูลก่อนหน้า
                 data: songData,
                 searching: false,
