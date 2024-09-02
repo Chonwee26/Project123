@@ -407,6 +407,7 @@
                         render: function (data, type, row) {
                             var html = `<div><span class="title-song">${data.SongName}</span></div>
      <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
+     debugger
                             return html
                         }
                     },

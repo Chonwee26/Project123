@@ -48,22 +48,25 @@
         .sidebar {
             position: fixed;
             left: 0;
-         
             height: calc(100vh - 75px);
             display: flex !important;
             flex-direction: column;
-            z-index: 1; /* Ensure sideBar is below bottomBar */
+            z-index: 1;
             border: 4px solid;
             min-width: 90px !important; /* Minimum width to match your input range */
             max-width: 420px; /* Maximum width to match your input range */
-            overflow-y: auto;
-            overflow-x:hidden;
+            overflow-y: hidden;
+            overflow-x: hidden;
             scrollbar-color: black gray;
             padding: 10px;
             box-sizing: border-box;
-            z-index: 2;
+           
         }
-
+            .sidebar:hover {
+                overflow-y: auto;
+              
+            }
+         
         .search-sidebar {
             display: flex !important;
             justify-content: center;
@@ -139,11 +142,24 @@
             outline:none;
         }
 
+
         .icon-control {
-           color:#ffffff;
-           font-size:22px;          
-           
+            color: #bdbdbd;
+            font-size: 24px;
+            transition: transform 0.2s, color 0.2s;
         }
+
+
+        .button-control:hover .icon-control {
+            transform: scale(1.1);
+            color: #ffffff;
+        }
+
+
+        .button-control:active .icon-control {
+            color: #e52cf9;
+        }
+
      
         .imgMainArtist {
             display: flex !important;
@@ -278,6 +294,7 @@
                     @*<div class="imgArtist">
                         <img src="~/picture/shipment_pic3.jpg" />
                     </div>*@
+
              
 
                  
@@ -339,22 +356,22 @@
                                 Your brownser does not support this audio elemento
                             </audio>
                             <button class="button-control btn-media btn-media-shuffle" type="button">
-                                <i class="fa-solid icon-control fa-shuffle"></i>
+                                <i class="fa-solid icon-control fa-shuffle" id="iconMediaShuffle"></i>
                             </button>
                             <button class="button-control btn-media btn-media-backward">
-                                <i class="fa-solid icon-control fa-backward"></i>
+                                <i class="fa-solid icon-control fa-backward" id="iconMediaBackward"></i>
                             </button>
                             <button class="button-control btn-media btn-media-play">
-                                <i class="fa-solid icon-control fa-circle-play"></i>
+                                <i class="fa-solid icon-control fa-circle-play" id="iconMediaPlay"></i>
                             </button>
                             <button class="button-control btn-media btn-media-pause">
-                                <i class="fa-solid icon-control fa-circle-pause"></i>
+                                <i class="fa-solid icon-control fa-circle-pause" id="iconMediaPause"></i>
                             </button>
                             <button class="button-control btn-media btn-media-forward">
-                                <i class="fa-solid icon-control fa-forward"></i>
+                                <i class="fa-solid icon-control fa-forward" id="iconMediaForward"></i>
                             </button>
                             <button class="button-control btn-media btn-media-repeat">
-                                <i class="fa-solid icon-control fa-repeat" id="iconRepeat"></i>
+                                <i class="fa-solid icon-control fa-repeat" id="iconMediaRepeat"></i>
                             </button>
                         </div>
 
@@ -420,6 +437,14 @@
         var volume;
         var progressBar = $('#progressBar');
         $(document).ready(function () {
+
+        
+              
+           
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
             toggleAsideDisplay();
             progressBar.attr('disabled', true);
             $('.btn-media-pause').addClass('hide-element')
@@ -447,15 +472,15 @@
 
             $('.btn-media-repeat').click(function () {
 
-                $('#iconRepeat').toggleClass('icon-color-purple');
+                $('#iconMediaRepeat').toggleClass('icon-color-purple');
 
 
 
                 if (audioControl.loop) {
-                    audioControl.loop = false; 
+                    audioControl.loop = false;
                 } else {
-                    audioControl.loop = true;  
-                    audioControl.play();       
+                    audioControl.loop = true;
+                    audioControl.play();
                 }
             });
 
@@ -500,7 +525,7 @@
 
             //});
 
-            
+
 
             audioControl.addEventListener('timeupdate', function () {
                 var currentTime = audioControl.currentTime;
@@ -527,9 +552,9 @@
                 /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
 
                 durationTimeminute != null ? minutes + ':' + formattedDurationSeconds : "";
-              
+
                 if (!isNaN(minutes) && !isNaN(formattedDurationSeconds)) {
-                    debugger;
+
                     $('#endMediaTime').text(minutes + ':' + formattedDurationSeconds);
                 }
 
@@ -581,7 +606,7 @@
                 minWidth: 107,
                 maxWidth: 420,
                 resize: function (event, ui) {
-                    $('#main').css('margin-left', ui.size.width + 'px');
+                    $('#main').css('margin-left', ui.size.width -7 + 'px' );
                 }
             });
             getAlbumSideLayout();
@@ -612,7 +637,7 @@
             var bottomMedia = `
                 <div class="dv-bottomside-image" style = "margin:5px 15px 0px 15px" >
 
-                    <img class="img-bottomside" src=${image} />
+                    <img class="img-bottomside" src="${image}"/>
   </div >
 
             <div class="bottomside-title" style = "margin-bottom:5px;">
@@ -629,25 +654,25 @@
         <button class="btn" id="btnCloseAside" style="color:white">Close</button>
         <p>${albumName}</p>
         <div class="img-aside-content">
-            <img id="aside_pic" src=${image} class="img-aside" />
+            <img id="aside_pic" src="${image}" class="img-aside" />
         </div>
         <h3>${data.SongName}</h3>
          <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
-          
+
         <div class="aside-about-artist">
             <div class="aside-about-artist-img">
                 <h6>About the artist</h6>
-                  <img id="imgAsideAbout" src=${image} class="img-aside-about" />
+                  <img id="imgAsideAbout" src="${image}" class="img-aside-about" />
             </div>
             <div class="aside-about-artist-title">
-            
+
              <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
                 <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
             </div>
         </div>
     </aside>
 </div>`;
-              
+
             $('#aside').append(aside);
 
         }
@@ -797,14 +822,24 @@
 
             result.Data.forEach(function (album, index) {
 
-                var albumHtml = `
-                    <div class="imgArtist" data-album-id="${album.AlbumId}">
-                        <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${album.AlbumId}">
-                            <img src="${album.AlbumImagePath}" />
-                        </a>
-                    </div>`;
+              var albumHtml = `
+    <div class="imgArtist" data-album-id="${album.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
+         title="
+                   ${album.AlbumName}<br>
+                  ${album.ArtistName}
+             ">
+  <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${album.AlbumId}">
+     <img src="${album.AlbumImagePath}" />
+ </a>
 
-                $('.lib-sidebar').append(albumHtml);
+    </div>`;
+
+$('.lib-sidebar').append(albumHtml);
+            });
+            // Initialize tooltips after appending the content
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
             });
         },
         error: function (request, status, error) {

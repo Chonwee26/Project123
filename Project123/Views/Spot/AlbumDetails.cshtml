@@ -153,41 +153,41 @@
                     }
                     else
                     {
-                            <p>@Model.ArtistName</p>
+                        <p>@Model.ArtistName</p>
                     }
                 </div>
             </div>
 
             @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-                <div class="music-content">
-                    <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
-                </div>
-                <div class="music-content-title">
-                    <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
-                    <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
-                </div>
-            </div>*@
-        <div class="main-content-music">
+            <div class="music-content">
+                <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
+            </div>
+            <div class="music-content-title">
+                <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
+            </div>
+        </div>*@
+            <div class="main-content-music">
 
 
-          
-      
+
+
 
                 <button class="button-control btn-media btn-album-play" style="background-color: unset; margin-left: 20px;">
-                    <i class="fa-solid  fa-circle-play" style="color:#e52cf9;  "></i>
+                    <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:40px  "></i>
                 </button>
                 @*<button class="button-control btn-media btn-album-pause">
-            <i class="fa-solid icon-control fa-circle-pause"></i>
-        </button>*@
+                <i class="fa-solid icon-control fa-circle-pause"></i>
+            </button>*@
 
                 <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
                     <i class="fa-solid  fa-shuffle" style="color:#FFF;" id="iconAlbumShuffle"></i>
                 </button>
-          
 
 
 
-        </div>
+
+            </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
           
@@ -218,7 +218,7 @@
             </table>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-5" id="aside">
+    <div class="content aside col-lg-3 col-5" id="aside">
         @*<div>
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -298,6 +298,7 @@
         $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
            debugger
             var table = $('#tblDataTableSong').DataTable();
+            var tableData = table.data();
             var rowDataAlbum = table.row(this).data();
             var tableAllIndex = table.rows().count() - 1;
             var currentIndex = table.row(this).index();
@@ -326,6 +327,7 @@
                     if (currentIndex!= 0) {
                         currentIndex--;
                         if (currentIndex <= tableAllIndex) {
+                           
                             var nextRowData = table.row(currentIndex).data();
                             $('.title-song').css('color', 'white');
                             $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
@@ -333,7 +335,9 @@
                             $('#songAudio').attr('src', nextRowData.SongFilePath);
                             audioControl.load();
                             audioControl.play();
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
                         } else {
+
 
                                 var nextRowData = table.row(currentIndex).data();
                                 $('.title-song').css('color', 'white');
@@ -343,8 +347,10 @@
                                 audioControl.load();
                                 audioControl.play();
                             console.log('End of playlist');
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
                         }
                     }
+              
 
                 });
 
@@ -366,12 +372,13 @@
                             /* $('.btn-media-pause').addClass('hide-element');*/
                             audioControl.load();
                             audioControl.play();
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
                         }
                         else //เผื่อไว้ตอนข้าม album
                         {
 
                         }
-
+                      /*  bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);*/
 
                     } else {
 
@@ -380,8 +387,8 @@
                 });
 
                 $('.btn-media-shuffle').click(function () {
-
-                    
+                  
+                    shuffleArray(tableAllIndex);
 
                 });
 
@@ -389,15 +396,16 @@
                 audioControl.onended = function () {
                     debugger;
                     currentIndex++;
-
                     if (currentIndex <= tableAllIndex) {
                         var nextRowData = table.row(currentIndex).data();
                         $('.title-song').css('color', 'white');
                         $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
 
+
                         $('#songAudio').attr('src', nextRowData.SongFilePath);
                         audioControl.load();
                         audioControl.play();
+                        bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
                     } else {
 
                         console.log('End of playlist');
@@ -405,6 +413,12 @@
                 };
             }
         });
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
 
 
 
@@ -520,6 +534,7 @@
                         render: function (data, type, row) {
                             var html = `<div><span class="title-song"id="titleSong${data.SongId}">${data.SongName}</span></div>
                     <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
+                  
                             return html
                         }
                     },
