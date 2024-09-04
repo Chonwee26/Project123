@@ -666,7 +666,7 @@
                     formData.append("SongImage", $("#fileSongImage")[0].files[0]);
                     formData.append("SongLength", $('#durationInput').val());
                     console.log(duration);
-
+                    debugger
                     $.ajax({
                         url: '@Url.Action("CreateSong1", "Spot")',
                         contentType: false,
