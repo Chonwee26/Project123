@@ -16,7 +16,7 @@
             background-image: linear-gradient(#762676a8, #0e0d0d);
             overflow-y: auto;
         }
-
+        
         .aside {
             display: flex;
             background-color: #262626;
@@ -498,7 +498,8 @@
 
                 //Edit section End
 
-                $('#fileSongFile').change(function (e) {
+        $('#fileSongFile').change(function (e) {
+                    debugger          
                     var file = e.target.files[0];
                     var url = URL.createObjectURL(file);
 

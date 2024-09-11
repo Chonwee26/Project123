@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Project123.Dto;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Project123.Controllers
 {
@@ -153,12 +154,13 @@ namespace Project123.Controllers
 
             return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
         }
-
+       
         [HttpPost("Admin/SearchUser1")]
         public async Task<IActionResult> SearchUser(dataModel UserData)
         {
             ResponseModel resp = new ResponseModel();
             List<dataModel> UserList = new List<dataModel>();
+
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -167,9 +169,14 @@ namespace Project123.Controllers
                 var client = _httpClientFactory.CreateClient();
                 client.BaseAddress = new Uri("https://localhost:7061/");
 
-
                 try
                 {
+                    // Retrieve the token from session storage or wherever it was stored
+                    string token = HttpContext.Session.GetString("UserToken");
+
+                    // Add the token to the request header for authentication
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                     string requestJson = JsonConvert.SerializeObject(UserData);
                     HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
@@ -183,33 +190,28 @@ namespace Project123.Controllers
                             resp.Status = "S";
                             resp.Message = "Success";
                         }
-
                         else
                         {
                             resp.Status = "E";
-                            resp.Message = $"Error:";
+                            resp.Message = "No users found.";
                         }
-
-
-                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
                     }
                     else
                     {
                         resp.Status = "E";
-                        resp.Message = $"Error:";
+                        resp.Message = $"Error: {response.StatusCode}"; 
                     }
                 }
-
                 catch (Exception ex)
                 {
-                    this.response.Status = "E";
-                    this.response.Message = ex.Message;                       
+                    resp.Status = "E";
+                    resp.Message = $"An error occurred: {ex.Message}";
                 }
             }
-
-            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = UserList });
+            // message forebidden คือ role ผิดนะจ๊ะ
+            return Json(new { status = resp.Status, success = resp.Status == "S", message = resp.Message, Data = UserList });
         }
+
 
         [HttpPost("Admin/Login")]
 
@@ -259,6 +261,7 @@ namespace Project123.Controllers
             return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, data = UserList });
         }
 
+
         [HttpPost("Admin/Login1")]
         public async Task<IActionResult> Login1(AdminModel UserData)
         {
@@ -273,7 +276,6 @@ namespace Project123.Controllers
 
                     UserData = new AdminModel
                     {
-
                         Name = "",
                         Email = UserData.Email,
                         Password = UserData.Password,
@@ -289,10 +291,36 @@ namespace Project123.Controllers
 
                         if (responseResult.IsSuccessStatusCode)
                         {
-                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
-                            ;
-                            ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            var responseContent = await responseResult.Content.ReadAsStringAsync();
+                            var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
 
+                            // Check the status of the response
+                            if (responseObject.status == "S")
+                            {
+                                string token = responseObject.access_token;
+
+
+                                // if you want to store token in cookeieieieiei
+
+                                //Response.Cookies.Append("UserToken", token, new CookieOptions
+                                //{
+                                //    HttpOnly = true, // Ensures the cookie is accessible only by the server
+                                //    Secure = true,   // Use Secure cookies if you're using HTTPS
+                                //    Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie to expire in 7 days
+                                //});
+
+                                // Store the token in session, local storage, or cookies as needed
+                                HttpContext.Session.SetString("UserToken", token);
+                                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                                this.response.Status = "S";
+                                this.response.Message = "Login successful.";
+                            }
+                            else
+                            {
+                                this.response.Status = "E";
+                                this.response.Message = responseObject.message;
+                            }
                         }
                         else
                         {
@@ -300,7 +328,6 @@ namespace Project123.Controllers
                             this.response.Message = $"Error: {responseResult.StatusCode}";
                         }
                     }
-
                     catch (Exception ex)
                     {
                         this.response.Status = "E";
@@ -310,8 +337,62 @@ namespace Project123.Controllers
             }
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
-
         }
+
+
+        //[HttpPost("Admin/Login1")]
+        //public async Task<IActionResult> Login1(AdminModel UserData)
+        //{
+        //    using (HttpClientHandler handler = new HttpClientHandler())
+        //    {
+        //        // Temporarily bypass SSL certificate validation (not for production use)
+        //        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+        //        using (HttpClient client = new HttpClient(handler))
+        //        { 
+        //            client.BaseAddress = new Uri("https://localhost:7061/");
+
+        //            UserData = new AdminModel
+        //            {
+
+        //                Name = "",
+        //                Email = UserData.Email,
+        //                Password = UserData.Password,
+        //                Role = ""
+        //            };
+
+        //            try
+        //            {
+        //                string requestJson = JsonConvert.SerializeObject(UserData);
+        //                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+        //                var responseResult = await client.PostAsync("api/Admin/Login1", httpContent);
+
+        //                if (responseResult.IsSuccessStatusCode)
+        //                {
+        //                    this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+        //                    ;
+        //                    ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        //                }
+        //                else
+        //                {
+        //                    this.response.Status = "E";
+        //                    this.response.Message = $"Error: {responseResult.StatusCode}";
+        //                }
+        //            }
+
+        //            catch (Exception ex)
+        //            {
+        //                this.response.Status = "E";
+        //                this.response.Message = ex.Message;
+        //            }
+        //        }
+        //    }
+
+        //    return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+
+        //}
 
         [HttpPost("Admin/Register2")]
         public async Task<IActionResult>Register(AdminModel UserData)
@@ -466,6 +547,20 @@ namespace Project123.Controllers
             }
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            ResponseModel resp = new ResponseModel();
+            // Clear the user's session
+            HttpContext.Session.Clear();
+
+            resp.Status = "S";
+            resp.Message = "Log out Success";
+
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
         }
     }
     }

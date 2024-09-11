@@ -178,6 +178,17 @@ namespace Project123Api.Controllers
         }
 
 
+        [HttpPost("GetFavoriteSongs")]
+        public async Task<IEnumerable<SongModel>> GetFavoriteSongs(SongModel SongData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<SongModel> SongList = await _spotRepo.GetFavoriteSongs(SongData);
+
+            return SongList;
+        }
+
+
         [HttpPost("SearchAlbum")]
         public async Task<IEnumerable<AlbumModel>> SearchAlbum(AlbumModel AlbumData)
         {

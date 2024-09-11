@@ -27,5 +27,15 @@ namespace Project123.Dto
         public string? SongFilePath { get; set; }
         [Column("SongImage")]
         public string? SongImagePath { get; set; }
+
+        [Column("AlbumImage")]
+        public string? AlbumImagePath { get; set; }
+
+        public bool? FavoriteSong { get; set; }
+
+        public DateTime? FavoriteDate { get; set; } = DateTime.Now;
+
+
+        public DateTime? CreateSongDate { get; set; } = DateTime.Now;
     }
 }

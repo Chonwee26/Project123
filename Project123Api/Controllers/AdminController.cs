@@ -53,11 +53,8 @@ namespace Project123Api.Controllers
         //}
 
 
-
-
-      
         [HttpPost("Login1")]
-        public async Task<ResponseModel> Login1(AdminModel admin)
+        public async Task<IActionResult> Login1(AdminModel admin)
         {
             ResponseModel resp = new ResponseModel();
 
@@ -69,40 +66,90 @@ namespace Project123Api.Controllers
                 {
                     resp.Status = "E";
                     resp.Message = "Invalid email or password.";
-                    return resp;
+                    return Ok(resp); // Return an OkObjectResult for consistency
                 }
 
                 var claims = new[]
                 {
             new Claim(JwtRegisteredClaimNames.Email, admin.Email),
             new Claim(ClaimTypes.Email, admin.Email),
+              new Claim(ClaimTypes.Role, adminEmail.Role) // Add the user's role to the claims
         };
 
                 var token = _auth.GenerateAccessToken(claims);
 
                 resp.Status = "S";
-                resp.Message = ""+token.AccessToken;
-                new ObjectResult(new
+                resp.Message = "Authentication successful";
+
+                // Return the result with the token details
+                return Ok(new
                 {
+                    status = resp.Status,
+                    message = resp.Message,
                     access_token = token.AccessToken,
                     expires_in = token.ExpiresIn,
                     token_type = token.TokenType,
                     creation_time = token.ValidFrom,
-                    user_id = adminEmail.Id,
+                    user_id = adminEmail.Id
                 });
-
-                string userToken = token.AccessToken;
-
-                HttpContext.Session.SetString("UserToken", userToken);
             }
             catch (Exception ex)
             {
                 resp.Status = "E";
                 resp.Message = $"An error occurred: {ex.Message}";
+                return Ok(resp); // Return an OkObjectResult for consistency
             }
-
-            return resp;
         }
+
+
+
+        //[HttpPost("Login1")]
+        //public async Task<ResponseModel> Login1(AdminModel admin)
+        //{
+        //    ResponseModel resp = new ResponseModel();
+
+        //    try
+        //    {
+        //        var adminEmail = await _dbContext.Tb_Admin.FirstOrDefaultAsync(a => a.Email == admin.Email);
+
+        //        if (adminEmail == null || !SecurePasswordHasherHelper.Verify(admin.Password, adminEmail.Password))
+        //        {
+        //            resp.Status = "E";
+        //            resp.Message = "Invalid email or password.";
+        //            return resp;
+        //        }
+
+        //        var claims = new[]
+        //        {
+        //    new Claim(JwtRegisteredClaimNames.Email, admin.Email),
+        //    new Claim(ClaimTypes.Email, admin.Email),
+        //};
+
+        //        var token = _auth.GenerateAccessToken(claims);
+
+        //        resp.Status = "S";
+        //        resp.Message = "" + token.AccessToken;
+        //        new ObjectResult(new
+        //        {
+        //            access_token = token.AccessToken,
+        //            expires_in = token.ExpiresIn,
+        //            token_type = token.TokenType,
+        //            creation_time = token.ValidFrom,
+        //            user_id = adminEmail.Id,
+        //        });
+
+        //        string userToken = token.AccessToken;
+
+        //        HttpContext.Session.SetString("UserToken", userToken);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        resp.Status = "E";
+        //        resp.Message = $"An error occurred: {ex.Message}";
+        //    }
+
+        //    return resp;
+        //}
 
         //[HttpPost("Login1")]
         //public IActionResult Login1([FromBody] AdminModel admin)
@@ -188,8 +235,8 @@ namespace Project123Api.Controllers
             return resp;
 
 
-        }  
-       
+        }
+        [Authorize(Roles = "Admin")]
         [HttpPost("SearchUser1")]
         public async Task<IEnumerable<dataModel>> SearchUser(dataModel UserData)
         {

@@ -1,116 +1,159 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Player Example</title>
-    <link rel="stylesheet" href="styles.css">
-
+    <title>Document Picture-in-Picture API Example</title>
+    <script src="main.js" async></script>
+    <link href="main.css" rel="stylesheet">
     <style>
-
         #miniPlayer {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: none;
-            z-index: 1000;
-        }
+  width: 400px;
+  font:
+    14px "Open Sans",
+    sans-serif;
+}
 
-            #miniPlayer video {
-                width: 100%;
-            }
+#credits {
+  padding: 0 0 10px 0;
+  font:
+    italic 10px "Open Sans",
+    sans-serif;
+}
 
-            #miniPlayer button {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-            }
+#in-pip-message {
+  display: none;
+}
 
-        #mainPlayer {
-            margin-bottom: 20px;
-        }
+@@media (display-mode: picture-in-picture) and (prefers-color-scheme: light) {
+	body {
+		background: antiquewhite;
+	}
+}
 
+@@media (display-mode: picture-in-picture) and (prefers-color-scheme: dark) {
+	body {
+		background: #333;
+	}
+
+	a {
+		color: antiquewhite;
+	}
+}
     </style>
 </head>
+
 <body>
-    <div id="mainPlayer">
-        <video id="video" width="600" controls>
-            <source src="path_to_your_video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <button id="miniPlayerButton">Open Mini Player</button>
-    </div>
-
     <div id="miniPlayer">
-        <video id="miniVideo" controls>
-            <source src="/video/Japan.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <button id="closeMiniPlayerButton">Close Mini Player</button>
+        <h1>Document Picture-in-Picture API Example</h1>
+        <div id="miniPlayercontainer">
+            <p id="in-pip-message">Video player is currently in the separate Picture-in-Picture window.</p>
+            <div id="miniPlayerMedia">
+                <img src="~/picture/Spotify Image/music_pic3_yanagi.jpg" />
+                <audio  id="audio" controls>
+                   <source  src="/uploads/Aimer/Album_4015/Sign.mp3" type="audio/mp3" />
+                </audio>
+
+                <div id="credits">
+                   
+                </div>
+
+                <div id="controlbar">
+                    <p class="no-picture-in-picture">
+                        Document Picture-in-Picture API not available
+                    <p> 
+                </div>
+            </div>
+        </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
     <script>
-        $(document).ready(function () {
-            const mainPlayer = $('#mainPlayer');
-            const miniPlayer = $('#miniPlayer');
-            const mainVideo = $('#video')[0];
-            const miniVideo = $('#miniVideo')[0];
-            const miniPlayerButton = $('#miniPlayerButton');
-            const closeMiniPlayerButton = $('#closeMiniPlayerButton');
+        function bindingminiPlayer(){
 
-            miniPlayerButton.on('click', function () {
-                mainPlayer.hide();
-                miniPlayer.show();
-                miniVideo.currentTime = mainVideo.currentTime;
-                miniVideo.play();
-            });
+        }
+    const videoPlayer = document.getElementById("miniPlayerMedia");
+const playerminiPlayercontainer = document.getElementById("miniPlayercontainer");
 
-            closeMiniPlayerButton.on('click', function () {
-                miniPlayer.hide();
-                mainPlayer.show();
-                mainVideo.currentTime = miniVideo.currentTime;
-                mainVideo.play();
-            });
+const inPipMessage = document.getElementById("in-pip-message");
 
-            // Synchronize playback between main and mini players
-            mainVideo.addEventListener('timeupdate', function () {
-                if (!miniPlayer.is(':hidden')) {
-                    miniVideo.currentTime = mainVideo.currentTime;
-                }
-            });
+if ("documentPictureInPicture" in window) {
+  document.querySelector(".no-picture-in-picture").remove();
 
-            miniVideo.addEventListener('timeupdate', function () {
-                if (!mainPlayer.is(':hidden')) {
-                    mainVideo.currentTime = miniVideo.currentTime;
-                }
-            });
+  const togglePipButton = document.createElement("button");
+  togglePipButton.textContent = "Toggle Picture-in-Picture";
+  togglePipButton.addEventListener("click", togglePictureInPicture, false);
 
-            // Drag functionality for the mini-player
-            miniPlayer.on('mousedown', function (e) {
-                var posX = e.clientX, posY = e.clientY,
-                    miniPlayerLeft = miniPlayer.offset().left,
-                    miniPlayerTop = miniPlayer.offset().top;
+  document.getElementById("controlbar").appendChild(togglePipButton);
+}
 
-                $(document).on('mousemove', function (e) {
-                    var dx = e.clientX - posX, dy = e.clientY - posY;
-                    miniPlayer.css({
-                        top: miniPlayerTop + dy + 'px',
-                        left: miniPlayerLeft + dx + 'px'
-                    });
-                });
+async function togglePictureInPicture() {
+  // Early return if there's already a Picture-in-Picture window open
+  if (window.documentPictureInPicture.window) {
+    inPipMessage.style.display = "none";
+    playerminiPlayercontainer.append(videoPlayer);
+    window.documentPictureInPicture.window.close();
+    return;
+  }
 
-                $(document).on('mouseup', function () {
-                    $(document).off('mousemove');
-                    $(document).off('mouseup');
-                });
-            });
-        });
+  // Open a Picture-in-Picture window.
+  const pipWindow = await window.documentPictureInPicture.requestWindow({
+    width: videoPlayer.clientWidth,
+    height: videoPlayer.clientHeight + 50,
+  });
 
+  // Add pagehide listener to handle the case of the pip window being closed using the browser X button
+  pipWindow.addEventListener("pagehide", (event) => {
+    inPipMessage.style.display = "none";
+    playerminiPlayercontainer.append(videoPlayer);
+  });
+
+  // Copy style sheets over from the initial document
+  // so that the player looks the same.
+  [...document.styleSheets].forEach((styleSheet) => {
+    try {
+      const cssRules = [...styleSheet.cssRules]
+        .map((rule) => rule.cssText)
+        .join("");
+      const style = document.createElement("style");
+
+      style.textContent = cssRules;
+      pipWindow.document.head.appendChild(style);
+    } catch (e) {
+      const link = document.createElement("link");
+
+      link.rel = "stylesheet";
+      link.type = styleSheet.type;
+      link.media = styleSheet.media;
+      link.href = styleSheet.href;
+      pipWindow.document.head.appendChild(link);
+    }
+  });
+
+  // Move the player to the Picture-in-Picture window.
+  pipWindow.document.body.append(videoPlayer);
+
+  // Display a message to say it has been moved
+  inPipMessage.style.display = "block";
+}
+
+documentPictureInPicture.addEventListener("enter", (event) => {
+  const pipWindow = event.window;
+  console.log("Video player has entered the pip window");
+
+  const pipMuteButton = pipWindow.document.createElement("button");
+  pipMuteButton.textContent = "Mute";
+  pipMuteButton.addEventListener("click", () => {
+    const pipVideo = pipWindow.document.querySelector("#video");
+    if (!pipVideo.muted) {
+      pipVideo.muted = true;
+      pipMuteButton.textContent = "Unmute";
+    } else {
+      pipVideo.muted = false;
+      pipMuteButton.textContent = "Mute";
+    }
+  });
+
+  pipWindow.document.body.append(pipMuteButton);
+});
     </script>
 </body>
+
 </html>

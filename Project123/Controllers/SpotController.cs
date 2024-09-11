@@ -30,6 +30,17 @@ namespace Project123.Controllers
             return View();
         }
 
+
+        public IActionResult SpotProfilePage()
+        {
+            return View();
+        }
+
+        public IActionResult FavoriteSong()
+        {
+            return View();
+        }
+
         public IActionResult AlbumDetails(int albumId)
         {
             if (albumId <= 0)
@@ -688,10 +699,22 @@ namespace Project123.Controllers
             Directory.CreateDirectory(albumFolderPath);
 
             // Variable to store the old folder path
-         
+
 
             // Generate a unique file name and get the full file path
-            var fileName = file.ContentType == "audio/mpeg" ? $"{name}.mp3" : file.FileName;
+            string fileName;
+            if (file.ContentType == "audio/mpeg")
+            {
+                fileName = $"{name}.mp3";
+            }
+            else if (file.ContentType == "audio/flac")
+            {
+                fileName = $"{name}.flac";
+            }
+            else
+            {
+                fileName = file.FileName;
+            }
             var filePath = Path.Combine(albumFolderPath, fileName);
 
             var existingFiles = Directory.GetFiles(albumFolderPath, fileName);
@@ -1021,6 +1044,60 @@ namespace Project123.Controllers
                 }
             }
             return Json(new { success = this.response.Success, message = this.response.Message, Data = albumList });
+        }
+
+        [HttpPost("Spot/GetFavoriteSongs1")]
+        public async Task<IActionResult> GetFavoriteSongs(SongModel SongData)
+        {
+            SongData.FavoriteDate = null;
+            SongData.CreateSongDate = null;
+            List<SongModel> songDataList = new List<SongModel>();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+
+                    string requestJson = JsonConvert.SerializeObject(SongData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetFavoriteSongs", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        songDataList = await response.Content.ReadAsAsync<List<SongModel>>();
+
+                        if (songDataList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Success";
+                        }
+
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error:";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error:";
+                    }
+                }
+
+
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
         }
 
         [HttpPost("Spot/SearchAlbum1")]

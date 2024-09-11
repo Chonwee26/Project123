@@ -1,0 +1,499 @@
+﻿@model Project123.Dto.AlbumModel;
+
+@{
+    Layout = "~/Views/Shared/_SpotLayout.cshtml";
+}
+
+@section Styles{
+    <style type="text/css">
+
+        .dv-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 70px;
+        }
+
+        .dv-album-img {
+            margin: 100px 10px 20px 20px;
+        }
+
+        /* #dvTableAlbum #tblDataTableSong th, tr, td :hover {
+            background-color: purple !important;
+        }
+        #dvTableAlbum #tblDataTableSong th, tr, td {
+            color: white !important;
+            background-color: black !important;
+            border: none !important;
+        }*/
+        /*  #dvTableAlbum #tblDataTableSong tr :hover {
+            background-color: purple !important;
+        }*/
+        .table-dark {
+            --bs-table-bg: black;
+            --bs-table-striped-bg: #2c3034;
+            --bs-table-striped-color: #fff;
+            --bs-table-active-bg: #373b3e;
+            --bs-table-active-color: #fff;
+            --bs-table-hover-bg: #560156;
+            --bs-table-hover-color: #fff;
+            color: #fff;
+            border-color: #373b3e;
+        }
+
+        table.dataTable thead .sorting_asc {
+            background-image: none !important;
+        }
+
+        .btn-edit-album, .btn-delete, btn-edit-song {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="d-flex container-fluid content">
+    <div class="content main-content col-lg-9 col-7">
+        <div>
+            <div class="album-details d-flex">
+                <div class="dv-album-img">
+                    <img src="/picture/liked-songs-300.png" alt="Favortie Song" class="img-music-content" />
+                </div>
+
+                <div class="dv-title">
+                    <h1>Favorite Song</h1>
+
+                </div>
+            </div>
+
+            @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                    <div class="music-content">
+                        <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
+                    </div>
+                    <div class="music-content-title">
+                        <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                        <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
+                    </div>
+                </div>*@
+            <div class="main-content-music">
+
+                <button class="button-control  btn-media btn-album-play btn-media-play" style="background-color: unset; margin-left: 20px;">
+                    <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:46px  "></i>
+                </button>
+                <button class="button-control btn-media btn-album-pause btn-media-pause" style="background-color: unset; margin-left: 20px;">
+                    <i class="fa-solid icon-control fa-circle-pause" style="color:#e52cf9; font-size:40px "></i>
+                </button>
+
+                <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
+                    <i class="fa-solid  fa-shuffle" style="color:#FFF;" id="iconAlbumShuffle"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
+
+            @*<button class="button-control btn-media btn-album-shuffle" type="button">
+                    <i class="fa-solid icon-control fa-shuffle"></i>
+                </button>
+                <div class="" style="background-color:black;">
+
+                    <button class="button-control btn-media btn-media-play">
+                        <i class="fa-solid icon-control fa-circle-play"></i>
+                    </button>
+                    <button class="button-control btn-media btn-media-pause">
+                        <i class="fa-solid icon-control fa-circle-pause"></i>
+                    </button>
+                </div>*@
+
+            <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%">
+                <thead>
+                    <tr class="">
+                        <th style="width:40px !important">#</th>
+                        <th>Title</th>
+                        <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="content aside col-lg-3 col-5" id="aside">
+        @*<div>
+                <aside class="aside-content px-3">
+                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                    <div class="img-aside-content">
+                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                    </div>
+                    <h3>17さいのうた。</h3>
+                    <h6>Yuika</h6>
+
+                    <div class="aside-about-artist">
+                        <div class="aside-about-artist-img">
+                            <h6>About the artist</h6>
+                        </div>
+                        <div class="aside-about-artist-title">
+                            <h6>Yuika</h6>
+                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>*@
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var AlbumId = '';
+        var ArtistName = '';
+        var AlbumName = '';
+        var songData = [];
+        var AlbumImage ='';
+        @*var ArtistName = @Model.ArtistName;*@
+        $(document).ready(function () {
+            $('.btn-album-pause').addClass('hide-element')
+         /*   getAlbum();*/
+            //getAlbumContainer();
+      /*      toggleAsideDisplay();*/
+            searchSongs();
+
+            $('.img-music-content').on('click', function () {
+
+                var imgSrc = $(this).attr('src');
+                $('#aside_pic').attr('src', imgSrc);
+                if ($('#aside').css('display') == 'none') {
+                    toggleAsideDisplay();
+                }
+            });
+            $(document).on('click', '.dv-content', function () {
+                ;
+                var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
+                $('#aside_pic').attr('src', imgSrc);
+                if ($('#aside').css('display') == 'none') {
+                    toggleAsideDisplay();
+                }
+                console.log(count);
+            });
+
+            $(document).on('click', '#btnCloseAside', function () {
+                toggleAsideDisplay();
+            });
+        });
+
+        $('.btn-album-shuffle').click(function () {
+
+            $('#iconAlbumShuffle').toggleClass('icon-color-purple');
+
+
+
+            //if (audioControl.loop) {
+            //    audioControl.loop = false;
+            //} else {
+            //    audioControl.loop = true;
+            //    audioControl.play();
+            //}
+        });
+
+        $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
+            debugger
+            var table = $('#tblDataTableSong').DataTable();
+            var tableData = table.data();
+            var rowDataAlbum = table.row(this).data();
+            var tableAllIndex = table.rows().count() - 1;
+            var currentIndex = table.row(this).index();
+            var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+            if (rowDataAlbum) {
+                AlbumImage = rowDataAlbum.SongImagePath != null && rowDataAlbum.SongImagePath != "" ? rowDataAlbum.SongImagePath : rowDataAlbum.AlbumImagePath;
+                bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
+                if ($('#aside').is(':visible')) {
+
+                }
+                else {
+                    toggleAsideDisplay();
+                }
+                $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
+
+                // Load the new audio source
+                $('#progressBar').attr('disabled', false);
+                audioControl.load();
+                audioControl.play();
+
+                $('.btn-media-play').addClass('hide-element');
+                $('.btn-album-play').addClass('hide-element');
+                $('.btn-media-pause').removeClass('hide-element');
+                $('.btn-album-pause').removeClass('hide-element');
+                $('.title-song').css('color','white');
+                $('#titleSong' + rowData.SongId).css("color", '#e52cf9');
+
+                $('.btn-media-miniPlayer').click(function() {
+
+                });
+
+
+                $('.btn-media-backward').click(function () {
+                    if (currentIndex!= 0) {
+                        currentIndex--;
+                        if (currentIndex <= tableAllIndex) {
+
+
+                            var nextRowData = table.row(currentIndex).data();
+                            AlbumImage = nextRowData.SongImagePath != null && nextRowData.SongImagePath != "" ? nextRowData.SongImagePath : nextRowData.AlbumImagePath;
+                            $('.title-song').css('color', 'white');
+                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+
+                            $('#songAudio').attr('src', nextRowData.SongFilePath);
+                            audioControl.load();
+                            audioControl.play();
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
+                        } else {
+
+                            AlbumImage = nextRowData.SongImagePath != null && nextRowData.SongImagePath != "" ? nextRowData.SongImagePath : nextRowData.AlbumImagePath;
+                                var nextRowData = table.row(currentIndex).data();
+                                $('.title-song').css('color', 'white');
+                                $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+
+                                $('#songAudio').attr('src', nextRowData.SongFilePath);
+                                audioControl.load();
+                                audioControl.play();
+                            console.log('End of playlist');
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
+                        }
+                    }
+
+
+                });
+
+                $('.btn-media-forward').click(function () {
+
+                    if (currentIndex <= tableAllIndex) {
+                        if (currentIndex < tableAllIndex) {
+                            currentIndex++;
+                            var nextRowData = table.row(currentIndex).data();
+                            AlbumImage = nextRowData.SongImagePath != null && nextRowData.SongImagePath != "" ? nextRowData.SongImagePath : nextRowData.AlbumImagePath;
+                            $('.title-song').css('color', 'white');
+                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+
+                            $('#songAudio').attr('src', nextRowData.SongFilePath);
+
+                            if ($('.btn-media-pause').hasClass('hide-element')) {
+                                $('.btn-media-pause').removeClass('hide-element');
+                                $('.btn-media-play').addClass('hide-element');
+                            }
+                            /* $('.btn-media-pause').addClass('hide-element');*/
+                            audioControl.load();
+                            audioControl.play();
+                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
+                        }
+                        else //เผื่อไว้ตอนข้าม album
+                        {
+
+                        }
+                      /*  bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);*/
+
+                    } else {
+
+                        console.log('End of playlist');
+                    }
+                });
+
+                $('.btn-media-shuffle').click(function () {
+
+                    shuffleArray(tableAllIndex);
+
+                });
+
+                // Event listener for when the song ends
+                audioControl.onended = function () {
+                     ;
+                    currentIndex++;
+                    if (currentIndex <= tableAllIndex) {
+                        var nextRowData = table.row(currentIndex).data();
+                        AlbumImage = nextRowData.SongImagePath != null && nextRowData.SongImagePath != "" ? nextRowData.SongImagePath : nextRowData.AlbumImagePath;
+                        $('.title-song').css('color', 'white');
+                        $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+
+
+                        $('#songAudio').attr('src', nextRowData.SongFilePath);
+                        audioControl.load();
+                        audioControl.play();
+                        bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
+                    } else {
+
+                        console.log('End of playlist');
+                    }
+                };
+            }
+        });
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+
+
+//        $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
+//            console.log('hello');
+//            var rowDataAlbum = $('#tblDataTableSong').DataTable().row(this).data();
+//            if (rowDataAlbum) {
+//                $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
+//                // Load the new audio source
+//                audioControl.load();
+//            /*    $('#audiocontrol').show();*/
+//                audioControl.play();
+
+//                $('.btn-media-play').addClass('hide-element')
+//                $('.btn-media-pause').removeClass('hide-element')
+////                var html = `<aside class="aside-content px-3">
+////    <button class="btn btn-close-aside" id="btnCloseAside" style="color:white">Close</button>
+////    <p>peem</p>
+////    <div class="img-aside-content">
+////        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+////    </div>
+////    <h3>17さいのうた。</h3>
+////    <h6>Yuika</h6>
+////    <div class="aside-about-artist">
+////        <div class="aside-about-artist-img">
+////            <h6>About the artist</h6>
+////        </div>
+////        <div class="aside-about-artist-title">
+////            <h6>Yuika</h6>
+////            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+////        </div>
+////    </div>
+////</aside>
+////`
+////                $('#aside').html(html);
+
+//                // Play the audio (optional)
+//                // audioControl.play();
+//            } else {
+//                console.error('Row data is null or undefined');
+//            }
+//        });
+
+        async function searchSongs() {
+
+            let frmSearch = {
+
+                AlbumId: AlbumId
+            };
+
+            await $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFavoriteSongs1", "Spot")',
+                dataType: "json",
+                success: function (result) {
+
+                /*    songData = result.Data;*/
+                    songData = result.Data.forEach(function (song, index) {
+                        songData.push(song.SongFilePath)
+
+                    });
+
+                    bindingTableSong(result.Data);
+                    //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+                    if (result.status == "S") {
+
+                    }
+                    else {
+
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        function toggleAsideDisplay() {
+            $('#aside').toggle();
+            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+        }
+
+
+
+
+        function bindingTableSong(songData) {
+            $('#dvTableAlbum').show();
+            // Initialize DataTable
+            dataTable = $('#tblDataTableSong').DataTable({
+
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: songData,
+                searching: false,
+                hover: true,
+                lengthchange: false,
+                scrollx: false,
+                paging: false,
+                info: false,
+                columns: [
+
+                    {
+                        data: null, className: 'text-center', width: '40px!important', orderable: false, sortable: false,
+                        render: function (data, type, row, meta) {
+                            return `<div class=""style="margin-top:10px;">${meta.row + 1}</div>`
+                        }
+                    },
+                 {
+                        data: null,
+                        className: 'text-left',
+                        orderable: false,
+                     render: function (data, type, row) {
+
+                         var dataImage = data.SongImagePath != null && data.SongImagePath != "" ? data.SongImagePath : data.AlbumImagePath;
+                         var html = `
+        <div>
+            <div class="d-flex align-items-center">
+                <img src="${dataImage}" />
+                <div class="ml-4"style="margin-left:10px;">
+                    <span class="title-song" id="titleSong${data.SongId}">${data.SongName}</span>
+                    <br />
+                    <a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a>
+                </div>
+            </div>
+        </div>`;
+
+                         return html;
+    }
+}
+,
+
+
+                    {
+                        data: null, className: 'text-center',width: '60px', orderable: false,
+                        render: function (data, type, row) {
+                            var duration = data.SongLength
+                            var minutes = Math.floor(duration / 60);
+                            var seconds = Math.floor(duration % 60);
+                            // Ensure seconds are displayed with two digits
+                            var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                            /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
+                            debugger
+                            return duration != null ? minutes + ':' + formattedSeconds : "";
+
+                        }
+                    },
+                ]
+            });
+            //rowCount = dataTable.rows().count();
+        }
+
+
+
+        //$('#aside').on('change', function () {
+
+
+        //    if ($('#aside').css('display') == 'none') {
+        //
+        //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
+        //    }
+        //    else {
+        //        $('.main-content').removeClass('col-lg-12 col-12').addClass('col-lg-9 col-7');
+        //    }
+        //});
+
+    </script>
+}

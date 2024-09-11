@@ -19,6 +19,127 @@
     @await RenderSectionAsync("Styles", required: false)
     <style>
 
+      
+        .content {
+            border-radius: 20px;
+            height: calc(100vh - 75px); /* Adjust height to account for the bottom bar */
+            overflow: hidden;
+        }
+
+        .main-content {
+            background-color: #0e0d0d;
+            margin-right: 10px;
+            height: 100%;
+            padding: 15px;
+            background-image: linear-gradient(#762676a8, #0e0d0d);
+            overflow-y: hidden;
+            scrollbar-color: black gray;
+        }
+
+            .main-content:hover {
+                overflow-y: auto;
+            }
+
+        .aside {
+            display: flex;
+            background-color: #262626;
+            padding: 15px;
+            overflow-y: auto;
+            height: 100%;
+            color: white;
+        }
+
+        .main-content-music {
+            margin-top: 20px;
+            display: flex;
+            /*    justify-content: center;*/
+            align-items: center;
+        }
+
+        .music-content {
+            padding-top: 12px;
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .music-content-title {
+            margin-top: 10px;
+            display: inline-grid;
+        }
+        .text-content {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .img-music-content,
+        .img-aside {
+            display: flex !important;
+            justify-content: center;
+            width: 100%;
+            height: auto;
+            max-width: 205px;
+        }
+
+        .img-aside {
+            max-height: 388px;
+            max-width: 388px;
+        }
+
+        .img-aside-content,
+        .aside-content {
+            display: flex !important;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .dv-content {
+            max-height: 320px;
+            max-width: 220px;
+            border-radius: 8px;
+        }
+
+            .dv-content:hover {
+                background-color: #8f2c8fa8; /* or any color you prefer */
+            }
+
+            .dv-content:active {
+                background-color: black;
+            }
+
+        #miniPlayer {
+            width: 400px;
+            font: 14px "Open Sans", sans-serif;
+        }
+
+        #credits {
+            padding: 0 0 10px 0;
+            font: italic 10px "Open Sans", sans-serif;
+        }
+
+        #in-pip-message {
+            display: none;
+        }
+
+        @@media (display-mode: picture-in-picture) and (prefers-color-scheme: light) {
+            body {
+                background: antiquewhite;
+            }
+        }
+
+        @@media (display-mode: picture-in-picture) and (prefers-color-scheme: dark) {
+            body {
+                background: #333;
+            }
+
+            a {
+                color: antiquewhite;
+            }
+        }
+
+
         * {
             margin: 0;
             padding: 0;
@@ -105,7 +226,9 @@
             height: 50px;
         }
 
-        .imgArtist ,.iconlove {
+      
+
+        .imgArtist {
             display: flex !important;
             justify-content: center;
             align-items: center;
@@ -123,11 +246,8 @@
         }
 
         .iconlove {
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-            width: 64px;
-            height: 64px;
+           
+         
         }
         .button-control {
             display: flex !important;
@@ -288,8 +408,8 @@
 
                 </div>
                 <div class="lib-sidebar" id="libSideBar">
-                    <div class="iconlove">
-                        <a href="#" class="btn" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+                    <div class=""style="text-align:center;">
+                        <a href="/Spot/FavoriteSong"class="btn iconlove" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
                     </div>
                     @*<div class="imgArtist">
                         <img src="~/picture/shipment_pic3.jpg" />
@@ -395,13 +515,16 @@
                     <div class="content bottomside-control col-4 ">
                         <div class="col-12 d-flex justify-content-center">
 
-                      
-                           
+
+
                             @*<button class="button-control"><i class="btn-media-play fa-solid icon-control fa-play"></i></button>
-                            <button class="button-control"><i class="btn-media-pause fa-solid icon-control fa-pause"></i></button>*@
-                         
+        <button class="button-control"><i class="btn-media-pause fa-solid icon-control fa-pause"></i></button>*@
+
                             <button class="button-control"><i class="btn-media-volume fa-solid icon-control fa-volume-low"></i></button>
                             <input type="range" class="btn-media-volume-bar" id="btnVolumeBar" min="0" max="1" step="0.01" value="">
+
+                            <button class="button-control"><i class="btn-media-fullscreen icon-control fa-solid fa-up-right-and-down-left-from-center"style="font-size:16px"></i></button>
+                            <button class="button-control"><i class="btn-media-miniPlayer icon-control fa-solid fa-arrow-up-right-from-square"style="font-size:16px"></i></button>
                         </div>
                     </div>
                 </div>
@@ -437,10 +560,71 @@
         var volume;
         var progressBar = $('#progressBar');
         $(document).ready(function () {
-
         
-              
-           
+            document.addEventListener('keypress', function (event) {
+                
+                setTimeout(
+                    function () {
+
+                        if (event.code === 'Space') {
+                            debugger
+                            event.preventDefault();
+                            if (audioControl.paused) {
+                                audioControl.play();
+                                $('.btn-media-play').click()
+                            } else {
+                                audioControl.pause();
+                                $('.btn-media-pause').click()
+                            }
+                        }
+                    }, 300);
+            });      
+            let isFullscreen = false; // Track fullscreen state
+            let isProcessing = false; // Prevent multiple rapid clicks
+
+            $('.btn-media-fullscreen').click(function () {
+                if (isProcessing) return; // Ignore click if processing
+
+                isProcessing = true; // Set flag to prevent additional clicks
+
+                // Toggle fullscreen state
+                if (!isFullscreen) {
+                    // Enter fullscreen
+                    let element = document.documentElement; // Use the whole document
+
+                    if (element.requestFullscreen) {
+                        element.requestFullscreen();
+                    } else if (element.mozRequestFullScreen) { // Firefox
+                        element.mozRequestFullScreen();
+                    } else if (element.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                        element.webkitRequestFullscreen();
+                    } else if (element.msRequestFullscreen) { // IE/Edge
+                        element.msRequestFullscreen();
+                    }
+                } else { // Exit fullscreen
+                   
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) { // Firefox
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { // IE/Edge
+                        document.msExitFullscreen();
+                    }
+                }
+            });
+
+            // Listen for fullscreen change event
+            $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
+                isFullscreen = !!(document.fullscreenElement ||
+                    document.mozFullScreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.msFullscreenElement);
+
+                isProcessing = false; // Reset flag after state change
+            });
+                  
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
@@ -448,6 +632,7 @@
             toggleAsideDisplay();
             progressBar.attr('disabled', true);
             $('.btn-media-pause').addClass('hide-element')
+         
             audioControl.volume = audioVolume.val();
 
             $(audioVolume).on('input', function () {
@@ -460,14 +645,18 @@
                 if ($('#songAudio').attr('src') != 'blobdosomething') {
                 audioControl.play(audioControl);
                     $('.btn-media-play').addClass('hide-element');
+                    $('.btn-album-play').addClass('hide-element');
                     $('.btn-media-pause').removeClass('hide-element');
+                    $('.btn-album-pause').removeClass('hide-element');
                 }
             });
             $('.btn-media-pause').click(function () {
                 audioControl.pause(audioControl);
 
                 $('.btn-media-play').removeClass('hide-element');
+                $('.btn-album-play').removeClass('hide-element');
                 $('.btn-media-pause').addClass('hide-element');
+                $('.btn-album-pause').addClass('hide-element');
             });
 
             $('.btn-media-repeat').click(function () {
@@ -737,18 +926,27 @@
                             <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
                         </div>
                         <div class="music-content-title">
-                            <h6 class="link-opacity-100-hover" href="#">${album.AlbumName}</h6>
-                            <p class="link-opacity-100-hover" href="#">${album.ArtistName}</p>
+                            <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                    title="${album.AlbumName}">${album.AlbumName}</h6>
+                            <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                    title="${album.ArtistName}">${album.ArtistName}</p>
                         </div>
                     </div>
                 `;
                         $('.main-content-music').append(albumHtml);
+
+                        // Initialize tooltips after appending the content
+                        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                        tooltipTriggerList.map(function (tooltipTriggerEl) {
+                            return new bootstrap.Tooltip(tooltipTriggerEl)
+                        });
                     });
 
                     $('.dv-content').on('click', function () {
 
                         var albumId = $(this).data('album-id');
                         window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+              
                     });
 
 

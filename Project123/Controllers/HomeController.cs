@@ -49,6 +49,15 @@ namespace Project123.Controllers
         {
             return View();
         }
+        public IActionResult DigitalArt()
+        {
+            return View();
+        }
+
+        public IActionResult PushState()
+        {
+            return View();
+        }
 
 
     }

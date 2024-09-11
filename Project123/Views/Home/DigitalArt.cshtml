@@ -1,0 +1,102 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+
+@section Styles{
+    <style type="text/css">
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEEB; /* Sky Blue Background */
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+}
+<canvas id="seaCanvas"></canvas>
+
+
+
+
+@section Scripts{
+    <!-- DataTables Buttons JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
+    <script src="~/lib/datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="sea.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            const canvas = $('#seaCanvas')[0];
+            const ctx = canvas.getContext('2d');
+
+            // Set the canvas to fill the window
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const waves = [];
+            const maxWaves = 5;
+            const waveHeight = 20;
+
+            // Create wave objects
+            for (let i = 0; i < maxWaves; i++) {
+                waves.push({
+                    x: 0,
+                    y: canvas.height / 2 + (i * waveHeight * 2),
+                    speed: 1 + Math.random() * 2,
+                    amplitude: 20 + Math.random() * 40,
+                    wavelength: 100 + Math.random() * 200
+                });
+            }
+
+            function drawWave(wave) {
+                ctx.beginPath();
+                ctx.moveTo(0, wave.y);
+
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = wave.y + Math.sin((x + wave.speed) / wave.wavelength) * wave.amplitude;
+                    ctx.lineTo(x, y);
+                }
+
+                ctx.strokeStyle = `rgba(0, 105, 148, 0.6)`; // Anime-style sea color
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#FFF'; // Sky color
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw each wave
+                for (const wave of waves) {
+                    drawWave(wave);
+                    wave.speed += 0.5;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        });
+
+
+
+
+
+    </script>
+}
+

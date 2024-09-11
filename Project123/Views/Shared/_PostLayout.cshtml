@@ -101,6 +101,18 @@
                         </li>
 
                     </ul>
+                    <ul class="navbar-nav flex-grow-1 d-flex justify-content-end ">
+
+                        <li class="d-flex nav-item dropdown float-end">
+                            <a class="nav-link dropdown-toggle" onclick="logOut()" href="#" role="button" data-bs-toggle="dropdown">Log out</a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark">Log Out</a>
+                                    @*<a class="nav-link  text-dark" asp-area="" asp-controller="Admin" asp-action="RegisterPage">Register </a>*@
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -163,10 +175,27 @@
             $(".swal2-confirm").addClass('btn-swal-primary');
         }
 
+              function logOut() {
+            $.ajax({
+    type: 'POST',
+    url: '@Url.Action("Logout", "Admin")',
+    dataType: "json",
+    success: function (result) {
+        if (result.success) {
+          
+        }
+        //bindingTableSongAlbum(result.Data);
+        /* bindingTable(result.Data); */
+    },
+    error: function (request, status, error) {
+        console.log(error);
+    }
+});
+      }
 
 
         jQuery(document).ajaxStart(function () {
-            
+
             jQuery('div.dv-animation').show();
         });
 

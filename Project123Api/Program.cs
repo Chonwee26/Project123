@@ -24,7 +24,7 @@ using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 // Add logging services
@@ -57,7 +57,28 @@ builder.Services.AddDbContext<DataDbContext>(options =>
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 builder.Services.AddScoped<ISpotRepository, SpotRepository>();
+//var key = builder.Configuration.GetValue<string>("Tokens:Key");
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = builder.Configuration["Tokens:Issuer"],
+//            ValidAudience = builder.Configuration["Tokens:Issuer"],
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+//            ClockSkew = TimeSpan.Zero,
+//        };
+//    });
+
+
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
+var issuer = builder.Configuration.GetValue<string>("Tokens:Issuer");
+var accessExpireSeconds = builder.Configuration.GetValue<int>("Tokens:AccessExpireSeconds");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -68,20 +89,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Tokens:Issuer"],
-            ValidAudience = builder.Configuration["Tokens:Issuer"],
+            ValidIssuer = issuer,
+            ValidAudience = issuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            RoleClaimType = ClaimTypes.Role, // Specify that the role is included in the token
             ClockSkew = TimeSpan.Zero,
         };
     });
 
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecificOrigin",
+//       builder => builder.WithOrigins("https://localhost:7166")
+//       .AllowAnyMethod()
+//       .AllowAnyHeader());
+//});
+
+
+// allow anyorigin
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-       builder => builder.WithOrigins("https://localhost:7166")
-       .AllowAnyMethod()
-       .AllowAnyHeader());
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+        policy.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 });
 
 builder.Services.AddAuthorization();

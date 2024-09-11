@@ -81,6 +81,7 @@
                                 </ul>
                             </li>
                         </ul>
+                 
                     </div>
                 </div>
             </nav>
@@ -139,6 +140,25 @@
                 });
             }
             $(".swal2-confirm").addClass('btn-swal-primary');
+        }
+
+        function logOut() {
+              $.ajax({
+      type: 'POST',
+      url: '@Url.Action("Logout", "Admin")',
+      dataType: "json",
+      success: function (result) {
+          if (result.success) {
+              SweetAlert('Logout Success!');
+              window.location('https://localhost:7166/');
+          }
+          //bindingTableSongAlbum(result.Data);
+          /* bindingTable(result.Data); */
+      },
+      error: function (request, status, error) {
+          console.log(error);
+      }
+  });
         }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
