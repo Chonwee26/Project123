@@ -19,11 +19,12 @@
     @await RenderSectionAsync("Styles", required: false)
     <style>
 
-      
+
         .content {
             border-radius: 20px;
             height: calc(100vh - 75px); /* Adjust height to account for the bottom bar */
             overflow: hidden;
+           
         }
 
         .main-content {
@@ -32,12 +33,15 @@
             height: 100%;
             padding: 15px;
             background-image: linear-gradient(#762676a8, #0e0d0d);
-            overflow-y: hidden;
             scrollbar-color: black gray;
+            overflow-y:hidden; /* For browsers that support it, this avoids pushing the content */
+           /* Adds padding to reserve space for the scrollbar */
+          
         }
 
             .main-content:hover {
                 overflow-y: auto;
+                padding: 15px 0px 15px 15px !important;
             }
 
         .aside {
@@ -402,7 +406,7 @@
                     </div>
                 
                     <div id="sidebarSearch">
-                        <a href="#" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
+                        <a href="/Spot/SpotAdminPage" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
                        
                     </div>
 

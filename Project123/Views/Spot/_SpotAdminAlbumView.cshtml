@@ -5,11 +5,20 @@
 
 
 <form id="albumSongForm">
-    <h1 style="margin-top:72px;" id="h1Album"></h1>
-    <img id="albumEditImagePreview" class="" style="width:202px;height:202px" src="#" />
-    <button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Edit Album
-    </button>
+    <div class="d-flex">
+        <div class="mt-4">
+            <img id="albumEditImagePreview" class="" style="width:202px;height:202px" src="#" />
+        </div>
+        <div style="margin-top:72px;">
+
+            <h1  id="h1Album"></h1>
+            <button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Edit Album
+            </button>
+        </div>
+    </div>
+
+  
 
     <div class="col-12 mt-4" id="dvTableSongAlbum" style="display:none">
         <table id="tblDataTableSongAlbum" class="table table-bordered" width="100%">
@@ -20,7 +29,7 @@
                     <th>Artist</th>
                     <th>Duration</th>
                     <th>Genres</th>
-                    <th  style="width:80px!important;">Remove</th>
+                    <th style="width:80px!important;">Remove</th>
                 </tr>
             </thead>
             <tbody>
