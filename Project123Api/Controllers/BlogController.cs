@@ -38,6 +38,11 @@ namespace Project123Api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             var user = _dbContext.Tb_User.Find(id);
 
             if (user == null)
@@ -52,6 +57,11 @@ namespace Project123Api.Controllers
         [HttpPost("{id}")]
         public IActionResult Post(int id)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             var user = _dbContext.Tb_User.Find(id);
 
             if (user == null)

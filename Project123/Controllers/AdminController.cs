@@ -172,7 +172,7 @@ namespace Project123.Controllers
                 try
                 {
                     // Retrieve the token from session storage or wherever it was stored
-                    string token = HttpContext.Session.GetString("UserToken");
+                    string token = HttpContext.Session.GetString("UserToken")??string.Empty;
 
                     // Add the token to the request header for authentication
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -292,52 +292,63 @@ namespace Project123.Controllers
                         if (responseResult.IsSuccessStatusCode)
                         {
                             var responseContent = await responseResult.Content.ReadAsStringAsync();
-                            var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
 
-                            // Check the status of the response
-                            if (responseObject.status == "S")
+                            // Ensure the response content is not empty before deserializing
+                            if (!string.IsNullOrWhiteSpace(responseContent))
                             {
-                                string token = responseObject.access_token;
+                                try
+                                {
+                                    var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
 
 
-                                // if you want to store token in cookeieieieiei
+                                    // Check if responseObject is not null and status is "S"
+                                    if (responseObject != null/* && responseObject.status == "S"*/)
+                                    {
+                                        responseObject.status = "S";
+                                        string token = responseObject.access_token;
 
-                                //Response.Cookies.Append("UserToken", token, new CookieOptions
-                                //{
-                                //    HttpOnly = true, // Ensures the cookie is accessible only by the server
-                                //    Secure = true,   // Use Secure cookies if you're using HTTPS
-                                //    Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie to expire in 7 days
-                                //});
+                                        // Store the token in session, local storage, or cookies as needed
+                                        HttpContext.Session.SetString("UserToken", token);
+                                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                                // Store the token in session, local storage, or cookies as needed
-                                HttpContext.Session.SetString("UserToken", token);
-                                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                                this.response.Status = "S";
-                                this.response.Message = "Login successful.";
+                                        this.response.Status = "S";
+                                        this.response.Message = "Login successful.";
+                                    }
+                                    else
+                                    {
+                                        this.response.Status = "E";
+                                        this.response.Message = responseObject?.message ?? "Login failed.";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    this.response.Status = "E";
+                                    this.response.Message = $"Deserialization error: {ex.Message}";
+                                }
                             }
                             else
                             {
                                 this.response.Status = "E";
-                                this.response.Message = responseObject.message;
+                                this.response.Message = "Empty response from server.";
                             }
                         }
                         else
                         {
                             this.response.Status = "E";
-                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                            this.response.Message = $"Error: {responseResult.ReasonPhrase}";
                         }
                     }
                     catch (Exception ex)
                     {
                         this.response.Status = "E";
-                        this.response.Message = ex.Message;
+                        this.response.Message = $"Exception: {ex.Message}";
                     }
                 }
             }
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
+
 
 
         //[HttpPost("Admin/Login1")]
@@ -495,59 +506,59 @@ namespace Project123.Controllers
 
 
 
-        public async Task<IActionResult> Hello(dataModel UserData)
-        {
-            using (HttpClientHandler handler = new HttpClientHandler())
-            {
-                // Temporarily bypass SSL certificate validation (not for production use)
-                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+        //public async Task<IActionResult> Hello(dataModel UserData)
+        //{
+        //    using (HttpClientHandler handler = new HttpClientHandler())
+        //    {
+        //        // Temporarily bypass SSL certificate validation (not for production use)
+        //        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    client.BaseAddress = new Uri("https://localhost:7061/");
-                    // Set a timeout for the request
-                    UserData = new dataModel
-                    {
-                        Name = "peemapi5",
-                        Age = "23" // Assuming age is an integer
-                    };
-                    try
-                    {
-                         string requestJson = JsonConvert.SerializeObject(UserData);
-                        Console.WriteLine("Request JSON: " + requestJson);
-                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+        //        using (HttpClient client = new HttpClient(handler))
+        //        {
+        //            client.BaseAddress = new Uri("https://localhost:7061/");
+        //            // Set a timeout for the request
+        //            UserData = new dataModel
+        //            {
+        //                Name = "peemapi5",
+        //                Age = "23" // Assuming age is an integer
+        //            };
+        //            try
+        //            {
+        //                 string requestJson = JsonConvert.SerializeObject(UserData);
+        //                Console.WriteLine("Request JSON: " + requestJson);
+        //                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
                         
-                        var responseResult = await client.PostAsync("Admin/Hello", httpContent);
-                        if (responseResult.IsSuccessStatusCode)
-                        {
-                            var responseString = await responseResult.Content.ReadAsStringAsync();
-                            this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        }
-                        else
-                        {
-                            this.response.Status = "E";
-                            this.response.Message = $"Error: {responseResult.StatusCode}";
-                        }
-                    }
-                    catch (HttpRequestException httpEx)
-                    {
-                        // Log the HTTP request exception details
-                        Console.WriteLine($"HttpRequestException: {httpEx.Message}");
-                        this.response.Status = "E";
-                        this.response.Message = httpEx.Message;
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log the general exception details
-                        Console.WriteLine($"Exception: {ex.Message}");
-                        this.response.Status = "E";
-                        this.response.Message = ex.Message;
-                    }
-                }
-            }
+        //                var responseResult = await client.PostAsync("Admin/Hello", httpContent);
+        //                if (responseResult.IsSuccessStatusCode)
+        //                {
+        //                    var responseString = await responseResult.Content.ReadAsStringAsync();
+        //                    this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //                }
+        //                else
+        //                {
+        //                    this.response.Status = "E";
+        //                    this.response.Message = $"Error: {responseResult.StatusCode}";
+        //                }
+        //            }
+        //            catch (HttpRequestException httpEx)
+        //            {
+        //                // Log the HTTP request exception details
+        //                Console.WriteLine($"HttpRequestException: {httpEx.Message}");
+        //                this.response.Status = "E";
+        //                this.response.Message = httpEx.Message;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                // Log the general exception details
+        //                Console.WriteLine($"Exception: {ex.Message}");
+        //                this.response.Status = "E";
+        //                this.response.Message = ex.Message;
+        //            }
+        //        }
+        //    }
 
-            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
-        }
+        //    return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        //}
 
         [HttpPost("Logout")]
         public IActionResult Logout()

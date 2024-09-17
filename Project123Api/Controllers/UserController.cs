@@ -31,6 +31,11 @@ namespace Project123Api.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             var user = _dbContext.Tb_User.Find(id);
 
             if (user == null)
@@ -46,6 +51,11 @@ namespace Project123Api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] dataModel userObj)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             _dbContext.Tb_User.Add(userObj);
             _dbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
@@ -55,6 +65,11 @@ namespace Project123Api.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] dataModel userObj)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             var user = _dbContext.Tb_User.Find(id);
             if (user == null)
             {
@@ -73,6 +88,11 @@ namespace Project123Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            if (_dbContext.Tb_User == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
             var user = _dbContext.Tb_User.Find(id);
             if (user == null)
             {

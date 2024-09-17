@@ -59,18 +59,22 @@ namespace Project123.Controllers
             {
                 ShipmentModel shipping = new ShipmentModel();
                 shipping.OrderNumber = ShipmentData.OrderNumber;
-                // Execute the SQL query
 
-
-
+                if (_db.Shipment == null)
+                {
+                    var response = new
+                    {
+                        Message = "E", // Error message
+                        Status = "Shipment data is unavailable."
+                    };
+                    return Json(response);
+                }
 
                 var queryResult = _db.Shipment
                     .FirstOrDefault(s => s.OrderNumber == shipping.OrderNumber);
-                   
 
-                if (queryResult == null )
+                if (queryResult == null)
                 {
-
                     var response = new
                     {
                         Message = "E"
@@ -85,45 +89,44 @@ namespace Project123.Controllers
                         Data = queryResult
                     };
                     return Json(response);
-
                 }
-
-
-
-                // Send data to view
-
             }
-
             catch (Exception ex)
             {
-
                 // Log the exception or handle it as needed
-                // Return message indicating an error occurred
                 var response = new
                 {
-                    Message = "E" ,// "E" indicating an error
-                      Status = ex.Message
+                    Message = "E", // "E" indicating an error
+                    Status = ex.Message
                 };
                 return Json(response);
             }
-
         }
+
 
 
         public IActionResult SearchShipmentAll(ShipmentModel ShipmentData)
         {
             try
-             {
+            {
+                // Check if _db.Shipment is null before proceeding
+                if (_db.Shipment == null)
+                {
+                    var response = new
+                    {
+                        Message = "E", // "E" indicating an error
+                        Error = "Database shipment table not found."
+                    };
+                    return Json(response);
+                }
+
                 // Check if all fields in ShipmentData are null or empty
                 if (string.IsNullOrEmpty(ShipmentData.OrderNumber) &&
                     string.IsNullOrEmpty(ShipmentData.FullName) &&
                     string.IsNullOrEmpty(ShipmentData.MobileNumber) &&
                     string.IsNullOrEmpty(ShipmentData.Storage) &&
-                    (ShipmentData.ShipmentStatus == null))
-
-
+                    ShipmentData.ShipmentStatus == null)
                 {
-
                     var response = new
                     {
                         Message = "E", // "E" indicating an error
@@ -133,8 +136,6 @@ namespace Project123.Controllers
                 }
 
                 var query = _db.Shipment.AsQueryable();
-
-
 
                 if (!string.IsNullOrEmpty(ShipmentData.OrderNumber))
                 {
@@ -150,16 +151,16 @@ namespace Project123.Controllers
                 {
                     query = query.Where(s => s.MobileNumber == ShipmentData.MobileNumber);
                 }
+
                 if (!string.IsNullOrEmpty(ShipmentData.Storage))
                 {
                     query = query.Where(s => s.Storage == ShipmentData.Storage);
                 }
 
-                if ((ShipmentData.ShipmentStatus != null))
+                if (ShipmentData.ShipmentStatus != null)
                 {
                     query = query.Where(s => s.ShipmentStatus == ShipmentData.ShipmentStatus);
                 }
-
 
                 var queryResult = query.ToList();
 
@@ -183,9 +184,8 @@ namespace Project123.Controllers
                 }
             }
             catch (Exception ex)
-             {
+            {
                 // Log the exception or handle it as needed
-                // Return message indicating an error occurred
                 var response = new
                 {
                     Message = "E", // "E" indicating an error
@@ -194,6 +194,7 @@ namespace Project123.Controllers
                 return Json(response);
             }
         }
+
         //เดี๋ยวมาทำให้มัน join ได้
         //public IActionResult SearchShipmentAll1(ShipmentModel ShipmentData,ShipmentLocationModel )
         //{
@@ -205,10 +206,10 @@ namespace Project123.Controllers
         //            string.IsNullOrEmpty(ShipmentData.MobileNumber)&&
         //            string.IsNullOrEmpty(ShipmentData.Storage)&&
         //            (ShipmentData.ShipmentStatus == null))
-                
-                    
+
+
         //        {
-                   
+
         //            var response = new
         //            {
         //                Message = "E", // "E" indicating an error
@@ -227,8 +228,8 @@ namespace Project123.Controllers
         //                        Shipment.MobileNumber,Shipment.Storage,
         //                        Shipment.ShipmentStatus,Shipment.ShipDate,
         //                        Shipment.ShipDateFR,Shipment.ShipDateTO,
-                                
-                                
+
+
         //                        ShipmentLocation.ShipmentStorageID, ShipmentLocation.ShipmentStorageName
         //                    };
 
@@ -257,7 +258,7 @@ namespace Project123.Controllers
         //        {
         //            query = query.Where(s => s.ShipmentStatus == ShipmentData.ShipmentStatus);
         //        }
-              
+
 
         //        var queryResult = query.ToList();
 
@@ -299,8 +300,20 @@ namespace Project123.Controllers
         {
             try
             {
+                // Check if _db.Shipment is null
+                if (_db.Shipment == null)
+                {
+                    var response = new
+                    {
+                        Message = "E",
+                        Error = "Database shipment table not found."
+                    };
+                    return Json(response);
+                }
+
                 ShipmentModel shipping = new ShipmentModel();
                 shipping.OrderNumber = ShipmentData.OrderNumber;
+
                 // Execute the SQL query
                 var queryResult = _db.Shipment
                     .Where(s => s.OrderNumber == shipping.OrderNumber)
@@ -308,7 +321,6 @@ namespace Project123.Controllers
 
                 if (queryResult == null || queryResult.Count == 0)
                 {
-
                     var response = new
                     {
                         Message = "E"
@@ -323,17 +335,11 @@ namespace Project123.Controllers
                         Data = queryResult
                     };
                     return Json(response);
-
                 }
-                // Send data to view
-
             }
-
             catch (Exception ex)
             {
-
                 // Log the exception or handle it as needed
-                // Return message indicating an error occurred
                 var response = new
                 {
                     Message = "E", // "E" indicating an error
@@ -341,23 +347,46 @@ namespace Project123.Controllers
                 };
                 return Json(response);
             }
-
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateShipmentAjax(ShipmentModel ShipmentData)
         {
+            // Check if _db.Shipment is null
+            if (_db.Shipment == null)
+            {
+                var response = new
+                {
+                    Message = "E", // "E" indicating an error
+                    Error = "Database shipment table not found."
+                };
+                return Json(response);
+            }
 
+            // Add ShipmentData to the Shipment table and save changes
             _db.Shipment.Add(ShipmentData);
             _db.SaveChanges();
+
             return Json(ShipmentData);
-
-
         }
+
         public IActionResult CreateShipmentAjax1(ShipmentModel ShipmentData)
         {
+
+
+            if (_db.Shipment == null)
+            {
+                var response = new
+                {
+                    Message = "E", // "E" indicating an error
+                    Error = "Database shipment table not found."
+                };
+                return Json(response);
+            }
             try
             {
+               
                 //ShipmentData.OrderNumber = OrderGenerator.GenerateOrderNumber(); // int
                 ShipmentData.OrderNumber = StringGenerator.GenerateRandomString(); //string
                 _db.Shipment.Add(ShipmentData);
@@ -419,7 +448,7 @@ namespace Project123.Controllers
         public IActionResult GetShipmentLocation()
         {
             List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
-            object response = null;
+            object? response = null;
 
             string sqlSelect = @"SELECT CONVERT(VARCHAR(10), ShipmentStorageID) AS ShipmentItemID, ShipmentStorageName AS ShipmentItemText
                          FROM ShipmentLocation
@@ -439,8 +468,8 @@ namespace Project123.Controllers
                         foreach (DataRow row in dtResult.Rows)
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel();
-                            model.ShipmentItemID = row["ShipmentItemID"].ToString();
-                            model.ShipmentItemText = row["ShipmentItemText"].ToString();
+                            model.ShipmentItemID = row["ShipmentItemID"].ToString() ??string.Empty;
+                            model.ShipmentItemText = row["ShipmentItemText"].ToString() ?? string.Empty;
                             storageList.Add(model);
                         }
                     }
@@ -471,7 +500,7 @@ namespace Project123.Controllers
         public IActionResult GetShipmentStatus()
         {
             List<ShipmentLocationModel> statusList = new List<ShipmentLocationModel>();
-            object response = null;
+            object? response = null;
 
             string sqlSelect = @"SELECT CONVERT(VARCHAR(10),ShipmentStatusID) AS ShipmentItemID, ShipmentStatusName AS ShipmentItemText
                          FROM ShipmentStatus
@@ -492,8 +521,8 @@ namespace Project123.Controllers
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel();
                         
-                            model.ShipmentItemID = row["ShipmentItemID"].ToString();
-                            model.ShipmentItemText = row["ShipmentItemText"].ToString();
+                            model.ShipmentItemID = row["ShipmentItemID"].ToString() ?? string.Empty;
+                            model.ShipmentItemText = row["ShipmentItemText"].ToString() ?? string.Empty;
                             statusList.Add(model);
                             
                         }

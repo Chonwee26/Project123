@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  project123:
+    build:
+      context: .
+      dockerfile: Project123/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - projectapi
+
+  projectapi:
+    build:
+      context: .
+      dockerfile: ProjectApi/Dockerfile
+    ports:
+      - "5001:80"
+
+  projectdto:
+    build:
+      context: .
+      dockerfile: Project.Dto/Dockerfile
+    # Add additional configurations if needed
+

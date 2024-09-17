@@ -12,9 +12,10 @@ namespace Project123.Controllers
     public class SpotController : BaseController
     {
         private readonly DataDbContext _db;
-        private readonly string connectionString;
+        //private string? _connectionString; // Make the field nullable
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<SpotController> _logger;
+
         public SpotController(IHttpClientFactory httpClientFactory, ILogger<SpotController> logger, DataDbContext db)
         {
             _httpClientFactory = httpClientFactory;
@@ -48,6 +49,12 @@ namespace Project123.Controllers
                 return Json(new { status = "E", success = false, message = "Invalid Album ID" });
             }
 
+            // Check if _db.Albums is null before querying
+            if (_db.Albums == null)
+            {
+                return Json(new { status = "E", success = false, message = "No albums available in the database" });
+            }
+
             var album = _db.Albums
                            .Where(s => s.AlbumId == albumId)
                            .Select(s => new Project123.Dto.AlbumModel
@@ -70,6 +77,7 @@ namespace Project123.Controllers
             return View("AlbumDetails", album);
         }
 
+
         public IActionResult ArtistDetails(string artistname)
         {
             if (string.IsNullOrEmpty(artistname))
@@ -77,29 +85,35 @@ namespace Project123.Controllers
                 return Json(new { status = "E", success = false, message = "Could not find Artist" });
             }
 
-            var artist = _db.Song
-                           .Where(s => s.ArtistName == artistname)
-                           .Select(s => new Project123.Dto.SongModel
-                           {
-                               SongId = s.SongId,
-                               AlbumId = s.AlbumId,
-                               ArtistName = s.ArtistName,
-                               SongName = s.SongName,
-                               SongGenres = s.SongGenres,
-                               SongLength = s.SongLength,
-                               SongFilePath = s.SongFilePath,
-                               SongImagePath = s.SongImagePath
-                           })
-                           .FirstOrDefault();
+            // Check if _db.Song is null before querying
+            if (_db.Song == null)
+            {
+                return Json(new { status = "E", success = false, message = "No songs available in the database" });
+            }
 
-            if (artistname == null)
+            var artist = _db.Song
+                            .Where(s => s.ArtistName == artistname)
+                            .Select(s => new SongModel
+                            {
+                                SongId = s.SongId,
+                                AlbumId = s.AlbumId,
+                                ArtistName = s.ArtistName,
+                                SongName = s.SongName,
+                                SongGenres = s.SongGenres,
+                                SongLength = s.SongLength,
+                                SongFilePath = s.SongFilePath,
+                                SongImagePath = s.SongImagePath
+                            })
+                            .FirstOrDefault();
+
+            if (artist == null) // Correct condition to check if the artist data is found
             {
                 return Json(new { status = "E", success = false, message = "Artist not found" });
             }
 
-         
             return View("ArtistDetails", artist);
         }
+
 
 
         //[HttpGet("Spot/AlbumDetails/{id}")]
@@ -199,8 +213,22 @@ namespace Project123.Controllers
 
                     try
                     {
+
+                        if (string.IsNullOrEmpty(AlbumData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album ArtistName is missing." });
+                        }
+                        if (string.IsNullOrEmpty(AlbumData.AlbumName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album AlbumName is missing." });
+                        }
+                        if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
+                        }
+
                         // Save files and update paths in SongData
-                      
+
                         if (AlbumData.AlbumImage != null)
                         {
                             var (filePath, error, oldFolderPath) = await SaveFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId,AlbumData.AlbumImagePath);
@@ -260,6 +288,22 @@ namespace Project123.Controllers
 
                     try
                     {
+                        if (string.IsNullOrEmpty(AlbumData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album ArtistName is missing." });
+                        }
+                        if (string.IsNullOrEmpty(AlbumData.AlbumName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album AlbumName is missing." });
+                        }
+                        if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
+                        }
+
+
+
+
                         // Save files and update paths in SongData
 
                         if (AlbumData.AlbumImage != null)
@@ -325,6 +369,30 @@ namespace Project123.Controllers
 
                     try
                     {
+                        if (string.IsNullOrEmpty(SongData.SongName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song name is missing." });
+                        }
+
+                        if (SongData.SongFile == null)
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(SongData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(SongData.SongFilePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                        }
+                        if (string.IsNullOrEmpty(SongData.SongImagePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
+                        }
+
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
@@ -401,6 +469,29 @@ namespace Project123.Controllers
 
                     try
                     {
+                        if (string.IsNullOrEmpty(SongData.SongName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song name is missing." });
+                        }
+
+                        if (SongData.SongFile == null)
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(SongData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(SongData.SongFilePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                        }
+                        if (string.IsNullOrEmpty(SongData.SongImagePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
+                        }
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
@@ -476,6 +567,27 @@ namespace Project123.Controllers
 
                     try
                     {
+                        // Check if SongName is null before proceeding
+                        if (string.IsNullOrEmpty(songData.SongName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song name is missing." });
+                        }
+
+                        if (songData.SongFile == null)
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(songData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(songData.SongFilePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                        }
+
                         // Update song file path
                         var (songFilePath, songFileError) = MoveFileToAlbumUpdate(songData.SongFilePath, songData.ArtistName, songData.SongName, songData.AlbumId);
                         if (songFileError != null)
@@ -551,19 +663,35 @@ namespace Project123.Controllers
                 var client = _httpClientFactory.CreateClient();
                 client.BaseAddress = new Uri("https://localhost:7061/");
 
-
                 try
                 {
-                    //string requestJson = JsonConvert.SerializeObject(id);
-                    //HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-                    // Log the request URL
+                    // Check if SongName is null before proceeding
+                    if (string.IsNullOrEmpty(SongData.SongName))
+                    {
+                        return Json(new { status = "E", success = false, message = "Song name is missing." });
+                    }
+
+                    if (SongData.SongFile == null)
+                    {
+                        return Json(new { status = "E", success = false, message = "Song file is missing." });
+                    }
+
+                    if (string.IsNullOrEmpty(SongData.ArtistName))
+                    {
+                        return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                    }
+
+                    if (string.IsNullOrEmpty(SongData.SongFilePath))
+                    {
+                        return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                    }
+
 
                     var (filePath, error, oldFolderPath) = await DeleteFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId, SongData.SongFilePath);
                     if (error != null)
                     {
                         return Json(new { status = "E", success = false, message = error });
                     }
-                  
 
                     string requestJson = JsonConvert.SerializeObject(SongData);
                     HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
@@ -578,10 +706,7 @@ namespace Project123.Controllers
                         this.response.Status = "E";
                         this.response.Message = $"Error: {responseResult.StatusCode}";
                     }
-
-              
                 }
-
                 catch (Exception ex)
                 {
                     this.response.Status = "E";
@@ -591,6 +716,7 @@ namespace Project123.Controllers
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
+
 
 
 
@@ -671,11 +797,11 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-        private async Task<(string filePath, string error, string oldFolderPath)> SaveFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
+        private async Task<(string? filePath, string? error, string? oldFolderPath)> SaveFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
         {
             if (file == null || file.Length == 0)
             {
-                return (null, "File is empty", null);
+                return (null, "File is empty", null); // Allow null values
             }
 
             // Sanitize artist name and song name for use in file paths
@@ -684,22 +810,12 @@ namespace Project123.Controllers
 
             // Create the directory path for the artist and song
             var artistFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", sanitizedArtistName);
-            var albumFolderPath = "";
-
-            if (albumId != null)
-            {
-                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + albumId.ToString());
-            }
-            else
-            {
-                albumFolderPath = Path.Combine(artistFolderPath, sanitizedName);
-            }
+            var albumFolderPath = albumId != null
+                ? Path.Combine(artistFolderPath, "Album_" + albumId.ToString())
+                : Path.Combine(artistFolderPath, sanitizedName);
 
             // Ensure the directories exist
             Directory.CreateDirectory(albumFolderPath);
-
-            // Variable to store the old folder path
-
 
             // Generate a unique file name and get the full file path
             string fileName;
@@ -721,9 +837,9 @@ namespace Project123.Controllers
             if (existingFiles.Length > 0)
             {
                 System.IO.File.Delete(existingFiles[0]);
-                //return (null, "Song already exists", null);
             }
-            string oldFolderPath = null;
+
+            string? oldFolderPath = null; // Declare oldFolderPath as nullable
 
             // Check if there's an existing file and delete it
             if (!string.IsNullOrEmpty(existingFilePath))
@@ -731,23 +847,11 @@ namespace Project123.Controllers
                 var fullExistingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingFilePath.TrimStart('/').Replace("/", "\\"));
                 if (System.IO.File.Exists(fullExistingFilePath))
                 {
-                    oldFolderPath = Path.GetDirectoryName(fullExistingFilePath);
-                    if (albumId != null)
-                    {
-
-
-                        // Delete the existing file
-                        System.IO.File.Delete(fullExistingFilePath);
-                    }
-                    // Get the old folder path
-                    else
-                    {
-                        System.IO.File.Delete(fullExistingFilePath);
-                        //System.IO.Directory.Delete(oldFolderPath);
-                    }
-
+                    oldFolderPath = Path.GetDirectoryName(fullExistingFilePath); // Assigning null if the path is null
+                    System.IO.File.Delete(fullExistingFilePath);
                 }
             }
+
             // Save the file to the generated path
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -760,7 +864,7 @@ namespace Project123.Controllers
                 var (newFilePath, moveError) = MoveFileToAlbum(filePath, artistFolderPath, sanitizedName, albumId.Value);
                 if (moveError != null)
                 {
-                    return (null, moveError, oldFolderPath);
+                    return (null, moveError, oldFolderPath); // Return nullable values
                 }
                 filePath = newFilePath;
             }
@@ -770,32 +874,22 @@ namespace Project123.Controllers
         }
 
 
-        private async Task<(string filePath, string error, string oldFolderPath)> DeleteFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
-        {
-            
 
+        private Task<(string? filePath, string? error, string? oldFolderPath)> DeleteFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
+        {
             // Sanitize artist name and song name for use in file paths
             var sanitizedArtistName = SanitizeFileName(artistName);
             var sanitizedName = SanitizeFileName(name);
 
             // Create the directory path for the artist and song
             var artistFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", sanitizedArtistName);
-            var albumFolderPath = "";
-
-            if (albumId != null)
-            {
-                albumFolderPath = Path.Combine(artistFolderPath, "Album_" + albumId.ToString());
-            }
-            else
-            {
-                albumFolderPath = Path.Combine(artistFolderPath, sanitizedName);
-            }
+            var albumFolderPath = albumId != null ? Path.Combine(artistFolderPath, "Album_" + albumId.ToString()) : Path.Combine(artistFolderPath, sanitizedName);
 
             // Ensure the directories exist
             Directory.CreateDirectory(albumFolderPath);
 
             // Variable to store the old folder path
-            string oldFolderPath = null;
+            string? oldFolderPath = null;
 
             // Check if there's an existing file and delete it
             if (!string.IsNullOrEmpty(existingFilePath))
@@ -811,12 +905,13 @@ namespace Project123.Controllers
             }
 
             // Return the old folder path
-            return (null, null, oldFolderPath);
+            return Task.FromResult<(string? filePath, string? error, string? oldFolderPath)>((null, null, oldFolderPath));
         }
 
 
+
         // Helper method to move file to album
-        private (string newFilePath, string error) MoveFileToAlbum(string filePath, string artistFolderPath, string sanitizedName, int albumId)
+        private (string? newFilePath, string? error) MoveFileToAlbum(string filePath, string artistFolderPath, string sanitizedName, int albumId)
         {
             try
             {
@@ -842,7 +937,7 @@ namespace Project123.Controllers
             return name;
         }
 
-        private (string newFilePath, string error) MoveFileToAlbumUpdate(string existingFilePath, string artistName, string songName, int? albumId)
+        private (string? newFilePath, string? error) MoveFileToAlbumUpdate(string existingFilePath, string artistName, string songName, int? albumId)
         {
             try
             {

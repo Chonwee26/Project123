@@ -4,12 +4,30 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8343826e-dedb-448a-af63-368edab9fdef</UserSecretsId>
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+ <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
+
 
   <ItemGroup>
     <Content Include="Migrations\20240429043029_addShipmentDB.cs" />
     <Content Include="Migrations\20240429043029_addShipmentDB.Designer.cs" />
   </ItemGroup>
+
+<ItemGroup>
+	<None Update="appsettings.json">
+  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+</None>
+
+  <None Update="appsettings.Development.json">
+    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+  </None>
+</ItemGroup>
+	
+	
+
 
   <ItemGroup>
     <PackageReference Include="ApacheTech.Common.DependencyInjection" Version="2.1.2" />
@@ -31,10 +49,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+   
 	  <ProjectReference Include="..\Project123.Dto\Project123.Dto.csproj" />
 	  <ProjectReference Include="..\Project123Api\Project123Api.csproj" />
   </ItemGroup>
-
 	
 	
 	

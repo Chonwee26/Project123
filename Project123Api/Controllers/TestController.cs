@@ -36,7 +36,7 @@ namespace Project123Api.Controllers
 
         private string GetTokenFromSession()
         {
-            return HttpContext.Session.GetString("UserToken");
+            return HttpContext.Session.GetString("UserToken") ?? string.Empty; // Return an empty string if null
         }
 
         // GET: api/<TestController>

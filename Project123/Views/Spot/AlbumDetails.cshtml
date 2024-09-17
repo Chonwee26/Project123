@@ -75,7 +75,7 @@
                     }
                     else
                     {
-                        <p>@Model.ArtistName</p>
+                        <p>@Model?.ArtistName</p>
                     }
                 </div>
             </div>
@@ -167,12 +167,13 @@
 </div>
 
 @section Scripts{
+    
     <script type="text/javascript">
-        var AlbumId = @Model.AlbumId;
-        var ArtistName = '@Model.ArtistName';
-        var AlbumName = '@Model.AlbumName';
+        var AlbumId = @Model?.AlbumId;
+        var ArtistName = '@Model?.ArtistName';
+        var AlbumName = '@Model?.AlbumName';
         var songData = [];
-        var AlbumImage ='@Model.AlbumImagePath';
+        var AlbumImage ='@Model?.AlbumImagePath';
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
             $('.btn-album-pause').addClass('hide-element')

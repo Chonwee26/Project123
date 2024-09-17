@@ -21,7 +21,7 @@ namespace Project123.Controllers
     {
 
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ResponseModel response = new ResponseModel();
+        private new readonly ResponseModel response = new ResponseModel();
         public BackupController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;

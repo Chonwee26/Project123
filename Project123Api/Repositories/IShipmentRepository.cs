@@ -103,8 +103,8 @@ namespace Project123Api.Repositories
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel
                             {
-                                ShipmentItemID = row["ShipmentItemID"].ToString(),
-                                ShipmentItemText = row["ShipmentItemText"].ToString()
+                                ShipmentItemID = row["ShipmentItemID"].ToString() ?? string.Empty,
+                                ShipmentItemText = row["ShipmentItemText"].ToString() ?? string.Empty
                             };
                             shipmentList.Add(model);
                         }
@@ -146,8 +146,8 @@ namespace Project123Api.Repositories
                         {
                             ShipmentLocationModel model = new ShipmentLocationModel
                             {
-                                ShipmentItemID = row["ShipmentItemID"].ToString(),
-                                ShipmentItemText = row["ShipmentItemText"].ToString()
+                                ShipmentItemID = row["ShipmentItemID"].ToString() ?? string.Empty,
+                                ShipmentItemText = row["ShipmentItemText"].ToString() ?? string.Empty
                             };
                             statusList.Add(model);
                         }
@@ -436,21 +436,21 @@ namespace Project123Api.Repositories
                                     MobileNumber = reader["MobileNumber"].ToString(),
                                     Storage = reader["Storage"].ToString(),
                                     ShipmentStatus = reader["ShipmentStatus"] != DBNull.Value ? Convert.ToInt32(reader["ShipmentStatus"]) : (int?)null,
-                                    ShipDate = reader["ShipDate"].ToString(),
-                                    ShipDateFR = reader["ShipDateFR"].ToString(),
-                                    ShipDateTO = reader["ShipDateTO"].ToString(),
-                                    CreateDate = reader["CreateDate"].ToString(),
+                                    ShipDate = reader["ShipDate"].ToString() ?? string.Empty,
+                                    ShipDateFR = reader["ShipDateFR"].ToString() ?? string.Empty,
+                                    ShipDateTO = reader["ShipDateTO"].ToString() ?? string.Empty,
+                                    CreateDate = reader["CreateDate"].ToString() ?? string.Empty,
                                 };
 
                                 ShipmentLocationModel location = new ShipmentLocationModel
                                 {
-                                    ShipmentItemID = reader["ShipmentStorageID"].ToString(),
-                                    ShipmentItemText = reader["ShipmentStorageName"].ToString()
+                                    ShipmentItemID = reader["ShipmentStorageID"].ToString() ?? string.Empty,
+                                    ShipmentItemText = reader["ShipmentStorageName"].ToString() ?? string.Empty
                                 };
                                 ShipmentStatusModel status = new ShipmentStatusModel
                                 {
-                                    ShipmentItemID = reader["ShipmentStatusID"].ToString(),
-                                    ShipmentItemText = reader["ShipmentStatusName"].ToString()
+                                    ShipmentItemID = reader["ShipmentStatusID"].ToString() ?? string.Empty,
+                                    ShipmentItemText = reader["ShipmentStatusName"].ToString() ?? string.Empty
                                 };
 
                                 model.ShipmentLocation.Add(location);

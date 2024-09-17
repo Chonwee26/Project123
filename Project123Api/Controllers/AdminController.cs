@@ -60,6 +60,14 @@ namespace Project123Api.Controllers
 
             try
             {
+                // Ensure _dbContext and Tb_Admin are not null
+                if (_dbContext == null || _dbContext.Tb_Admin == null)
+                {
+                    resp.Status = "E";
+                    resp.Message = "An error occurred: Database context is not available.";
+                    return Ok(resp); // Return an OkObjectResult for consistency
+                }
+
                 var adminEmail = await _dbContext.Tb_Admin.FirstOrDefaultAsync(a => a.Email == admin.Email);
 
                 if (adminEmail == null || !SecurePasswordHasherHelper.Verify(admin.Password, adminEmail.Password))
@@ -71,9 +79,9 @@ namespace Project123Api.Controllers
 
                 var claims = new[]
                 {
-            new Claim(JwtRegisteredClaimNames.Email, admin.Email),
-            new Claim(ClaimTypes.Email, admin.Email),
-              new Claim(ClaimTypes.Role, adminEmail.Role) // Add the user's role to the claims
+            new Claim(JwtRegisteredClaimNames.Email, admin.Email??string.Empty),
+            new Claim(ClaimTypes.Email, admin.Email ?? string.Empty),
+            new Claim(ClaimTypes.Role, adminEmail.Role ?? string.Empty) // Add the user's role to the claims
         };
 
                 var token = _auth.GenerateAccessToken(claims);
@@ -100,6 +108,7 @@ namespace Project123Api.Controllers
                 return Ok(resp); // Return an OkObjectResult for consistency
             }
         }
+
 
 
 
@@ -188,23 +197,35 @@ namespace Project123Api.Controllers
 
 
         [HttpPost("Register1")]
-        public IActionResult Register1([FromBody] AdminModel admin) 
+        public IActionResult Register1([FromBody] AdminModel admin)
         {
-            var adminWithEmail = _dbContext.Tb_Admin.Where(a => a.Email == admin.Email).SingleOrDefault();
-            if (adminWithEmail != null) {
+            // Ensure _dbContext and Tb_Admin are not null
+            if (_dbContext == null || _dbContext.Tb_Admin == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+            }
+
+            var adminWithEmail = _dbContext.Tb_Admin.SingleOrDefault(a => a.Email == admin.Email);
+
+            if (adminWithEmail != null)
+            {
                 return BadRequest("User with same email already exists");
             }
+
             var adminObj = new AdminModel
             {
                 Name = admin.Name,
                 Email = admin.Email,
                 Password = SecurePasswordHasherHelper.Hash(admin.Password),
-                Role = admin.Role                                                                          
-            };                 
+                Role = admin.Role
+            };
+
             _dbContext.Tb_Admin.Add(adminObj);
             _dbContext.SaveChanges();
+
             return StatusCode(StatusCodes.Status201Created);
         }
+
 
         [HttpPost("CreateUser123")]
         public async Task<ResponseModel> CreateUser(dataModel UserData)
