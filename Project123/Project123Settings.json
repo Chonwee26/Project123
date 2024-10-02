@@ -19,5 +19,6 @@
     "DefaultConnection": "Server=(localdb)\\Local; Database=ShipmentDB;Trusted_Connection=True;MultipleActiveResultSets=true;"
     //"DefaultConnection": "Server=(localdb)\\Local; Database=ShipmentDB;Trusted_Connection=True;MultipleActiveResultSets=true;"
     //"Server=(localdb)\\GENPF2AVQ9Y\\GENERWIZ;Database=Shipment;Trusted_Connection=True;MultipleActiveResultSets=true;"
+    //"DefaultConnection": "Server=sql_server_container;Database=ShipmentDB;User Id=sa;Password=YourStrong@Passw0rd;MultipleActiveResultSets=true;"
   }
 }

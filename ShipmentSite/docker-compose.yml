@@ -1,25 +1,13 @@
 version: '3.8'
 
 services:
-  project123:
-    build:
-      context: .
-      dockerfile: Project123/Dockerfile
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserverProject123
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
     ports:
-      - "5000:80"
-    depends_on:
-      - projectapi
-
-  projectapi:
-    build:
-      context: .
-      dockerfile: ProjectApi/Dockerfile
-    ports:
-      - "5001:80"
-
-  projectdto:
-    build:
-      context: .
-      dockerfile: Project.Dto/Dockerfile
-    # Add additional configurations if needed
-
+      - "1433:1433"
+    volumes:
+      - ./mssql-data:/var/opt/mssql

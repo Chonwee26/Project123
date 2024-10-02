@@ -1,4 +1,4 @@
-﻿@model Project123.Dto.SongModel;
+﻿@model Project123.Dto.ArtistModel;
 
 @{
     Layout = "~/Views/Shared/_SpotLayout.cshtml";
@@ -9,6 +9,7 @@
 
 @section Styles{
     <style type="text/css">
+     
         .content {
             border-radius: 20px;
             height: calc(100vh - 75px); /* Adjust height to account for the bottom bar */
@@ -130,7 +131,7 @@
         <div>
             <div class="album-details d-flex">
                 <div class="dv-album-img">
-                    <img src="/uploads/Lisa/Album_3006/music_pic6_yorushika.jpg" alt="#" class="img-music-content" />
+                    <img src="@Model.ArtistImagePath" alt="@Model.ArtistName" class="img-music-content" />
                 </div>
 
                 <div class="dv-title">
@@ -142,22 +143,24 @@
             </div>
 
             @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-                    <div class="music-content">
-                        <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
-                    </div>
-                    <div class="music-content-title">
-                        <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
-                        <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
-                    </div>
-                </div>*@
+                <div class="music-content">
+                    <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
+                </div>
+                <div class="music-content-title">
+                    <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                    <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
+                </div>
+            </div>*@
         <div class="main-content-music row">
-            <div class="main-content-music-album">
-                <h3>Albums</h3>
+            <h3>Albums</h3>
+            <div class="main-content-music-album d-flex">
+
 
             </div>
 
-            <div class="main-content-music-song">
-                <h3>Songs</h3>
+            <h3>Songs</h3>
+            <div class="main-content-music-song d-flex">
+
 
             </div>
             @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
@@ -176,7 +179,7 @@
         </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block">
-         
+
             <table id="tblDataTableSong" class="table table-bordered" width="100%" style="display:none;">
                 <thead>
                     <tr class="">
@@ -191,8 +194,12 @@
                 </tbody>
             </table>
         </div>
+        <div class="col-12" style="margin-top:40px;">
+            <h3>About</h3>
+        </div>
+
     </div>
-    <div class=" content aside col-lg-3 col-5" id="aside">
+    <div class=" content aside col-lg-3 col-6" id="aside">
         <div>
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -219,8 +226,9 @@
 
 @section Scripts{
     <script type="text/javascript">
-        var AlbumId = @Model.AlbumId;
+        @*var AlbumId = @Model.AlbumId;*@
         var ArtistName = '@Model.ArtistName';
+        var ArtistBio = '@Model.ArtistBio';
      debugger
 
         @*var ArtistName = @Model.ArtistName;*@
@@ -302,6 +310,7 @@
    }
 
 
+      
              function searchAlbum() {
          frmSearch = {
 

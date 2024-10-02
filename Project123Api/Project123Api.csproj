@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
@@ -19,7 +19,7 @@
 		<None Update="vercel.json">
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
-	</ItemGroup>
+	</ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="ApacheTech.Common.DependencyInjection" Version="2.1.2" />

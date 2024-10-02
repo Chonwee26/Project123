@@ -20,13 +20,31 @@
     <style>
 
 
-        .content {
+        .btn-favorite{
+            cursor:pointer;
+            display:block;
+        }
+        #tblDataTableSong:hover .btn-favorite {
+            display: block;
+        }
+
+        table.dataTable thead th, table.dataTable thead td {
+            border-bottom:unset;
+        }
+        tbody, td, tfoot, th, thead, tr {
+            border-style:unset;
+        }
+            .content {
             border-radius: 20px;
             height: calc(100vh - 75px); /* Adjust height to account for the bottom bar */
             overflow: hidden;
            
         }
-
+        .about-artist {
+            background: #393838;
+            padding: 10px;
+            border-radius: 15px;
+        }
         .main-content {
             background-color: #0e0d0d;
             margin-right: 10px;
@@ -82,12 +100,17 @@
         .img-aside {
             display: flex !important;
             justify-content: center;
-            width: 100%;
-            height: auto;
-            max-width: 205px;
+            width: 169px;
+            height: 169px;
+            max-width: 169px;
         }
 
         .img-aside {
+            display: flex !important;
+            justify-content: center;
+            width: 275px;
+            height: 275px;
+           
             max-height: 388px;
             max-width: 388px;
         }
@@ -101,12 +124,12 @@
 
         .dv-content {
             max-height: 320px;
-            max-width: 220px;
+            max-width: 197px;
             border-radius: 8px;
         }
 
             .dv-content:hover {
-                background-color: #8f2c8fa8; /* or any color you prefer */
+                background-color: #8f2c8fa8; 
             }
 
             .dv-content:active {
@@ -318,10 +341,10 @@
         /* New hover styles */
         #sidebarHome a:hover,
         #sidebarSearch a:hover,
+        #sidebarAdmin a:hover,
         .iconlove:hover,
         .imgArtist:hover {
             background-color: gray; /* or any color you prefer */
-
         }
 
         .btn-media{
@@ -402,18 +425,27 @@
             <nav class="sidebar">
                 <div class="search-sidebar" id="">
                     <div id="sidebarHome">
-                        <a href="/home/MusicSpotpage" class="btn active-icon" id="btnHome"><i class="fa-solid fa-house" id="iconHome" ></i></a>
+                        <a href="/home/MusicSpotpage" class="btn active-icon nav-link" id="btnHome"><i class="fa-solid fa-house" id="iconHome"></i></a>
                     </div>
-                
+
                     <div id="sidebarSearch">
-                        <a href="/Spot/SpotAdminPage" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
-                       
+                        <a href="/Spot/Search" class="btn nav-link" id="btnSearch"data-page="search"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
+                        @*<a href="/Spot/SpotAdminPage" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>*@
+
+                    </div>
+
+
+
+                    <div id="sidebarAdmin">
+                        @*<a href="/Spot/Search" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>*@
+                        <a href="/Spot/SpotAdminPage" class="btn nav-link" id="btnAdmin"><i class="fa-solid fa-user" id="iconAdmin" style="color: #bfbfbf"></i></a>
+
                     </div>
 
                 </div>
                 <div class="lib-sidebar" id="libSideBar">
                     <div class=""style="text-align:center;">
-                        <a href="/Spot/FavoriteSong"class="btn iconlove" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+                        <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
                     </div>
                     @*<div class="imgArtist">
                         <img src="~/picture/shipment_pic3.jpg" />
@@ -431,7 +463,7 @@
 <div id="main">
     <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
     @RenderBody()
-    <div class=" content aside col-lg-3 col-5" id="aside">
+    <div class=" content aside col-lg-3 col-6" id="aside">
         @*<div class="dv-aside">
                 <aside class="aside-content px-3">
                     <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -563,15 +595,17 @@
         var audioVolume = $('#btnVolumeBar');
         var volume;
         var progressBar = $('#progressBar');
+
         $(document).ready(function () {
-        
+
+
             document.addEventListener('keypress', function (event) {
-                
+
                 setTimeout(
                     function () {
 
                         if (event.code === 'Space') {
-                            debugger
+
                             event.preventDefault();
                             if (audioControl.paused) {
                                 audioControl.play();
@@ -582,7 +616,7 @@
                             }
                         }
                     }, 300);
-            });      
+            });
             let isFullscreen = false; // Track fullscreen state
             let isProcessing = false; // Prevent multiple rapid clicks
 
@@ -606,7 +640,7 @@
                         element.msRequestFullscreen();
                     }
                 } else { // Exit fullscreen
-                   
+
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
                     } else if (document.mozCancelFullScreen) { // Firefox
@@ -628,7 +662,7 @@
 
                 isProcessing = false; // Reset flag after state change
             });
-                  
+
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
@@ -636,7 +670,7 @@
             toggleAsideDisplay();
             progressBar.attr('disabled', true);
             $('.btn-media-pause').addClass('hide-element')
-         
+
             audioControl.volume = audioVolume.val();
 
             $(audioVolume).on('input', function () {
@@ -678,7 +712,7 @@
             });
 
             //audioControl.addEventListener('timeupdate', function () {
-            //    debugger
+            //
 
             //        var currenttime = audioControl.currentTime / audioControl.duration * 100;
             //        progressBar.attr('aria-valuenow', currenttime);
@@ -697,14 +731,14 @@
 
 
             //audioControl.addEventListener('timeupdate', function () {
-            //    debugger
+            //
 
             //    var currenttime = audioControl.currentTime / audioControl.duration * 100;
             //    progressBar.attr('data-time',currenttime);
 
             //    //progressBar.css('width', currenttime + '%');
             //    $('#progressBar').on('input', function () {
-            //        debugger
+            //
             //        $(this).val($(this).attr('data-time'));
 
             //    })
@@ -804,27 +838,113 @@
             });
             getAlbumSideLayout();
 
-            function changeIconClass(activeIcon, inactiveIcon) {
+
+
+
+        });
+        ////test pushs
+        //$('.nav-link').on('click', function (e) {
+        //    e.preventDefault();
+
+        //    // Get the page name from the clicked link
+        //    let page = $(this).data('page');
+
+        //    // Use pushState to change the URL without reloading the page
+        //    window.history.pushState({ page: page }, '', page);
+
+        //    // Load the new content based on the page
+        //    loadPage(page);
+        //    console.log('page', page);
+        //});
+
+
+
+//        function loadPage(page) {
+//            let content;
+//            switch (page) {
+//                case 'search':
+//                    content = $('');
+//                    break;
+//                case 'contact':
+//                    content = `  <div class="album-details d-flex">
+//    <div class="dv-album-img">
+//        <img src="/picture/Spotify Image/music_pic7_anima.jpg" alt="Anima" class="img-music-content" />
+//    </div>
+
+//    <div class="dv-title">
+//        <h1>Anima</h1>
+
+//    </div>
+//</div>`;
+//                    break;
+//                case 'otherpage': // Adding a new case for "otherpage"
+//                    content = `<div class="album-details d-flex">
+//    <div class="dv-album-img">
+//        <img src="/picture/Spotify Image/music_pic11_other.jpg" alt="Other Song" class="img-music-content" />
+//    </div>
+
+//    <div class="dv-title">
+//        <h1>Other Song</h1>
+
+//    </div>
+//</div>`;
+//                    break;
+//                default:
+//                    content = `  <div class="album-details d-flex">
+//    <div class="dv-album-img">
+//        <img src="/picture/Spotify Image/music_pic10_rayons.jpg" alt="Rayons" class="img-music-content" />
+//    </div>
+
+//    <div class="dv-title">
+//        <h1>Rayons</h1>
+
+//    </div>
+//</div>`;
+//                    break;
+//            }
+//            $('#content').html(content);
+//        }
+
+//        // Handle browser's back/forward buttons
+//        window.onpopstate = function (event) {
+//            if (event.state && event.state.page) {
+//                loadPage(event.state.page);
+//            } else {
+//                loadPage('home/menupage'); // Default to home page if state is undefined
+//            }
+//        };
+
+         function changeIconClass(activeIcon, inactiveIcons) {
+            if ($(activeIcon).length > 0) {
                 $(activeIcon).addClass('active-icon').removeClass('inactive-icon');
-                $(inactiveIcon).addClass('inactive-icon').removeClass('active-icon');
             }
-
-            $('#btnHome').on('click', function () {
-                changeIconClass('#iconHome', '#iconSearch, #iconLove');
+            $(inactiveIcons).each(function () {
+                if ($(this).length > 0) {
+                    $(this).addClass('inactive-icon').removeClass('active-icon');
+                }
             });
+        }
 
-            $('#btnSearch').on('click', function () {
-                changeIconClass('#iconSearch', '#iconHome, #iconLove');
-            });
+        $('#btnHome').on('click', function () {
+            changeIconClass('#iconHome', '#iconSearch, #iconLove, #iconAdmin');
+        });
 
-            $('#btnLove').on('click', function () {
+        $('#btnSearch').on('click', function () {
+            changeIconClass('#iconSearch', '#iconHome, #iconLove, #iconAdmin');
+        });
 
-                changeIconClass('#iconLove', '#iconHome, #iconSearch');
-            });
+        $('#btnLove').on('click', function () {
+
+            changeIconClass('#iconLove', '#iconHome, #iconSearch, #iconAdmin');
+        });
+
+        $('#btnAdmin').on('click', function () {
+
+            changeIconClass('#iconAdmin', '#iconHome, #iconSearch, #iconLove');
         });
 
         function bindingMediaLayout(data,image,albumName) {
-            debugger
+
             $('#dv-bottomside').empty();
             $('#aside').empty();
             var bottomMedia = `
@@ -842,16 +962,17 @@
 
 
 
-            var aside = `    <div class="dv-aside">
-    <aside class="aside-content px-3">
+            var aside = `<div class="dv-aside">
+    <aside class="aside-content">
         <button class="btn" id="btnCloseAside" style="color:white">Close</button>
         <p>${albumName}</p>
         <div class="img-aside-content">
             <img id="aside_pic" src="${image}" class="img-aside" />
         </div>
-        <h3>${data.SongName}</h3>
-         <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
+        <h3 style="margin:20px 0 0 0;">${data.SongName}</h3>
+         <a  class="title-artist mb-3" href="" style="color:white;">${data.ArtistName}</a>
 
+         <div class="about-artist">
         <div class="aside-about-artist">
             <div class="aside-about-artist-img">
                 <h6>About the artist</h6>
@@ -860,11 +981,32 @@
             <div class="aside-about-artist-title">
 
              <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
-                <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                <p class="aside-about-artist-title p"></p>
+            </div>
             </div>
         </div>
     </aside>
 </div>`;
+
+            //var dataArtist = {
+            //    ArtistName: data.ArtistName
+            //}
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchArtist1", "Spot")',
+                data: { ArtistName: data.ArtistName },
+                global: false,
+                dataType: "json",
+                success: function (result) {
+                    debugger
+                    $('.aside-about-artist-title p').text(result.Data[0].ArtistBio);
+                },
+
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
 
             $('#aside').append(aside);
 
@@ -950,7 +1092,7 @@
 
                         var albumId = $(this).data('album-id');
                         window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
-              
+
                     });
 
 

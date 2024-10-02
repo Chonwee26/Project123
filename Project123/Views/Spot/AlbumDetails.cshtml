@@ -18,6 +18,7 @@
             margin: 100px 10px 20px 20px;
         }
 
+
        /* #dvTableAlbum #tblDataTableSong th, tr, td :hover {
             background-color: purple !important;
         }
@@ -81,14 +82,14 @@
             </div>
 
             @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-            <div class="music-content">
-                <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
-            </div>
-            <div class="music-content-title">
-                <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
-                <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
-            </div>
-        </div>*@
+                <div class="music-content">
+                    <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
+                </div>
+                <div class="music-content-title">
+                    <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                    <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
+                </div>
+            </div>*@
             <div class="main-content-music">
 
 
@@ -99,8 +100,8 @@
                     <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:46px  "></i>
                 </button>
                 <button class="button-control btn-media btn-album-pause btn-media-pause" style="background-color: unset; margin-left: 20px;">
-                <i class="fa-solid icon-control fa-circle-pause"style="color:#e52cf9; font-size:40px " ></i>
-            </button>
+                    <i class="fa-solid icon-control fa-circle-pause" style="color:#e52cf9; font-size:40px "></i>
+                </button>
 
                 <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
                     <i class="fa-solid  fa-shuffle" style="color:#FFF;" id="iconAlbumShuffle"></i>
@@ -112,12 +113,12 @@
             </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
-          
+
             @*<button class="button-control btn-media btn-album-shuffle" type="button">
                 <i class="fa-solid icon-control fa-shuffle"></i>
             </button>
             <div class="" style="background-color:black;">
-             
+
                 <button class="button-control btn-media btn-media-play">
                     <i class="fa-solid icon-control fa-circle-play"></i>
                 </button>
@@ -125,12 +126,13 @@
                     <i class="fa-solid icon-control fa-circle-pause"></i>
                 </button>
             </div>*@
-            <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%">
+            <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%" style="background-color: #121212; ">
                 <thead>
                     <tr class="">
 
                         <th style="width:40px !important">#</th>
                         <th>Title</th>
+                        <th style="min-width:20px !important; max-width:20px!important;"></th>
                         <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
 
                     </tr>
@@ -139,30 +141,34 @@
                 </tbody>
             </table>
         </div>
+       
     </div>
-    <div class="content aside col-lg-3 col-5" id="aside">
+
+
+  
+    <div class="content aside col-lg-3 col-6" id="aside">
         @*<div>
-            <aside class="aside-content px-3">
-                <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                <div class="img-aside-content">
-                    <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                </div>
-                <h3>17さいのうた。</h3>
-                <h6>Yuika</h6>
-
-                <div class="aside-about-artist">
-                    <div class="aside-about-artist-img">
-                        <h6>About the artist</h6>
+                <aside class="aside-content px-3">
+                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                    <div class="img-aside-content">
+                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
                     </div>
-                    <div class="aside-about-artist-title">
-                        <h6>Yuika</h6>
-                        <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                    </div>
-                </div>
-            </aside>
+                    <h3>17さいのうた。</h3>
+                    <h6>Yuika</h6>
 
-        </div>*@
+                    <div class="aside-about-artist">
+                        <div class="aside-about-artist-img">
+                            <h6>About the artist</h6>
+                        </div>
+                        <div class="aside-about-artist-title">
+                            <h6>Yuika</h6>
+                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>*@
     </div>
 </div>
 
@@ -210,145 +216,183 @@
             $('#iconAlbumShuffle').toggleClass('icon-color-purple');
 
 
-             
+
             //if (audioControl.loop) {
             //    audioControl.loop = false;
             //} else {
             //    audioControl.loop = true;
-            //    audioControl.play(); 
+            //    audioControl.play();
             //}
         });
 
-        $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-           debugger
-            var table = $('#tblDataTableSong').DataTable();
-            var tableData = table.data();
-            var rowDataAlbum = table.row(this).data();
-            var tableAllIndex = table.rows().count() - 1;
-            var currentIndex = table.row(this).index();
+        $('#tblDataTableSong tbody').on('click', '.btn-favorite', function () {
+
             var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
-            if (rowDataAlbum) {
-                bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
-                if ($('#aside').is(':visible')) {
-                   
-                }
-                else {
-                    toggleAsideDisplay();
-                }
-                $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
-                // Load the new audio source
-                $('#progressBar').attr('disabled', false);
-                audioControl.load();
-                audioControl.play();
 
-                $('.btn-media-play').addClass('hide-element');
-                $('.btn-album-play').addClass('hide-element');
-                $('.btn-media-pause').removeClass('hide-element');
-                $('.btn-album-pause').removeClass('hide-element');
-                $('.title-song').css('color','white');
-                $('#titleSong' + rowData.SongId).css("color", '#e52cf9');
+            if (rowData.FavoriteSong) {
+                $('#iconLove' + rowData.SongId).removeClass('fa-solid').addClass('fa-regular');
 
-                $('.btn-media-miniPlayer').click(function() {
+            }
+            else {
+                $('#iconLove' + rowData.SongId).removeClass('fa-regular').addClass('fa-solid');
+            }
 
-                });
+            //var favData = {
+            //    SongId: rowData.SongId,
+            //    FavoriteSong: rowData.FavoriteSong == null ? null : "1"
+            //}
+            rowData.FavoriteDate = new Date($.now());
+            rowData.FavoriteSong = !rowData.FavoriteSong;
+            var frmSearch = {
+                AlbumId : rowData.AlbumId
+            }
+            console.log('rowData', rowData);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("FavoriteSong1", "Spot")',
+                data: rowData,
+                global: false,
+                dataType: "json",
+                success: function (result) {
 
+                    /*    songData = result.Data;*/
+                    console.log("update fav song", result);
 
-                $('.btn-media-backward').click(function () {
-                    if (currentIndex!= 0) {
-                        currentIndex--;
-                        if (currentIndex <= tableAllIndex) {
-                           
-                            var nextRowData = table.row(currentIndex).data();
-                            $('.title-song').css('color', 'white');
-                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+                    @*$.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SearchSong1", "Spot")',
+                        data: frmSearch,
+                        global:false,
+                        dataType: "json",
+                        success: function (result) {
 
-                            $('#songAudio').attr('src', nextRowData.SongFilePath);
-                            audioControl.load();
-                            audioControl.play();
-                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
-                        } else {
+                            ///*    songData = result.Data;*/
+                            //songData = result.Data.forEach(function (song, index) {
+                            //    songData.push(song.SongFilePath)
 
+                            //})
 
-                                var nextRowData = table.row(currentIndex).data();
-                                $('.title-song').css('color', 'white');
-                                $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
+                            bindingTableSong(result.Data);
+                            //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+                            if (result.status == "S") {
 
-                                $('#songAudio').attr('src', nextRowData.SongFilePath);
-                                audioControl.load();
-                                audioControl.play();
-                            console.log('End of playlist');
-                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
-                        }
-                    }
-              
-
-                });
-
-                $('.btn-media-forward').click(function () {
-
-                    if (currentIndex <= tableAllIndex) {
-                        if (currentIndex < tableAllIndex) {
-                            currentIndex++;
-                            var nextRowData = table.row(currentIndex).data();
-                            $('.title-song').css('color', 'white');
-                            $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-
-                            $('#songAudio').attr('src', nextRowData.SongFilePath);
-
-                            if ($('.btn-media-pause').hasClass('hide-element')) {
-                                $('.btn-media-pause').removeClass('hide-element');
-                                $('.btn-media-play').addClass('hide-element');
                             }
-                            /* $('.btn-media-pause').addClass('hide-element');*/
-                            audioControl.load();
-                            audioControl.play();
-                            bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
+                            else {
+
+                            }
+                        },
+                        error: function (request, status, error) {
+                            console.log(error);
                         }
-                        else //เผื่อไว้ตอนข้าม album
-                        {
+                    });*@
 
-                        }
-                      /*  bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);*/
 
-                    } else {
 
-                        console.log('End of playlist');
+                 /*   bindingTableSong(result.Data);*/
+                    //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+                    if (result.status == "S") {
+
                     }
-                });
+                    else {
 
-                $('.btn-media-shuffle').click(function () {
-                  
-                    shuffleArray(tableAllIndex);
-
-                });
-
-                // Event listener for when the song ends
-                audioControl.onended = function () {
-                    debugger;
-                    currentIndex++;
-                    if (currentIndex <= tableAllIndex) {
-                        var nextRowData = table.row(currentIndex).data();
-                        $('.title-song').css('color', 'white');
-                        $('#titleSong' + nextRowData.SongId).css("color", '#e52cf9');
-
-
-                        $('#songAudio').attr('src', nextRowData.SongFilePath);
-                        audioControl.load();
-                        audioControl.play();
-                        bindingMediaLayout(nextRowData, AlbumImage, AlbumName);
-                    } else {
-
-                        console.log('End of playlist');
                     }
-                };
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+
+        });
+
+      $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
+
+    var table = $('#tblDataTableSong').DataTable();
+    var rowDataAlbum = table.row(this).data();
+    var tableAllIndex = table.rows().count() - 1;
+    var currentIndex = table.row(this).index();
+    var shuffledIndexes = [...Array(tableAllIndex + 1).keys()]; // Create an array of row indices
+
+    if (rowDataAlbum) {
+        bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
+        if (!$('#aside').is(':visible')) {
+            toggleAsideDisplay();
+        }
+
+        $('#songAudio').attr('src', rowDataAlbum.SongFilePath);
+        $('#progressBar').attr('disabled', false);
+        audioControl.load();
+        audioControl.play();
+
+        $('.btn-media-play').addClass('hide-element');
+        $('.btn-album-play').addClass('hide-element');
+        $('.btn-media-pause').removeClass('hide-element');
+        $('.btn-album-pause').removeClass('hide-element');
+        $('.title-song').css('color', 'white');
+        $('#titleSong' + rowDataAlbum.SongId).css("color", '#e52cf9');
+
+        // Handle backward button
+        $('.btn-media-backward').off('click').on('click', function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                var prevRowData = table.row(shuffledIndexes[currentIndex]).data();
+                updateAudioPlayer(prevRowData);
             }
         });
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+
+        // Handle forward button
+        $('.btn-media-forward').off('click').on('click', function () {
+            if (currentIndex < tableAllIndex) {
+                currentIndex++;
+                var nextRowData = table.row(shuffledIndexes[currentIndex]).data();
+                updateAudioPlayer(nextRowData);
+            } else {
+                console.log('End of playlist');
             }
-        }
+        });
+
+        // Handle shuffle button
+        $('.btn-media-shuffle').off('click').on('click', function () {
+            shuffleArray(shuffledIndexes);  // Shuffle the indexes only
+            currentIndex = 0; // Reset current index after shuffle
+            var shuffledRowData = table.row(shuffledIndexes[currentIndex]).data();
+            updateAudioPlayer(shuffledRowData);
+        });
+
+        // Event listener for when the song ends
+        audioControl.onended = function () {
+            currentIndex++;
+            if (currentIndex <= tableAllIndex) {
+                var nextRowData = table.row(shuffledIndexes[currentIndex]).data();
+                updateAudioPlayer(nextRowData);
+            } else {
+                console.log('End of playlist');
+            }
+        };
+    }
+});
+
+// Shuffle an array of indexes (Fisher-Yates Shuffle)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];  // Swap elements
+    }
+}
+
+// Function to update the audio player and the UI for a song
+function updateAudioPlayer(rowData) {
+    $('.title-song').css('color', 'white');
+    $('#titleSong' + rowData.SongId).css("color", '#e52cf9');
+    $('#songAudio').attr('src', rowData.SongFilePath);
+    if ($('.btn-media-pause').hasClass('hide-element')) {
+        $('.btn-media-pause').removeClass('hide-element');
+        $('.btn-media-play').addClass('hide-element');
+    }
+    audioControl.load();
+    audioControl.play();
+
+    bindingMediaLayout(rowData, AlbumImage, AlbumName);
+}
 
 
 
@@ -399,6 +443,7 @@
                 AlbumId: AlbumId
             };
 
+
             await $.ajax({
                 type: 'POST',
                 url: '@Url.Action("SearchSong1", "Spot")',
@@ -437,6 +482,7 @@
 
 
         function bindingTableSong(songData) {
+
             $('#dvTableAlbum').show();
             // Initialize DataTable
             dataTable = $('#tblDataTableSong').DataTable({
@@ -464,8 +510,20 @@
                         render: function (data, type, row) {
                             var html = `<div><span class="title-song"id="titleSong${data.SongId}">${data.SongName}</span></div>
                     <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
-                  
-                            return html
+
+                            return html;
+                        }
+                    },
+
+                    {
+                        data: null, className: 'text-center', width: '30px', orderable: false,
+                        render: function (data, type, row) {
+                            var favoriteClass = data.FavoriteSong ? 'fa-solid' : 'fa-regular';
+
+                                var html = `<i class="${favoriteClass} fa-heart btn-favorite " id="iconLove${data.SongId}"  style="color: #bfbfbf; margin-top:5px;"></i>`;
+                                return html;
+
+
                         }
                     },
 
@@ -493,7 +551,7 @@
 
 
         //    if ($('#aside').css('display') == 'none') {
-        //        debugger
+        //
         //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
         //    }
         //    else {

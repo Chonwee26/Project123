@@ -114,7 +114,7 @@
             </div>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-5" id="aside">
+    <div class=" content aside col-lg-3 col-6" id="aside">
         @*<div class="dv-aside">
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -161,7 +161,7 @@
                 var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
-                    toggleAsideDisplay();
+                  /*  toggleAsideDisplay();*/
                 }
                 console.log(count);
             });

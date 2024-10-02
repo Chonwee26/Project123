@@ -42,6 +42,11 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult Search()
+        {
+            return View();
+        }
+
         public IActionResult AlbumDetails(int albumId)
         {
             if (albumId <= 0)
@@ -86,23 +91,21 @@ namespace Project123.Controllers
             }
 
             // Check if _db.Song is null before querying
-            if (_db.Song == null)
+            if (_db.Artist == null)
             {
-                return Json(new { status = "E", success = false, message = "No songs available in the database" });
+                return Json(new { status = "E", success = false, message = "No Artist available in the database" });
             }
 
-            var artist = _db.Song
+            var artist = _db.Artist?
                             .Where(s => s.ArtistName == artistname)
-                            .Select(s => new SongModel
+                            .Select(s => new ArtistModel
                             {
-                                SongId = s.SongId,
-                                AlbumId = s.AlbumId,
+                               ArtistId = s.ArtistId,
+                                ArtistBio = s.ArtistBio,
                                 ArtistName = s.ArtistName,
-                                SongName = s.SongName,
-                                SongGenres = s.SongGenres,
-                                SongLength = s.SongLength,
-                                SongFilePath = s.SongFilePath,
-                                SongImagePath = s.SongImagePath
+                                ArtistGenres = s.ArtistGenres,
+                               ArtistImagePath = s.ArtistImagePath,
+                              
                             })
                             .FirstOrDefault();
 
@@ -198,6 +201,83 @@ namespace Project123.Controllers
 
 
 
+        [HttpPost("Spot/CreateArtist1")]
+        public async Task<IActionResult> CreateArtist(ArtistModel artistData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+
+                        if (string.IsNullOrEmpty(artistData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist ArtistName is missing." });
+                        }
+                     
+
+
+
+                        // Save files and update paths in SongData
+
+                        if (artistData.ArtistImage != null)
+                        {
+                            var (filePath, error, oldFolderPath) = await SaveFile(artistData.ArtistImage, artistData.ArtistName, artistData.ArtistName, null, artistData.ArtistImagePath);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            artistData.ArtistImagePath = filePath;
+                        }
+                        //if (string.IsNullOrEmpty(artistData.ArtistImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Artist ArtistImagePath is missing." });
+                        //}
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var artistDataCopy = new
+                        {
+                            artistData.ArtistId,
+                            artistData.ArtistName,
+                            artistData.ArtistImagePath,
+                            artistData.ArtistGenres,
+                            artistData.ArtistBio
+                         
+
+                        };
+
+                        string requestJson = JsonConvert.SerializeObject(artistDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/CreateArtist", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+
 
         [HttpPost("Spot/CreateAlbum1")]
         public async Task<IActionResult> CreateAlbum(AlbumModel AlbumData)
@@ -222,10 +302,7 @@ namespace Project123.Controllers
                         {
                             return Json(new { status = "E", success = false, message = "Album AlbumName is missing." });
                         }
-                        if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
-                        }
+                       
 
                         // Save files and update paths in SongData
 
@@ -238,6 +315,11 @@ namespace Project123.Controllers
                             }
                             AlbumData.AlbumImagePath = filePath;
                         }
+
+                        //if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
+                        //}
 
                         // Create a copy of SongData with nullified IFormFile properties for serialization
                         var AlbumDataCopy = new
@@ -273,6 +355,7 @@ namespace Project123.Controllers
 
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
+
 
         [HttpPost("Spot/EditAlbum1")]
         public async Task<IActionResult> EditAlbum(AlbumModel AlbumData)
@@ -388,10 +471,7 @@ namespace Project123.Controllers
                         {
                             return Json(new { status = "E", success = false, message = "Song file path is missing." });
                         }
-                        if (string.IsNullOrEmpty(SongData.SongImagePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
-                        }
+                      
 
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
@@ -403,6 +483,10 @@ namespace Project123.Controllers
                             }
 
                             SongData.SongFilePath = filePath;
+                        }
+                        if (string.IsNullOrEmpty(SongData.SongImagePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
                         }
 
                         if (SongData.SongImage != null)
@@ -454,6 +538,87 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+
+        [HttpPost("Spot/UpdateArtist1")]
+        public async Task<IActionResult> UpdateArtist(ArtistModel artistData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        if (string.IsNullOrEmpty(artistData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist ArtistName is missing." });
+                        }
+                        if (string.IsNullOrEmpty(artistData.ArtistGenres))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist ArtistGenres is missing." });
+                        }
+
+
+
+
+
+                        // Save files and update paths in SongData
+
+                        if (artistData.ArtistImage != null)
+                        {
+                            var (filePath, error, oldFolderPath) = await SaveFile(artistData.ArtistImage, artistData.ArtistName, artistData.ArtistName, null, artistData.ArtistImagePath);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            artistData.ArtistImagePath = filePath;
+                        }
+                        //if (string.IsNullOrEmpty(artistModel.ArtistImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Artist ArtistImagePath is missing." });
+                        //}
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var artistDataCopy = new
+                        {
+                            artistData.ArtistId,
+                            artistData.ArtistName,
+                            artistData.ArtistImagePath,
+                            artistData.ArtistGenres,
+                            artistData.ArtistBio
+
+
+                        };
+
+
+                        string requestJson = JsonConvert.SerializeObject(artistDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/UpdateArtist", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         [HttpPost("Spot/UpdateSong1")]
         public async Task<IActionResult> UpdateSong(SongModel SongData)
@@ -573,10 +738,7 @@ namespace Project123.Controllers
                             return Json(new { status = "E", success = false, message = "Song name is missing." });
                         }
 
-                        if (songData.SongFile == null)
-                        {
-                            return Json(new { status = "E", success = false, message = "Song file is missing." });
-                        }
+                      
 
                         if (string.IsNullOrEmpty(songData.ArtistName))
                         {
@@ -625,7 +787,7 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/SongUpdate", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -647,7 +809,70 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+        [HttpPost("Spot/FavoriteSong1")]
+        public async Task<IActionResult> FavoriteSong(SongModel songData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        // Check if SongName is null before proceeding
+                        if (string.IsNullOrEmpty(songData.SongName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song name is missing." });
+                        }
+
+
+
+                        if (string.IsNullOrEmpty(songData.ArtistName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                        }
+
+                        if (string.IsNullOrEmpty(songData.SongFilePath))
+                        {
+                            return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                        }
+
+                  
+                       
+
+
+
+                        // Create a copy of songData with nullified IFormFile properties for serialization
+                 
+
+                        string requestJson = JsonConvert.SerializeObject(songData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         [HttpPost("Spot/DeleteSong1")]
 
@@ -733,11 +958,58 @@ namespace Project123.Controllers
                 var client = _httpClientFactory.CreateClient();
                 client.BaseAddress = new Uri("https://localhost:7061/");
                 try
-                {             
+                {
+
+                
+                    var (filePath, error, oldFolderPath) = await DeleteFile(AlbumData.AlbumImage, AlbumData.ArtistName, AlbumData.AlbumName, AlbumData.AlbumId, AlbumData.AlbumImagePath);
+                    if (error != null)
+                    {
+                        return Json(new { status = "E", success = false, message = error });
+                    }
+
                     string requestJson = JsonConvert.SerializeObject(AlbumData);
                     HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
                     var responseResult = await client.PostAsync("api/Spot/DeleteAlbum", httpContent);
+                    if (responseResult.IsSuccessStatusCode)
+                    {
+                        this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error: {responseResult.StatusCode}";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+
+        [HttpPost("Spot/DeleteArtist1")]
+
+        public async Task<IActionResult> DeleteArtist(ArtistModel artistData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(artistData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var responseResult = await client.PostAsync("api/Spot/DeleteArtist", httpContent);
                     if (responseResult.IsSuccessStatusCode)
                     {
                         this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -797,7 +1069,7 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-        private async Task<(string? filePath, string? error, string? oldFolderPath)> SaveFile(IFormFile file, string artistName, string name, int? albumId, string existingFilePath)
+        private async Task<(string? filePath, string? error, string? oldFolderPath)> SaveFile(IFormFile file, string artistName, string? name, int? albumId, string existingFilePath)
         {
             if (file == null || file.Length == 0)
             {
@@ -806,6 +1078,10 @@ namespace Project123.Controllers
 
             // Sanitize artist name and song name for use in file paths
             var sanitizedArtistName = SanitizeFileName(artistName);
+            if (name == null)
+            {
+                name = "unname";
+            }
             var sanitizedName = SanitizeFileName(name);
 
             // Create the directory path for the artist and song
@@ -903,11 +1179,33 @@ namespace Project123.Controllers
                     System.IO.File.Delete(fullExistingFilePath);
                 }
             }
+            // Check if the artist folder is also empty (if album was deleted)
+            if (IsFolderEmpty(oldFolderPath))
+            {
+                // Delete the folder if it is empty
+                Directory.Delete(oldFolderPath);
+            }
+
+            // Check if the artist folder is also empty (if album was deleted)
+            if (IsFolderEmpty(artistFolderPath))
+            {
+                // Delete the artist folder if it's empty
+                Directory.Delete(artistFolderPath);
+            }
 
             // Return the old folder path
             return Task.FromResult<(string? filePath, string? error, string? oldFolderPath)>((null, null, oldFolderPath));
-        }
 
+
+        }
+        private bool IsFolderEmpty(string path)
+        {
+            // Ensure the directory exists before checking
+            if (!Directory.Exists(path))
+                return true; // Consider it empty if it doesn't exist
+
+            return Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0;
+        }
 
 
         // Helper method to move file to album
@@ -1194,6 +1492,65 @@ namespace Project123.Controllers
             }
             return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
         }
+
+
+        [HttpPost("Spot/SearchArtist1")]
+        public async Task<IActionResult> SearchArtist(ArtistModel artistData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<ArtistModel> artistList = new List<ArtistModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(artistData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/SearchArtist", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        artistList = await response.Content.ReadAsAsync<List<ArtistModel>>();
+
+                        if (artistList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = artistList });
+        }
+
 
         [HttpPost("Spot/SearchAlbum1")]
         public async Task<IActionResult> SearchAlbum(AlbumModel AlbumData)

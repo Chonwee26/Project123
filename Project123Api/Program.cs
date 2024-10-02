@@ -24,6 +24,11 @@ using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("Project123ApiSettings.json", optional: false, reloadOnChange: true) // Main settings file
+    .AddJsonFile($"Project123ApiSettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true) // Environment-specific settings
+    .AddEnvironmentVariables();
+
 //builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();

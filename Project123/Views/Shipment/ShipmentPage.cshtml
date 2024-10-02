@@ -408,11 +408,12 @@
                         @* Start second*@
                         <div class="row pb-3">
                             <div class="col-12 col-sm-12 col-md-6 ">
-
+                               
                                 <h6>สถานที่เก็บสินค้า</h6>
                                 <div class="input-group">
                                     <select class="form-select select2 select2-select" id="ddlSearchStorage" style="width:100%" name="Storage">
                                     </select>
+                                    @Html.DropDownList("ddlSearchStorageViewbag", new SelectList(ViewBag.StorageList, "ShipmentItemID", "ShipmentItemText"), "--- ทั้งหมด ---", new { @class = "select2 form-control "})
                                 </div>
                             </div>
                             <div class="col-12 col-sm-12 col-md-6 ">
@@ -420,6 +421,7 @@
                                 <div class="input-group">
                                     <select class="form-select select2 select2-select" id="ddlSearchShipmentStatus" name="ShipmentStatus">
                                     </select>
+                                    @Html.DropDownList("ddlSearchStatusViewbag", new SelectList(ViewBag.StatusList, "ShipmentItemID", "ShipmentItemText"), "--- ทั้งหมด ---", new { @class = "select2 form-control " })
                                 </div>
                             </div>
 
@@ -500,6 +502,7 @@
         var SaveUrl;
         var DataShipment;
         var rowData;
+        var storageList = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.StorageList))');
         $(document).ready(function () {
 
             $('#ddlSearchStorage').on('select2:select', function () {
@@ -653,7 +656,7 @@
             url: '@Url.Action("GetShipmentStatusAsync","Test")',
             datatype: 'json',
             success: function (result) {
-
+                debugger
                 $(elementId).html('');
                 $(elementId).select2({
                     placeholder:'--- ทั้งหมด ---',

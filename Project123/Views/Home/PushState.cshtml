@@ -1,5 +1,123 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PushState Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <style>
+        .img-music-content,
+        .img-aside {
+            display: flex !important;
+            justify-content: center;
+            width: 100%;
+            height: auto;
+            max-width: 205px;
+        }
+    </style>
+    <h1>PushState Example</h1>
+    <nav>
+        <ul>
+            <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+            <li><a href="#" class="nav-link" data-page="about">About</a></li>
+            <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
+        </ul>
+    </nav>
+    <div id="content">
+      
+        <div class="album-details d-flex">
+            <div class="dv-album-img">
+                <img src="/picture/liked-songs-300.png" alt="Favortie Song" class="img-music-content" />
+            </div>
+
+            <div class="dv-title">
+                <h1>Favorite Song</h1>
+
+            </div>
+        </div>
+
+
+      
+
+
+
+
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Function to change content based on page
+
+           
+            function loadPage(page) {
+                let content;
+                switch(page) {
+                    case 'about':
+                        content = `  <div class="album-details d-flex">
+      <div class="dv-album-img">
+          <img src="/picture/Spotify Image/music_pic4.jpg" alt="Favortie Song" class="img-music-content" />
+      </div>
+
+      <div class="dv-title">
+          <h1>Favorite Song</h1>
+
+      </div>
+  </div>`;
+                        break;
+                    case 'contact':
+                        content = `  <div class="album-details d-flex">
+      <div class="dv-album-img">
+          <img src="/picture/Spotify Image/music_pic7_anima.jpg" alt="Favortie Song" class="img-music-content" />
+      </div>
+
+      <div class="dv-title">
+          <h1>Anima</h1>
+
+      </div>
+  </div>`;
+                        break;
+                    default:
+                        content = `  <div class="album-details d-flex">
+      <div class="dv-album-img">
+          <img src="/picture/Spotify Image/music_pic10_rayons.jpg" alt="Favortie Song" class="img-music-content" />
+      </div>
+
+      <div class="dv-title">
+          <h1>Rayons</h1>
+
+      </div>
+  </div>`;
+                        break;
+                }
+                $('#content').html(content);
+            }
+
+            // Event listener for navigation links
+            $('.nav-link').on('click', function(e) {
+                e.preventDefault();
+
+                // Get the page name from the clicked link
+                let page = $(this).data('page');
+
+                // Use pushState to change the URL without reloading the page
+                window.history.pushState({ page: page }, '', page);
+
+                // Load the new content based on the page
+                loadPage(page);
+                console.log('page', page);
+            });
+
+            // Handle browser's back/forward buttons
+            window.onpopstate = function(event) {
+                if (event.state && event.state.page) {
+                    loadPage(event.state.page);
+                } else {
+                    loadPage('home'); // Default to home page if state is undefined
+                }
+            };
+        });
+    </script>
+</body>
+</html>

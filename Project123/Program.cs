@@ -9,6 +9,11 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("Project123Settings.json", optional: false, reloadOnChange: true) // Main settings file
+    .AddJsonFile($"Project123Settings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true) // Environment-specific settings
+    .AddEnvironmentVariables();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
@@ -76,6 +81,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Set cookie as HttpOnly
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
+
+
 
 var app = builder.Build();
 

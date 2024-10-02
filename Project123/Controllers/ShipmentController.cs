@@ -12,7 +12,9 @@ using System.Text;
 using Microsoft.Extensions.Primitives;
 using Project123.Migrations;
 using Project123Api.Repositories;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace Project123.Controllers
 {
@@ -22,12 +24,16 @@ namespace Project123.Controllers
 
         private readonly DataDbContext _db;
         private readonly string connectionString;
-
-        public ShipmentController(DataDbContext db, IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+        private new readonly ResponseModel response = new ResponseModel();
+    
+        public ShipmentController(DataDbContext db, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             _db = db;
             connectionString = configuration.GetConnectionString("DefaultConnection");
+            _httpClientFactory = httpClientFactory;
         }
+
 
         public IActionResult Index()
         {
@@ -597,8 +603,40 @@ namespace Project123.Controllers
 
 
 
-        public IActionResult ShipmentPage()
+        public async Task<IActionResult> ShipmentPageAsync()
         {
+            List<ShipmentLocationModel> storageList = new List<ShipmentLocationModel>();
+            List<ShipmentStatusModel> statusList = new List<ShipmentStatusModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                //using (var client = _httpClientFactory.CreateClient("BaseClient"))
+                try
+                {
+                    var responseSTO = await client.GetAsync("/api/Test/GetShipmentLocationAsync");
+                    if (responseSTO.IsSuccessStatusCode)
+                    {
+                        storageList = await responseSTO.Content.ReadAsAsync<List<ShipmentLocationModel>>();
+                    }
+
+                    var responseSTA = await client.GetAsync("/api/Test/GetShipmentStatusAsync");
+                    if (responseSTA.IsSuccessStatusCode)
+                    {
+                        statusList = await responseSTA.Content.ReadAsAsync<List<ShipmentStatusModel>>();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            //storageList = storageList.Prepend(new ShipmentLocationModel { ShipmentItemID = "", ShipmentItemText = "---ทั้งหมด---" }).ToList();
+            ViewBag.StorageList = storageList;
+            ViewBag.StatusList = statusList;
             return View();
         }
 

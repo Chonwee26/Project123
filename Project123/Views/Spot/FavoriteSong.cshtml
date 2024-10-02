@@ -116,7 +116,7 @@
             </table>
         </div>
     </div>
-    <div class="content aside col-lg-3 col-5" id="aside">
+    <div class="content aside col-lg-3 col-6" id="aside">
         @*<div>
                 <aside class="aside-content px-3">
                     <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -151,6 +151,8 @@
         var AlbumImage ='';
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
+          
+            changeIconClass('#iconLove', '#iconHome, #iconSearch, #iconAdmin');
             $('.btn-album-pause').addClass('hide-element')
          /*   getAlbum();*/
             //getAlbumContainer();
@@ -195,7 +197,7 @@
         });
 
         $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-            debugger
+             
             var table = $('#tblDataTableSong').DataTable();
             var tableData = table.data();
             var rowDataAlbum = table.row(this).data();
@@ -471,7 +473,7 @@
                             // Ensure seconds are displayed with two digits
                             var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                             /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
-                            debugger
+                             
                             return duration != null ? minutes + ':' + formattedSeconds : "";
 
                         }
