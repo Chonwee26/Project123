@@ -9,6 +9,7 @@ using Project123Api.Repositories;
 
 namespace Project123.Controllers
 {
+
     public class SpotController : BaseController
     {
         private readonly DataDbContext _db;
@@ -46,6 +47,42 @@ namespace Project123.Controllers
         {
             return View();
         }
+
+     
+
+        public IActionResult Genre(int genreId)
+        {
+            if (genreId <= 0)
+            {
+                return Json(new { status = "E", success = false, message = "Could not find this genre" });
+            }
+
+            // Check if _db.Song is null before querying
+            if (_db.Genre == null || !_db.Genre.Any())
+            {
+                return Json(new { status = "E", success = false, message = "No genre available in the database" });
+            }
+
+            var genre = _db.Genre?
+                            .Where(s => s.GenreId == genreId)
+                            .Select(s => new GenreModel
+                            {
+                                GenreId = s.GenreId,
+                                GenreName = s.GenreName,
+                                GenreImagePath = s.GenreImagePath,
+                              
+
+                            })
+                            .FirstOrDefault();
+
+            if (genre == null) // Correct condition to check if the artist data is found
+            {
+                return Json(new { status = "E", success = false, message = "Genre not found" });
+            }
+
+            return View("Genre", genre);
+        }
+
 
         public IActionResult AlbumDetails(int albumId)
         {
@@ -199,7 +236,80 @@ namespace Project123.Controllers
         //    return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
         //}
 
+        [HttpPost("Spot/CreateGenre1")]
+        public async Task<IActionResult> CreateGenre(GenreModel genreData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+
+                        if (string.IsNullOrEmpty(genreData.GenreName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Genre GenreName is missing." });
+                        }
+
+
+
+
+                        // Save files and update paths in SongData
+
+                        if (genreData.GenreImage != null)
+                        {
+                            var (filePath, error, oldFolderPath) = await SaveFile(genreData.GenreImage, genreData.GenreName, genreData.GenreName, null, genreData.GenreImagePath);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            genreData.GenreImagePath = filePath;
+                        }
+                        //if (string.IsNullOrEmpty(artistData.ArtistImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Artist ArtistImagePath is missing." });
+                        //}
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var genreDataCopy = new
+                        {
+                            genreData.GenreId,
+                            genreData.GenreName,
+                            genreData.GenreImagePath,
+                          
+
+
+                        };
+
+                        string requestJson = JsonConvert.SerializeObject(genreDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/CreateGenre", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         [HttpPost("Spot/CreateArtist1")]
         public async Task<IActionResult> CreateArtist(ArtistModel artistData)
@@ -467,10 +577,10 @@ namespace Project123.Controllers
                             return Json(new { status = "E", success = false, message = "Artist name is missing." });
                         }
 
-                        if (string.IsNullOrEmpty(SongData.SongFilePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Song file path is missing." });
-                        }
+                        //if (string.IsNullOrEmpty(SongData.SongFilePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                        //}
                       
 
                         // Save files and update paths in SongData
@@ -484,10 +594,10 @@ namespace Project123.Controllers
 
                             SongData.SongFilePath = filePath;
                         }
-                        if (string.IsNullOrEmpty(SongData.SongImagePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
-                        }
+                        //if (string.IsNullOrEmpty(SongData.SongImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Song Image path is missing." });
+                        //}
 
                         if (SongData.SongImage != null)
                         {
@@ -510,7 +620,9 @@ namespace Project123.Controllers
                             SongData.SongId,
                             SongData.SongImagePath,
                             SongData.SongName,
-                            SongData.SongLength
+                            SongData.SongLength,
+                            SongData.FavoriteSong,
+                            SongData.CreateSongDate
                         };
 
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
@@ -538,6 +650,84 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+
+
+        [HttpPost("Spot/UpdateGenre1")]
+        public async Task<IActionResult> UpdateGenre(GenreModel genreData)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                        if (string.IsNullOrEmpty(genreData.GenreName))
+                        {
+                            return Json(new { status = "E", success = false, message = "Genre GenreName is missing." });
+                        }
+                      
+
+
+
+
+
+                        // Save files and update paths in SongData
+
+                        if (genreData.GenreImage != null)
+                        {
+                            var (filePath, error, oldFolderPath) = await SaveFile(genreData.GenreImage, genreData.GenreName, genreData.GenreName, null, genreData.GenreImagePath);
+                            if (error != null)
+                            {
+                                return Json(new { status = "E", success = false, message = error });
+                            }
+                            genreData.GenreImagePath = filePath;
+                        }
+                        //if (string.IsNullOrEmpty(artistModel.ArtistImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Artist ArtistImagePath is missing." });
+                        //}
+
+                        // Create a copy of SongData with nullified IFormFile properties for serialization
+                        var genreDataCopy = new
+                        {
+                            genreData.GenreId,
+                            genreData.GenreName,
+                            genreData.GenreImagePath,
+
+
+
+                        };
+
+
+                        string requestJson = JsonConvert.SerializeObject(genreDataCopy);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/UpdateGenre", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         [HttpPost("Spot/UpdateArtist1")]
         public async Task<IActionResult> UpdateArtist(ArtistModel artistData)
@@ -653,10 +843,7 @@ namespace Project123.Controllers
                         {
                             return Json(new { status = "E", success = false, message = "Song file path is missing." });
                         }
-                        if (string.IsNullOrEmpty(SongData.SongImagePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Song Image path is missing." });
-                        }
+                      
                         // Save files and update paths in SongData
                         if (SongData.SongFile != null)
                         {
@@ -809,6 +996,67 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+
+
+        [HttpPost("Spot/SearchSpot1/")]
+
+        public async Task<IActionResult> SearchSpot(SearchSpotModal searchData)
+        {
+
+            // Check if SongName is null before proceeding
+            List<SearchSpotModal> searchSpotList = new List<SearchSpotModal>();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+               
+
+                        // Create a copy of songData with nullified IFormFile properties for serialization
+
+
+                        string requestJson = JsonConvert.SerializeObject(searchData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        var responseResult = await client.PostAsync("api/Spot/SearchSpot", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            //this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                            searchSpotList = await responseResult.Content.ReadAsAsync<List<SearchSpotModal>>();
+
+                            if (searchSpotList.Count > 0)
+                            {
+                                this.response.Status = "S";
+                                this.response.Message = "Success";
+                            }
+
+
+                        }
+
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message ,data = searchSpotList });
+        }
+
         [HttpPost("Spot/FavoriteSong1")]
         public async Task<IActionResult> FavoriteSong(SongModel songData)
         {
@@ -891,25 +1139,25 @@ namespace Project123.Controllers
                 try
                 {
                     // Check if SongName is null before proceeding
-                    if (string.IsNullOrEmpty(SongData.SongName))
-                    {
-                        return Json(new { status = "E", success = false, message = "Song name is missing." });
-                    }
+                    //if (string.IsNullOrEmpty(SongData.SongName))
+                    //{
+                    //    return Json(new { status = "E", success = false, message = "Song name is missing." });
+                    //}
 
-                    if (SongData.SongFile == null)
-                    {
-                        return Json(new { status = "E", success = false, message = "Song file is missing." });
-                    }
+                    //if (SongData.SongFile == null)
+                    //{
+                    //    return Json(new { status = "E", success = false, message = "Song file is missing." });
+                    //}
 
-                    if (string.IsNullOrEmpty(SongData.ArtistName))
-                    {
-                        return Json(new { status = "E", success = false, message = "Artist name is missing." });
-                    }
+                    //if (string.IsNullOrEmpty(SongData.ArtistName))
+                    //{
+                    //    return Json(new { status = "E", success = false, message = "Artist name is missing." });
+                    //}
 
-                    if (string.IsNullOrEmpty(SongData.SongFilePath))
-                    {
-                        return Json(new { status = "E", success = false, message = "Song file path is missing." });
-                    }
+                    //if (string.IsNullOrEmpty(SongData.SongFilePath))
+                    //{
+                    //    return Json(new { status = "E", success = false, message = "Song file path is missing." });
+                    //}
 
 
                     var (filePath, error, oldFolderPath) = await DeleteFile(SongData.SongFile, SongData.ArtistName, SongData.SongName, SongData.AlbumId, SongData.SongFilePath);
@@ -991,6 +1239,45 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
+
+
+        [HttpPost("Spot/DeleteGenre1")]
+
+        public async Task<IActionResult> DeleteGenre(GenreModel genreData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(genreData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var responseResult = await client.PostAsync("api/Spot/DeleteGenre", httpContent);
+                    if (responseResult.IsSuccessStatusCode)
+                    {
+                        this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error: {responseResult.StatusCode}";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
 
         [HttpPost("Spot/DeleteArtist1")]
 
@@ -1491,6 +1778,64 @@ namespace Project123.Controllers
                 }
             }
             return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
+        }
+
+
+        [HttpPost("Spot/SearchGenre1")]
+        public async Task<IActionResult> SearchGenre(GenreModel genreData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<GenreModel> genreList = new List<GenreModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(genreData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/SearchGenre", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        genreList = await response.Content.ReadAsAsync<List<GenreModel>>();
+
+                        if (genreList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = genreList });
         }
 
 

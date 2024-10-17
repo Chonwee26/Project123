@@ -60,6 +60,17 @@ namespace Project123.Controllers
             return View();
         }
 
+        public IActionResult DragAndDrop()
+        {
+            return View();
+        }
+
+        public IActionResult TestCode()
+        {
+            return View();
+        }
+
+
 
     }
 }

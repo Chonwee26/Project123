@@ -1,0 +1,290 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_PostLayout.cshtml";
+}
+
+@section Styles{
+    <style type="text/css">
+
+
+        .box-status {
+            width: 120px;
+            border: solid 1px;
+            margin-bottom: 10px;
+            padding-left: 3px;
+            cursor:pointer;
+            text-align:center;
+        }
+
+        .box-receive {
+            min-height: 30px;
+            width: 120px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .ui-droppable-hover {
+            border-color: #4caf50;
+        }
+
+        .trash-area {
+            min-height: 50px;
+            border: 2px dashed red;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+
+
+        .accept-area {
+            min-height: 25px;
+            border: 2px dashed green;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            color: green;
+            font-weight: bold;
+        }
+
+
+        .remove-area {
+            min-height: 25px;
+            border: 2px dashed red;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+}
+<div class="col-12">
+
+
+    <div class="row">
+        <div id="dvStatus" class="col-9">
+            <table id="tblStatus" class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th style="min-width:120px; max-width:150px;">Status</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div class="col-3">
+            <h1>Status</h1>
+            <div class="dvBoxStatus">
+                <div class="box-status complease" value="COMPLETE">
+                    Complete
+                </div>
+
+                <div class="box-status incomplete" value="INCOMPLETE">
+                    Incomplete
+                </div>
+
+                <div class="box-status cancele" value="CANCEL">
+                    Cancel
+                </div>
+            </div>
+
+
+            <div class="trash-area">
+                Drag here to remove status
+            </div>
+
+            <div class="dvconfirm-area">
+                <div class="row">
+                    <div class="accept-area col-6"style="">
+                        Accept
+                    </div>
+
+
+                    <div class="remove-area col-5">
+                        Remove
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+
+        var dataStatus = [
+            {
+                Name: "Coke",
+                Quantity: 10,
+                Status: ""
+
+            },
+            {
+                Name: "Pepsi",
+                Quantity: 5,
+                Status: ""
+            },
+            {
+                Name: "Soda",
+                Quantity: 10,
+                Status: ""
+            },
+        ]
+        $(document).ready(function () {
+            bindingTableStatus(dataStatus);
+
+         
+        });
+
+        $('.box-status').draggable({
+            revert: 'invalid',
+            helper: 'clone', //show clone when dragging
+            opacity: 0.6
+        });
+
+        $('.remove-area').droppable({
+            accept: '.box-receive',
+            hoverClass: 'ui-droppable-hover',
+            drop: function (event, ui) {
+                var rowIndex = $(ui.draggable).data('row');
+
+                // Remove the status from the data array
+                dataStatus[rowIndex].Status = "";
+
+                // Redraw the table
+                bindingTableStatus(dataStatus);
+            }
+        });
+        
+        $('.accept-area').droppable({
+            accept: '.box-receive',
+            hoverClass: 'ui-droppable-hover',
+            drop: function (event, ui) {
+                var rowIndex = $(ui.draggable).data('row');
+
+                console.log('accept', dataStatus[rowIndex]);
+            }
+        });
+
+
+        $('.accept-area').droppable({
+            accept: '.box-receive',
+            hoverClass: 'ui-droppable-hover',
+            drop: function (event, ui) {
+                var rowIndex = $(ui.draggable).data('row');
+                debugger
+                console.log('accept', dataStatus[rowIndex]);
+                dataStatus.splice(rowIndex, 1);
+                bindingTableStatus(dataStatus);
+            }
+        });
+
+
+        $('.dvBoxStatus').droppable({
+            accept: '.box-receive',
+            hoverClass: 'ui-droppable-hover',
+            drop: function (event, ui) {
+                var rowIndex = $(ui.draggable).data('row');
+
+                // Remove the status from the data array
+                dataStatus[rowIndex].Status = "";
+
+                // Redraw the table
+                bindingTableStatus(dataStatus);
+            }
+        });
+
+        function bindingTableStatus() {
+            dataTable = $('#tblStatus').DataTable({
+                destroy: true, //ล้างข้อมูลก่อนหน้า
+                data: dataStatus,
+                searching: true,
+                lengthchange: false,
+                scrollx: true,
+                info: false,
+
+                columns: [
+
+                    {
+                        data: null, className: '', orderable: false,
+
+                        render: function (data, type, row) {
+
+
+                            return data.Name;
+                        }
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+                        render: function (data, type, row) {
+
+                            return data.Quantity;
+
+                        }
+
+                    },
+                    {
+                        data: null, className: 'text-center', orderable: false,
+
+                        render: function (data, type, row, meta) {
+
+                            if (data.Status) {
+                                $('#boxReceive' + meta.row).css('border', '1px solid black');
+                               
+                                return html = `<div class="box-receive" id="boxReceive${meta.row}" data-row="${meta.row}">${data.Status}</div>`
+                            }
+                            else {
+                                return html = `<div class="box-receive" data-row="${meta.row}"></div>`
+                            }
+
+                         
+                        
+
+                        }
+
+                    }
+
+                ],
+
+                drawCallback: function () {
+                    $('#tblStatus tbody tr').droppable({
+                        accept: '.box-status',
+                        hoverClass: 'ui-droppable-hover',
+                        drop: function (event, ui) {
+                            var statusValue = $(ui.draggable).attr('value');
+                            var rowIndex = $(this).index(); // Get the index of the row
+                         
+
+                            // Update status in the data array
+                            dataStatus[rowIndex].Status = statusValue;
+                          
+                            // Update the table to reflect the new status
+                            bindingTableStatus(dataStatus);
+                        }
+
+                              // Make each status cell draggable for removal
+                  
+
+                    });
+                    $('.box-receive').draggable({
+                        opacity: 0.6,
+                        revert: 'invalid',
+                        helper: 'clone'
+                    });
+                    console.log(dataStatus);
+                }
+            });
+        }
+    </script>
+}
+

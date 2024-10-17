@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Spot\Genre.cshtml" />
     <Content Remove="Views\Spot\Search.cshtml" />
   </ItemGroup>
 
@@ -63,7 +64,22 @@
 
 
   <ItemGroup>
+    <None Include="Views\Spot\Genre.cshtml" />
     <None Include="Views\Spot\Search.cshtml" />
+  </ItemGroup>
+	
+	
+
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Spot\Genre.cshtml" />
+  </ItemGroup>
+	
+	
+
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Spot\Genre.cshtml" />
   </ItemGroup>
 	
 	

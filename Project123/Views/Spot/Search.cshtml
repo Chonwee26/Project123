@@ -6,11 +6,11 @@
 }
 
 @section Styles{
-<style type="text/css">
-    /*.content {
+    <style type="text/css">
+        /*.content {
             border-radius: 20px;
             height: calc(100vh - 75px);*/ /* Adjust height to account for the bottom bar */
-    /*overflow: hidden;
+        /*overflow: hidden;
 
         }
 
@@ -36,8 +36,8 @@
         .main-content-music {
             margin-top: 100px;
             display: flex;*/
-    /*    justify-content: center;*/
-    /*align-items: center;
+        /*    justify-content: center;*/
+        /*align-items: center;
         }
 
         .music-content {
@@ -82,72 +82,117 @@
         }
         .dv-content:hover {
             background-color: #8f2c8fa8;*/ /* or any color you prefer */
-    /*}
+        /*}
         .dv-content:active {
             background-color: black;
         }*/
-</style>
+
+
+        .song-genre-div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            width: 300px;
+            margin: 0 20px 20px 0;
+        }
+
+        .genre-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .genre-image {
+            width: 50px;
+            height: 50px;
+            transform: rotate(30deg);
+            transition: transform 0.3s ease;
+        }
+
+        .main-content-music-song, .main-content-music-artist, .main-content-music-album {
+            display:flex;
+            overflow:hidden;
+        }
+
+        .main-content-browse {
+
+        }
+       
+    </style>
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
+    <div class="content main-content col-lg-9 col-8">
         <div>
-          <input class="form-control" type="text" />
+            <input class="form-control" type="text" id="txtSearch" />
             <div class="main-content-music row">
+                <h3>Songs</h3>
+                <div class="main-content-music-song">
 
+                </div>
+
+                <h3>Artist</h3>
+                <div class="main-content-music-artist">
+
+                </div>
+
+                <h3>Albums</h3>
+                <div class="main-content-music-album">
+
+                </div>
+
+                <h3>Browse all</h3>
+                <div class="main-content-browse row" style=" border-color:white;">
+
+                </div>
                 @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
-                    <div class=" music-content">
-                        <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
-                    </div>
-                    <div class="music-content-title">
-                        <h6>Spice and Wolf</h6>
-                        <p>Kevin Penkin</p>
-                    </div>
+                        <div class=" music-content">
+                            <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+                        </div>
+                        <div class="music-content-title">
+                            <h6>Spice and Wolf</h6>
+                            <p>Kevin Penkin</p>
+                        </div>
 
-                </div>*@
-
-
-
+                    </div>*@
             </div>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-6" id="aside">
+    <div class=" content aside col-lg-3 col-4" id="aside">
         @*<div class="dv-aside">
-            <aside class="aside-content px-3">
-                <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                <div class="img-aside-content">
-                    <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                </div>
-                <h3>17さいのうた。</h3>
-                <h6>Yuika</h6>
+                <aside class="aside-content px-3">
+                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                    <div class="img-aside-content">
+                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                    </div>
+                    <h3>17さいのうた。</h3>
+                    <h6>Yuika</h6>
 
-                <div class="aside-about-artist">
-                    <div class="aside-about-artist-img">
-                        <h6>About the artist</h6>
+                    <div class="aside-about-artist">
+                        <div class="aside-about-artist-img">
+                            <h6>About the artist</h6>
+                        </div>
+                        <div class="aside-about-artist-title">
+                            <h6>Yuika</h6>
+                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                        </div>
                     </div>
-                    <div class="aside-about-artist-title">
-                        <h6>Yuika</h6>
-                        <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                    </div>
-                </div>
-            </aside>
-        </div>*@
+                </aside>
+            </div>*@
     </div>
 </div>
 
 @section Scripts{
-<script type="text/javascript">
-
+    <script type="text/javascript">
+        var searchTerm;
         $(document).ready(function () {
             /*   getAlbum();*/
-          
+            getBrowse();
             changeIconClass('#iconSearch', '#iconHome, #iconLove, #iconAdmin');
-            getAlbumContainer();
-
 
             $('.img-music-content').on('click', function () {
-
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
@@ -155,7 +200,7 @@
                 }
             });
             $(document).on('click', '.dv-content', function () {
-                
+
                 var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
                 $('#aside_pic').attr('src', imgSrc);
                 if ($('#aside').css('display') == 'none') {
@@ -171,12 +216,90 @@
             //});
         });
 
+        $('#txtSearch').on('keyup', function () {
+            searchTerm = $(this).val();
+            if (searchTerm.trim() !== "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SearchSpot1", "Spot")',
+                    data: { ArtistName: searchTerm },
+                    dataType: "json",
+                    success: function (result) {
+                        debugger
+                        searchSongContainer(result.data);
+
+                        $('.dv-content').on('click', function () {
+                            var albumId = $(this).data('album-id');
+                            window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+                        });
+
+                        /*    songData = result.Data;*/
+                        //songData = result.Data.forEach(function (song, index) {
+                        //songData.push(song.SongFilePath)
+
+                        //})
+
+                        //bindingTableSong(result.Data);
+                        ////$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+                        //if (result.status == "S") {
+
+                        //}
+                        //else {
+
+                        //}
+                    },
+                    error: function (request, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
 
 
 
+        function searchSongContainer(searchData) {
+
+            searchData.forEach(function (album, index) {
+
+                count = index + 1;
+                var albumHtml = `
+             <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                 <div class="music-content">
+                     <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+                 </div>
+                 <div class="music-content-title">
+                     <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+             title="${album.AlbumName}">${album.AlbumName}</h6>
+                     <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+             title="${album.ArtistName}">${album.ArtistName}</p>
+                 </div>
+             </div>
+         `;
+                $('.main-content-music').append(albumHtml);
+                $('.main-content-artist').append(albumHtml);
+                $('.main-content-album').append(albumHtml);
+
+                // Initialize tooltips after appending the content
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                });
 
 
+                $('.dv-content').on('click', function () {
 
+                    var albumId = $(this).data('album-id');
+                    window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+
+                });
+            });
+        }
+
+        function getBrowse() {
+            searchGenre();
+            getAlbumContainer();
+            getArtist();
+        }
 
         //$('#aside').on('change', function () {
 
@@ -190,5 +313,163 @@
         //    }
         //});
 
-</script>
+        function searchGenre() {
+            var frmGenre = {
+                GenreId: $("#txtSearchGenreId").val() || "", // Use logical OR to set default value
+                GenreName: $("#txtSearchGenreName").val() || "", // Use logical OR to set default value
+            };
+
+            console.log('frmGenre', frmGenre);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SearchGenre1", "Spot")',
+                data: frmGenre,
+                dataType: "json",
+                success: function (result) {
+
+                    // Clear existing genres before appending new ones
+                    $('.main-content-browse').empty();
+
+                    // Check if result.Data is an array
+                    if (Array.isArray(result.Data) && result.Data.length > 0) {
+                        result.Data.forEach(function (genre) {
+
+                            // genre.GenreId ต้องเป็นชื่อเดียวกับ controller
+                            var genreHtml = `
+                      <a href="@Url.Action("Genre", "Spot")?genreId=${genre.GenreId}">
+                        <div class="song-genre-div col-lg-3 col-4">
+                            <label class="genre-label">${genre.GenreName}</label>
+                            <img src="${genre.GenreImagePath}" alt="${genre.GenreName}" class="genre-image">
+                        </div>
+                          </a>
+                        `;
+
+                            // Append the genre HTML to the main content
+                            $('.main-content-browse').append(genreHtml);
+
+                            // Determine the color based on genre name
+                            var color;
+                            switch (genre.GenreName) {
+                                case "Anime":
+                                    color = "#FF5733";  // Color for Anime
+                                    break;
+                                case "J-Pop":
+                                    color = "#3375FF";  // Color for J-Pop
+                                    break;
+                                case "Rock":
+                                    color = "#FF33F7";  // Color for Rock
+                                    break;
+                                default:
+                                    color = "#E0E0E0";  // Default color
+                                    break;
+                            }
+
+                            // Apply background color to the last appended genre
+                            $('.song-genre-div:last').css('background-color', color);
+                        });
+                    } else {
+                        // Handle case where no genres are returned
+                        $('.main-content-browse').append('<div>No genres found.</div>');
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+ function getAlbumContainer() {
+     $.ajax({
+         type: 'POST',
+         url: '@Url.Action("GetAlbum1", "Spot")',
+         dataType: "json",
+         success: function (result) {
+             result.Data.forEach(function (album, index) {
+                 count = index + 1;
+                 var albumHtml = `
+             <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                 <div class="music-content">
+                     <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+                 </div>
+                 <div class="music-content-title">
+                     <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+             title="${album.AlbumName}">${album.AlbumName}</h6>
+                     <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+             title="${album.ArtistName}">${album.ArtistName}</p>
+                 </div>
+             </div>
+         `;
+                 $('.main-content-music-album').append(albumHtml);
+                 // Initialize tooltips after appending the content
+                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                 tooltipTriggerList.map(function (tooltipTriggerEl) {
+                     return new bootstrap.Tooltip(tooltipTriggerEl)
+                 });
+             });
+
+             $('.dv-content').on('click', function () {
+                 var albumId = $(this).data('album-id');
+                 window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+             });
+         },
+         error: function (request, status, error) {
+             console.log(error);
+         }
+     });
+        }
+
+
+
+        function getArtist() {
+       frmArtist = {
+           ArtistId: $("#txtSearchArtistId").val(),
+           ArtistName: $("#txtSearchArtistName").val(),
+           ArtistGenres: $('#txtSearchArtistGenres').val()
+       }
+       console.log('frmArtist', frmArtist);
+
+$.ajax({
+    type: 'POST',
+    url: '@Url.Action("SearchArtist1", "Spot")',
+    data: frmArtist,
+    dataType: "json",
+
+      success: function (result) {
+       result.Data.forEach(function (artist, index) {
+           count = index + 1;
+           var albumArtist = `
+       <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-artistname-name="${artist.ArtistId}">
+           <div class="music-content">
+               <img id="music_pic${count}" src="${artist.ArtistImagePath}" class="img-music-content" />
+           </div>
+           <div class="music-content-title">
+               <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+       title="${artist.AlbumName}">${artist.ArtistName}</h6>
+               <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+       title="Artist">Artist</p>
+           </div>
+       </div>
+   `;
+           $('.main-content-music-artist').append(albumArtist);
+           // Initialize tooltips after appending the content
+           var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+           tooltipTriggerList.map(function (tooltipTriggerEl) {
+               return new bootstrap.Tooltip(tooltipTriggerEl)
+           });
+       });
+
+          $('.dv-content').on('click', function () {
+           debugger
+           var artistname = $(this).data('artistname-name');
+           window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + artistname
+            
+       });
+   },
+   error: function (request, status, error) {
+       console.log(error);
+   }
+});
+   }
+    </script>
 }

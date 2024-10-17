@@ -30,6 +30,11 @@ namespace Project123Api.Repositories
             modelBuilder.Entity<ArtistModel>()
               .Ignore(a => a.ArtistImage);
 
+            modelBuilder.Entity<GenreModel>()
+             .Ignore(a => a.GenreImage);
+
+
+
 
             modelBuilder.Entity<SongModel>()
              .Ignore(a => a.SongImage); 
@@ -48,6 +53,7 @@ namespace Project123Api.Repositories
         public DbSet<AlbumModel>? Albums { get; set; }
         public DbSet<ArtistModel>? Artist { get; set; }
         public DbSet<SongModel>? Song { get; set; }
+        public DbSet<GenreModel>? Genre { get; set; }
     
       
         public DbSet<ShipmentModel>? Shipment { get; set; }

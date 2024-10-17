@@ -61,7 +61,7 @@
             height: auto;
             max-width: 205px;
         }
-
+/*
         .img-aside {
             max-height: 388px;
             max-width: 388px;
@@ -72,7 +72,7 @@
             display: flex !important;
             justify-content: center;
             flex-direction: column;
-        }
+        }*/
 
         .dv-content {
             max-height: 320px;
@@ -227,8 +227,9 @@
 @section Scripts{
     <script type="text/javascript">
         @*var AlbumId = @Model.AlbumId;*@
-        var ArtistName = '@Model.ArtistName';
+        var ArtistName1 = '@Model.ArtistName';
         var ArtistBio = '@Model.ArtistBio';
+        var ArtistName = decodeHTMLEntities(ArtistName1); ////////decode แปลงจาก ญี่ปุ่น
      debugger
 
         @*var ArtistName = @Model.ArtistName;*@
@@ -261,6 +262,15 @@
                 toggleAsideDisplay();
             });
         });
+
+
+
+        function decodeHTMLEntities(text) {
+            var tempElement = document.createElement('textarea');
+            tempElement.innerHTML = text;
+            return tempElement.value;
+        }
+
            function getArtistAlbumContainer() {
        $.ajax({
            type: 'POST',

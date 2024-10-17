@@ -1,70 +1,71 @@
 ﻿<!-- Button trigger modal -->
 
+<div class="main-content-music row">
+    <i class="fa-solid fa-chevron-left" id="btnEditAlbumBack" style="color: #c0b9b9;"></i>
 
-<i class="fa-solid fa-chevron-left"  id="btnEditAlbumBack"style="color: #c0b9b9;"></i>
 
+    <form id="albumSongForm">
+        <div class="d-flex">
+            <div class="mt-4">
+                <img id="albumEditImagePreview" class="" style="width:202px;height:202px" src="#" />
+            </div>
+            <div style="margin-top:72px; margin-left:20px;">
 
-<form id="albumSongForm">
-    <div class="d-flex">
-        <div class="mt-4">
-            <img id="albumEditImagePreview" class="" style="width:202px;height:202px" src="#" />
+                <h1 id="h1Album"></h1>
+                <button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#albumModal">
+                    Edit Album
+                </button>
+            </div>
         </div>
-        <div style="margin-top:72px;">
 
-            <h1  id="h1Album"></h1>
-            <button type="button" id="btnEditAlbum" class="btn btn-secondary m-2 px-4" data-bs-toggle="modal" data-bs-target="#albumModal">
-                Edit Album
-            </button>
+
+
+        <div class="col-12 mt-4" id="dvTableSongAlbum" style="display:none">
+            <table id="tblDataTableSongAlbum" class="table table-bordered" width="100%">
+                <thead>
+                    <tr class="text-center">
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Duration</th>
+                        <th>Genres</th>
+                        <th style="width:80px!important;">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+    </form>
+
+
+
+    <form id="albumArtistSongForm">
+
+        <div class="col-12" id="dvSearchArtistSongAlbum" style="display:none">
+            <table id="tblDataTableSearchArtistSongAlbum" class="table table-bordered" width="100%">
+                <thead>
+                    <tr class="text-center">
+
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Duration</th>
+                        <th>Genres</th>
+                        <th style="width:80px!important;">AddSong</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <hr />
+    <div class="col-12 mt-4">
+        <div class="col-4 offset-8 d-flex justify-content-end">
+            <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 " onclick="clearAlbumValue()">Cancel</button>
+            <button type="button" id="btnSaveEditAlbum" class="btn btn-secondary m-2 px-4 " onclick="saveEditAlbum()">Save</button>
         </div>
     </div>
-
-  
-
-    <div class="col-12 mt-4" id="dvTableSongAlbum" style="display:none">
-        <table id="tblDataTableSongAlbum" class="table table-bordered" width="100%">
-            <thead>
-                <tr class="text-center">
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Duration</th>
-                    <th>Genres</th>
-                    <th style="width:80px!important;">Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
     </div>
-
-</form>
-
-
-
-<form id="albumArtistSongForm">
-
-    <div class="col-12" id="dvSearchArtistSongAlbum" style="display:none">
-        <table id="tblDataTableSearchArtistSongAlbum" class="table table-bordered" width="100%">
-            <thead>
-                <tr class="text-center">
-
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Duration</th>
-                    <th>Genres</th>
-                    <th style="width:80px!important;">AddSong</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-</form>
-<hr />
-<div class="col-12 mt-4">
-    <div class="col-4 offset-8 d-flex justify-content-end">
-        <button type="button" id="btnCancel" class="btn btn-secondary m-2 px-4 " onclick="clearAlbumValue()">Cancel</button>
-        <button type="button" id="btnSaveEditAlbum" class="btn btn-secondary m-2 px-4 " onclick="saveEditAlbum()">Save</button>
-    </div>
-</div>

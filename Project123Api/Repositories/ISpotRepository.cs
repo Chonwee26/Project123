@@ -22,16 +22,21 @@ namespace Project123Api.Repositories
      
         Task<ResponseModel> CreateAlbum(AlbumModel AlbumData);
         Task<ResponseModel> CreateArtist(ArtistModel artistData);
+        Task<ResponseModel> CreateGenre(GenreModel genreData);
         Task<ResponseModel>EditAlbum(AlbumModel AlbumData);
         Task<ResponseModel> UpdateArtist(ArtistModel artistData);
+        Task<ResponseModel> UpdateGenre(GenreModel genreData);
         Task<ResponseModel> DeleteAlbum(AlbumModel AlbumData);
         Task<ResponseModel> DeleteArtist(ArtistModel artistData);
+        Task<ResponseModel> DeleteGenre(GenreModel genreData);
         Task<IEnumerable<SongModel>>SearchSong(SongModel SongData);
         Task<IEnumerable<SongModel>> SearchSongNotInAlbum(SongModel SongData);
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
         Task<IEnumerable<ArtistModel>>SearchArtist(ArtistModel artistData);
+        Task<IEnumerable<GenreModel>>SearchGenre(GenreModel genreData);
         Task<IEnumerable<AlbumModel>>GetAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>> GetFavoriteSongs(SongModel SongData);
+        Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData);
         
     }
 
@@ -80,6 +85,43 @@ namespace Project123Api.Repositories
 
         //    return await Task.FromResult(response);
         //}
+
+        public async Task<ResponseModel> CreateGenre(GenreModel genreData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlCreateSong = @"INSERT INTO Genre (GenreName, GenreImage) 
+                             VALUES (@GenreName, @GenreImage)";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlCreateSong, connection);
+                    command.Parameters.AddWithValue("@GenreName", genreData.GenreName ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@GenreImage", genreData.GenreImagePath ?? (object)DBNull.Value);
+                 
+
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Genre created successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return response;
+        }
 
 
         public async Task<ResponseModel> CreateArtist(ArtistModel artistData)
@@ -201,8 +243,8 @@ namespace Project123Api.Repositories
         public async Task<ResponseModel> CreateSong(SongModel SongData)
         {
             ResponseModel response = new ResponseModel();
-            string sqlCreateSong = @"INSERT INTO Song (AlbumId, ArtistName, SongName, SongFile, SongGenres, SongImage,SongLength) 
-                             VALUES (@AlbumId, @ArtistName, @SongName, @SongFile, @SongGenres, @SongImage, @SongLength,@FavoriteSong)";
+            string sqlCreateSong = @"INSERT INTO Song (AlbumId, ArtistName, SongName, SongFile, SongGenres, SongImage,SongLength,FavoriteSong,CreateSongDate) 
+                             VALUES (@AlbumId, @ArtistName, @SongName, @SongFile, @SongGenres, @SongImage, @SongLength,@FavoriteSong,@CreateSongDate)";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -218,7 +260,8 @@ namespace Project123Api.Repositories
                     command.Parameters.AddWithValue("@SongGenres", SongData.SongGenres ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@SongImage", SongData.SongImagePath ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@SongLength", SongData.SongLength ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FavoriteSong", SongData.SongLength ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@FavoriteSong", SongData.FavoriteSong ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@CreateSongDate", SongData.CreateSongDate ?? (object)DBNull.Value);
 
                     await command.ExecuteNonQueryAsync();
 
@@ -239,6 +282,72 @@ namespace Project123Api.Repositories
             return response;
         }
 
+
+        public async Task<ResponseModel> UpdateGenre(GenreModel genreData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<string> updateFields = new List<string>();
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            // Build dynamic SQL for non-null fields
+      
+
+            if (!string.IsNullOrEmpty(genreData.GenreName))
+            {
+                updateFields.Add("GenreName = @GenreName");
+                parameters.Add(new SqlParameter("@GenreName", genreData.GenreName));
+            }
+    
+
+            if (!string.IsNullOrEmpty(genreData.GenreImagePath))
+            {
+                updateFields.Add("GenreImagePath = @GenreImagePath");
+                parameters.Add(new SqlParameter("@GenreImagePath", genreData.GenreImagePath));
+            }
+
+
+            // If no fields are updated, return early
+            if (updateFields.Count == 0)
+            {
+                response.Status = "E";
+                response.Message = "No fields provided for update.";
+                return response;
+            }
+
+            // Build the final SQL query
+            string sqlUpdateArtist = $@"UPDATE Genre SET {string.Join(", ", updateFields)} 
+                                WHERE GenreId = @GenreId";
+
+            parameters.Add(new SqlParameter("@GenreId", genreData.GenreId));
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlUpdateArtist, connection);
+                    command.Parameters.AddRange(parameters.ToArray());
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Edit Genre successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return response;
+        }
 
         public async Task<ResponseModel> UpdateArtist(ArtistModel artistData)
         {
@@ -396,19 +505,27 @@ namespace Project123Api.Repositories
                 updateFields.Add("SongImage = @SongImage");
                 sqlParams.Add(new SqlParameter("@SongImage", SongData.SongImagePath));
             }
-        
+
+            if (SongData.FavoriteSong.HasValue && SongData.FavoriteSong.Value)
+            {
                 updateFields.Add("FavoriteSong = @FavoriteSong");
                 sqlParams.Add(new SqlParameter("@FavoriteSong", SongData.FavoriteSong));
 
-            updateFields.Add("FavoriteDate = @FavoriteDate");
-            sqlParams.Add(new SqlParameter("@FavoriteDate", SongData.FavoriteDate));
+
+                updateFields.Add("FavoriteDate = @FavoriteDate");
+                sqlParams.Add(new SqlParameter("@FavoriteDate", SongData.FavoriteDate));
+
+            }
+               
+
 
             if (SongData.SongLength != null)
             {
                 updateFields.Add("SongLength = @SongLength");
                 sqlParams.Add(new SqlParameter("@SongLength", SongData.SongLength));
             }
-       
+            
+          
 
             if (updateFields.Count == 0)
             {
@@ -538,6 +655,39 @@ namespace Project123Api.Repositories
             }
 
             return response;
+        }
+
+        public async Task<ResponseModel> DeleteGenre(GenreModel genreData)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlDeleteSong = @"DELETE dbo.genre WHERE GenreId = @GenreId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(sqlDeleteSong, connection);
+                    command.Parameters.AddWithValue("@GenreId", genreData.GenreId);
+
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Genre Delete successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return await Task.FromResult(response);
         }
 
         public async Task<ResponseModel> DeleteArtist(ArtistModel artistData)
@@ -904,6 +1054,82 @@ namespace Project123Api.Repositories
             return songList;
         }
 
+        public async Task<IEnumerable<GenreModel>> SearchGenre(GenreModel genreData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            List<GenreModel> genreList = new List<GenreModel>();
+            string sqlSelect = @"SELECT s.GenreId, s.GenreName, s.GenreImage
+                     FROM dbo.Genre s";
+
+            List<string> sqlWhereClauses = new List<string>();
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+            if (genreData.GenreId.HasValue)
+            {
+                sqlWhereClauses.Add("s.GenreId= @GenreId");
+                sqlParameters.Add(new SqlParameter("@GenreId", genreData.GenreId.Value));
+            }
+
+            if (!string.IsNullOrEmpty(genreData.GenreName))
+            {
+                sqlWhereClauses.Add("UPPER(s.GenreName) LIKE UPPER(@GenreName)");
+                sqlParameters.Add(new SqlParameter("@GenreName", $"%{genreData.GenreName}%"));
+            }
+           
+            string sqlWhere = sqlWhereClauses.Count > 0 ? " WHERE " + string.Join(" AND ", sqlWhereClauses) : "";
+            sqlSelect += sqlWhere;
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                GenreModel genre = new GenreModel
+                                {
+                                    GenreId = reader.GetInt32("GenreId"),
+                                 
+                                    GenreName= reader["GenreName"].ToString(),
+                                    GenreImagePath = reader["GenreImage"].ToString(),
+
+                                };
+                                genreList.Add(genre);
+                            }
+                        }
+                    }
+                }
+
+                if (genreList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return genreList;
+        }
 
         public async Task<IEnumerable<ArtistModel>> SearchArtist(ArtistModel artistData)
         {
@@ -1259,6 +1485,89 @@ namespace Project123Api.Repositories
 
             return songList;
         }
+
+        public async Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<SearchSpotModal> searchSpotList = new List<SearchSpotModal>();
+
+            string sqlSelect = @"
+    SELECT so.SongId, so.SongName, so.SongGenres, so.SongFile, so.SongImage, 
+           alb.AlbumId, alb.AlbumName, alb.AlbumImage, 
+           art.ArtistId, art.ArtistName, art.ArtistImage, art.ArtistGenres
+    FROM Song AS so
+    JOIN Artist AS art ON so.ArtistName = art.ArtistName
+    JOIN Albums AS alb ON so.AlbumId = alb.AlbumId
+    WHERE UPPER(so.SongName) LIKE UPPER(@searchData)
+       OR UPPER(art.ArtistName) LIKE UPPER(@searchData)
+       OR UPPER(alb.AlbumName) LIKE UPPER(@searchData);
+    ";
+
+            // Add wildcards to the search parameter in C#
+            string searchParameter = $"%{searchData.ArtistName}%"; // Assuming searchData has a SearchTerm property
+
+            // Create the list of parameters
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+    {
+        new SqlParameter("@searchData", searchParameter)
+    };
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                SearchSpotModal searchSong = new SearchSpotModal
+                                {
+                                    SongId = reader.IsDBNull(reader.GetOrdinal("SongId")) ? 0 : reader.GetInt32(reader.GetOrdinal("SongId")),
+                                    AlbumId = reader.IsDBNull(reader.GetOrdinal("AlbumId")) ? 0 : reader.GetInt32(reader.GetOrdinal("AlbumId")),
+                                    ArtistName = reader["ArtistName"] as string ?? string.Empty,
+                                    SongFilePath = reader["SongFile"] as string ?? string.Empty,
+                                    SongName = reader["SongName"] as string ?? string.Empty,
+                                    SongGenres = reader["SongGenres"] as string ?? string.Empty,
+                                    SongImagePath = reader["SongImage"] as string ?? string.Empty,
+                                    AlbumImagePath = reader["AlbumImage"] as string ?? string.Empty,
+                                };
+                                searchSpotList.Add(searchSong);
+                            }
+                        }
+                    }
+                }
+
+                if (searchSpotList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return searchSpotList;
+        }
+
+
+
 
 
 

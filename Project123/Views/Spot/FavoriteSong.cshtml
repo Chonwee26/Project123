@@ -108,6 +108,7 @@
                     <tr class="">
                         <th style="width:40px !important">#</th>
                         <th>Title</th>
+                        <th style="min-width:20px !important; max-width:20px!important;"></th>
                         <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
                     </tr>
                 </thead>
@@ -151,7 +152,7 @@
         var AlbumImage ='';
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
-          
+
             changeIconClass('#iconLove', '#iconHome, #iconSearch, #iconAdmin');
             $('.btn-album-pause').addClass('hide-element')
          /*   getAlbum();*/
@@ -196,8 +197,91 @@
             //}
         });
 
+
+           $('#tblDataTableSong tbody').on('click', '.btn-favorite', function () {
+
+       var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+
+       //if (rowData.FavoriteSong) {
+       //    $('#iconLove' + rowData.SongId).removeClass('fa-solid').addClass('fa-regular');
+
+       //}
+       //else {
+       //    $('#iconLove' + rowData.SongId).removeClass('fa-regular').addClass('fa-solid');
+       //}
+
+       //var favData = {
+       //    SongId: rowData.SongId,
+       //    FavoriteSong: rowData.FavoriteSong == null ? null : "1"
+       //}
+       rowData.FavoriteDate = new Date($.now());
+       rowData.FavoriteSong = !rowData.FavoriteSong;
+       var frmSearch = {
+           AlbumId : rowData.AlbumId
+       }
+               console.log('rowData', rowData);
+
+
+                 $.ajax({
+      type: 'POST',
+      url: '@Url.Action("FavoriteSong1", "Spot")',
+      data: rowData,
+      global: false,
+      dataType: "json",
+      success: function (result) {
+
+          /*    songData = result.Data;*/
+          console.log("update fav song", result);
+
+             $.ajax({
+    type: 'POST',
+    url: '@Url.Action("GetFavoriteSongs1", "Spot")',
+                 dataType: "json",
+                 global: false,
+    success: function (result) {
+        debugger
+    /*    songData = result.Data;*/
+        //songData = result.Data.forEach(function (song, index) {
+        //    songData.push(song.SongFilePath)
+
+        //});
+
+        bindingTableSong(result.Data);
+        //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+        if (result.status == "S") {
+
+        }
+        else {
+
+        }
+    },
+    error: function (request, status, error) {
+        console.log(error);
+    }
+});
+
+
+       /*   bindingTableSong(result.Data);*/
+          //$('#albumEditImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
+          if (result.status == "S") {
+
+          }
+          else {
+
+          }
+      },
+      error: function (request, status, error) {
+          console.log(error);
+      }
+  });
+
+
+
+
+   });
+
         $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
-             
+
             var table = $('#tblDataTableSong').DataTable();
             var tableData = table.data();
             var rowDataAlbum = table.row(this).data();
@@ -460,8 +544,19 @@
 
                          return html;
     }
-}
-,
+                    },
+
+                    {
+                        data: null, className: 'text-center', width: '30px', orderable: false,
+                        render: function (data, type, row) {
+                            var favoriteClass = data.FavoriteSong ? 'fa-solid' : 'fa-regular';
+
+                            var html = `<i class="${favoriteClass} fa-heart btn-favorite " id="iconLove${data.SongId}"  style="color: #bfbfbf; margin-top:5px;"></i>`;
+                            return html;
+
+
+                        }
+                    },
 
 
                     {
@@ -473,7 +568,7 @@
                             // Ensure seconds are displayed with two digits
                             var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                             /*  audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);*/
-                             
+
                             return duration != null ? minutes + ':' + formattedSeconds : "";
 
                         }

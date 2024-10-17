@@ -1,17 +1,47 @@
-﻿<form id="songEditForm">
-    <input type="text" id="txtSongAlbumIdEdit" placeholder="Album ID">
-    <input type="text" id="txtSongArtistEdit" placeholder="Artist Name">
-    <input type="text" id="txtSongNameEdit" placeholder="Song Name">
-    <input type="file" id="fileSongFileEdit" placeholder="File URL">
-    <audio id="audiocontrolPreviewEdit" controls style="">
-        <source id="songAudioPreviewEdit" src="#" type="audio/mp3" />
-        Your browser does not support this audio element
-    </audio>
-    <p id="durationEdit"></p>
-    <input type="number" id="durationInputEdit" placeholder="Duration input" hidden>
-    <input type="text" id="txtSongGenresEdit" placeholder="Genres">
-    <input type="file" id="fileSongImageEdit" placeholder="Song Image URL">
-    <img id="songImagePreviewEdit" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px;" />
-    <button type="button" id="btnCancelEdit" class="btn btn-secondary">Cancel</button>
-    <button type="button" onclick="EditSongSave()">Save</button>
+﻿
+<form id="songEditForm">
+    <div class="row">
+        <div class="col-6">
+            <input class="form-control" type="text" id="txtSongAlbumIdEdit" placeholder="Album ID">
+
+        </div>
+        <div class="col-6">
+            <input class="form-control" type="text" id="txtSongArtistEdit" placeholder="Artist Name">
+
+        </div>
+        <div class="col-6">
+            <input class="form-control" type="text" id="txtSongNameEdit" placeholder="Song Name">
+
+        </div>
+        <div class="col-6">
+            <input class="form-control" type="file" id="fileSongFileEdit" placeholder="File URL">
+            <audio id="audiocontrolPreviewEdit" controls style="">
+                <source id="songAudioPreviewEdit" src="#" type="audio/mp3" />
+                Your browser does not support this audio element
+            </audio>
+            <p id="durationEdit"></p>
+            <input type="number" id="durationInputEdit" placeholder="Duration input" hidden>
+        </div>
+
+        <div class="col-6">
+            <input type="text" id="txtSongGenresEdit" placeholder="Genres">
+
+        </div>
+
+
+        <div class="col-6">
+            <input type="file" id="fileSongImageEdit" placeholder="Song Image URL">
+            <img id="songImagePreviewEdit" src="#" alt="Song Image Preview" style="display: none; width: 168px; height: 168px;" />
+
+
+        </div>
+        <div class="text-end">
+            <button type="button" id="btnCancelEdit" class="btn btn-secondary">Cancel</button>
+            <button type="button" class="btn btn-secondary" onclick="EditSongSave()">Save</button>
+        </div>
+ 
+
+    </div>
 </form>
+
+
