@@ -59,7 +59,7 @@
 
             .main-content:hover {
                 overflow-y: auto;
-                padding: 15px 0px 15px 15px !important;
+                /*padding: 15px 0px 15px 15px !important;*/
             }
 
         .aside {
@@ -178,6 +178,7 @@
             height: 100%;
             margin: 0;
             overflow: hidden;
+         
          
         }
 
@@ -463,7 +464,7 @@
 <div id="main">
     <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
     @RenderBody()
-    <div class=" content aside col-lg-3 col-6" id="aside">
+    <div class="container-fluid content aside col-lg-3 col-6" id="aside">
         @*<div class="dv-aside">
                 <aside class="aside-content px-3">
                     <button class="btn" id="btnCloseAside" style="color:white">Close</button>

@@ -10,6 +10,10 @@ namespace Project123.Dto
         public string Message { get; set; }
    
         public bool Success { get { return Status == "S"; } }
+
+        public string access_token { get; set; }
+        public string user_roles { get; set; }
+
         public ResponseModel()
         {
             Status = "E";

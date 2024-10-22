@@ -94,7 +94,7 @@
             },
 
             submitHandler: function (form) {
-
+                debugger
                 var userName = $('#txtEmail').val();
 
                 var formData = {
@@ -102,14 +102,12 @@
                     Email: $('#txtEmail').val(),
                     Password: $('#txtPassword').val(),
 
-
-
                 };
 
                 $.ajax
                     ({
                         type: 'POST',
-                        url: "/Admin/Login1",
+                        url: "/Authen/Login1",
                         data: formData,
                         dataType: 'json',
                         success: function (result) {

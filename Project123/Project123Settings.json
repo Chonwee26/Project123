@@ -3,8 +3,8 @@
   "BaseAddress": "https://Project123.com",
   "Tokens": {
     "Key": "ABCDEFGHIJKLMNOPKRSTUVWSYXZHAPPYHAPPYWEWILLWE",
-    //"Issuer": "localhost:7061",
-    "Issuer": "https://Project123.com",
+    "Issuer": "localhost:7061",
+    //"Issuer": "https://Project123.com",
     "AccessExpireSeconds": "86400"
   },
 

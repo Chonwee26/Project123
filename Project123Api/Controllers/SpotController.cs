@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project123.Dto;
 using Project123Api.Repositories;
 
 namespace Project123Api.Controllers
 {
+   
     [Route("api/[controller]")]
     [ApiController]
     public class SpotController : BaseController
@@ -23,7 +25,7 @@ namespace Project123Api.Controllers
             _spotRepo = spotRepository;
         }
 
-
+     
         [HttpPost("CreateGenre")]
         public async Task<ResponseModel> CreateGenre(GenreModel genreData)
         {
@@ -344,6 +346,7 @@ namespace Project123Api.Controllers
 
             return artistList;
         }
+      
 
         [HttpPost("SearchGenre")]
         public async Task<IEnumerable<GenreModel>> SearchGenre(GenreModel genreData)

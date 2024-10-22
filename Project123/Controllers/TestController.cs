@@ -14,17 +14,21 @@ using Project123.Migrations;
 using Project123Api.Repositories;
 using Newtonsoft.Json;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
+using static Project123.Services.IAuthenticationService;
 
 namespace Project123.Controllers
 {
+  
     public class BackupController : BaseController
     {
-
+        private readonly ApiHelper _apiHelper;
         private readonly IHttpClientFactory _httpClientFactory;
         private new readonly ResponseModel response = new ResponseModel();
-        public BackupController(IHttpClientFactory httpClientFactory)
+        public BackupController(ApiHelper apiHelper, IHttpClientFactory httpClientFactory) : base(httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _apiHelper = apiHelper;
         }
 
         [HttpGet("Test/GetShipmentLocationAsync")]

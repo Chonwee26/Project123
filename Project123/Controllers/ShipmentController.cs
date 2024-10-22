@@ -15,6 +15,7 @@ using Project123Api.Repositories;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using static Project123.Services.IAuthenticationService;
 
 namespace Project123.Controllers
 {
@@ -25,10 +26,12 @@ namespace Project123.Controllers
         private readonly DataDbContext _db;
         private readonly string connectionString;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ApiHelper _apiHelper;
         private new readonly ResponseModel response = new ResponseModel();
     
-        public ShipmentController(DataDbContext db, IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public ShipmentController(ApiHelper apiHelper, DataDbContext db, IConfiguration configuration, IHttpClientFactory httpClientFactory) : base(httpClientFactory)
         {
+            _apiHelper = apiHelper;
             _db = db;
             connectionString = configuration.GetConnectionString("DefaultConnection");
             _httpClientFactory = httpClientFactory;

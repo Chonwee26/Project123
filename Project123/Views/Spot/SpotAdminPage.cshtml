@@ -117,7 +117,7 @@
             background-image: none !important;
         }
 
-        .btn-edit-album, .btn-delete, .btn-edit-song, .btn-edit-artist {
+        .btn-edit-album, .btn-delete, .btn-edit-song, .btn-edit-artist, .btn-edit-genre {
             cursor: pointer;
         }
         .select2-container--open {
@@ -780,7 +780,7 @@
 
         $('#btnSaveGenreModal').click(function () {
           
-            debugger
+            
             if (saveGenreStatus == "Update") {
                 createGenre(genreId);
             }
@@ -824,7 +824,7 @@
 
 
         $('#tblDataTableGenre').on('click', '.btn-edit-genre', function () {
-
+            debugger;
             saveGenreStatus = "Update";
             rowDataGenre = $('#tblDataTableGenre').DataTable().row($(this).closest('tr')).data();
             genreId = rowDataGenre.GenreId;
@@ -1017,7 +1017,7 @@
 
 
         function createGenre(genreId) {
-            var genreId = genreId == null || genreId == "" ? "" : genreId;
+             genreId = genreId == null || genreId == undefined ? "" : genreId;
 
             var formData = new FormData();
             formData.append("GenreId", genreId);

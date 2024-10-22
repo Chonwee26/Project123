@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Http;
 using Project123Api.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Project123Api.Middlewares;
+using Microsoft.AspNetCore.Http.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,10 @@ builder.Configuration
 
 //builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
+
+
+builder.Services.AddSession();
+
 builder.Services.AddHttpContextAccessor();
 // Add logging services
 builder.Logging.AddConsole();
@@ -84,11 +90,16 @@ builder.Services.AddScoped<ISpotRepository, SpotRepository>();
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
 var issuer = builder.Configuration.GetValue<string>("Tokens:Issuer");
 var accessExpireSeconds = builder.Configuration.GetValue<int>("Tokens:AccessExpireSeconds");
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+
         options.TokenValidationParameters = new TokenValidationParameters
+
+ 
+
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -100,6 +111,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             RoleClaimType = ClaimTypes.Role, // Specify that the role is included in the token
             ClockSkew = TimeSpan.Zero,
         };
+        options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
+
     });
 
 
@@ -123,7 +136,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -132,6 +148,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Project123 API v1"));
 }
+
+
+
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

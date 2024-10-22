@@ -301,7 +301,7 @@ namespace Project123Api.Repositories
 
             if (!string.IsNullOrEmpty(genreData.GenreImagePath))
             {
-                updateFields.Add("GenreImagePath = @GenreImagePath");
+                updateFields.Add("GenreImage = @GenreImagePath");
                 parameters.Add(new SqlParameter("@GenreImagePath", genreData.GenreImagePath));
             }
 
