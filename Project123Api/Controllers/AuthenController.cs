@@ -69,8 +69,13 @@ namespace Project123Api.Controllers
                 {
                     new Claim(JwtRegisteredClaimNames.Email, admin.Email),
                     new Claim(ClaimTypes.Email, admin.Email),
-                    new Claim(ClaimTypes.Role, adminEmail.Role)
+                    new Claim(ClaimTypes.Role, adminEmail.Role),
+                    new Claim("UserId", adminEmail.Id.ToString())
                 };
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                }
 
                 var token = _auth.GenerateAccessToken(claims);
 

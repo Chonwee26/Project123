@@ -50,6 +50,8 @@ namespace Project123.Controllers
 
         public IActionResult FavoriteSong()
         {
+            var userId = HttpContext.Session.GetString("UserId");
+            ViewBag.UserId = Convert.ToInt32(userId);
             return View();
         }
 
@@ -1053,6 +1055,7 @@ namespace Project123.Controllers
         [HttpPost("Spot/FavoriteSong1")]
         public async Task<IActionResult> FavoriteSong(SongModel songData)
         {
+            songData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1093,7 +1096,8 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(songData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        //var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/FavoriteSong", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -1708,17 +1712,20 @@ namespace Project123.Controllers
         {
             ResponseModel resp = new ResponseModel();
             List<SongModel> SongList = new List<SongModel>();
+            SongData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
                 handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
 
-                var client = _httpClientFactory.CreateClient();
-                client.BaseAddress = new Uri("https://localhost:7061/");
-
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+  
 
                 try
                 {
+
+                 
                     string requestJson = JsonConvert.SerializeObject(SongData);
                     HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
@@ -1812,6 +1819,65 @@ namespace Project123.Controllers
             }
             return Json(new { success = this.response.Success, message = this.response.Message, Data = albumList });
         }
+
+
+        [HttpPost("Spot/GetFavSongByUser1")]
+        public async Task<IActionResult> GetFavSongByUser( string userId)
+        {
+            List<SongModel> songDataList = new List<SongModel>();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                try
+                {
+                    var client = _apiHelper.CreateClient();
+                    client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+
+
+                 
+
+
+                    string requestJson = JsonConvert.SerializeObject(userId);
+
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetFavSongByUser", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        songDataList = await response.Content.ReadAsAsync<List<SongModel>>();
+
+                        if (songDataList != null && songDataList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Successfully retrieved favorite songs.";
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = "No favorite songs found.";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error: {response.ReasonPhrase}";
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = $"Request failed: {ex.Message}";
+                }
+            }
+
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
+        }
+
+
+
 
         [HttpPost("Spot/GetFavoriteSongs1")]
         public async Task<IActionResult> GetFavoriteSongs(SongModel SongData)

@@ -13,6 +13,7 @@ namespace Project123.Dto
 
         public string access_token { get; set; }
         public string user_roles { get; set; }
+        public string user_id { get; set; }
 
         public ResponseModel()
         {

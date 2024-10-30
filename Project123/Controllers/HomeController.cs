@@ -2,6 +2,7 @@
 //using Project123.Models;
 using Project123.Dto;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Project123.Controllers
 {
@@ -21,12 +22,26 @@ namespace Project123.Controllers
 
         public IActionResult MusicPlayerPage()
         {
+      
             return View();
         }
 
         public IActionResult MusicSpotPage()
         {
+
+
+            var userId = HttpContext.Session.GetString("UserId");
+            ViewBag.UserId = Convert.ToInt32(userId);
             return View();
+          
+        }
+
+        public IActionResult GetUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // Do something with userId
+           
+            return Ok(userId);
         }
 
         public IActionResult ExportExcel()

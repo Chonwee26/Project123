@@ -141,42 +141,45 @@
 
 @section Scripts{
     <script type="text/javascript">
-
-        $(document).ready(function () {
+           var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
+        document.addEventListener('DOMContentLoaded', function () {
+            debugger
             /*   getAlbum();*/
-           
+            console.log('userId', userId);
             getAlbumContainer();
 
 
-            $('.img-music-content').on('click', function () {
 
-                var imgSrc = $(this).attr('src');
-                $('#aside_pic').attr('src', imgSrc);
-                if ($('#aside').css('display') == 'none') {
-              /*      toggleAsideDisplay();*/
-                }
-            });
-            $(document).on('click', '.dv-content', function () {
-                ;
-                var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
-                $('#aside_pic').attr('src', imgSrc);
-                if ($('#aside').css('display') == 'none') {
-                  /*  toggleAsideDisplay();*/
-                }
-                console.log(count);
-            });
-            $(document).on('click', '#btnCloseAside', function () {
-                toggleAsideDisplay();
-            });
+
             //$('#btnCloseAside').click(function () {
-              
+
             //});
         });
-      
+
+        $(document).on('click', '#btnCloseAside', function () {
+            toggleAsideDisplay();
+        });
 
 
+        $(document).on('click', '.dv-content', function () {
+
+            var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
+            $('#aside_pic').attr('src', imgSrc);
+            if ($('#aside').css('display') == 'none') {
+                /*  toggleAsideDisplay();*/
+            }
+            console.log(count);
+        });
 
 
+        $('.img-music-content').on('click', function () {
+
+            var imgSrc = $(this).attr('src');
+            $('#aside_pic').attr('src', imgSrc);
+            if ($('#aside').css('display') == 'none') {
+                /*      toggleAsideDisplay();*/
+            }
+        });
 
 
 
@@ -191,6 +194,6 @@
         //        $('.main-content').removeClass('col-lg-12 col-12').addClass('col-lg-9 col-7');
         //    }
         //});
-
+        
     </script>
 }

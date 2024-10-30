@@ -210,6 +210,28 @@ namespace Project123Api.Controllers
 
             return response;
         }
+
+
+        [HttpPost("FavoriteSong")]
+        public async Task<ResponseModel> FavoriteSong(SongModel SongData)
+        {
+            ResponseModel response = new ResponseModel();
+            
+
+            try
+            {
+                response = await _spotRepo.FavoriteSong(SongData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
         [HttpPost("RemoveSong")]
         public async Task<ResponseModel> RemoveSong(SongModel SongData)
         {
@@ -275,8 +297,8 @@ namespace Project123Api.Controllers
         [HttpPost("SearchSong")]
         public async Task<IEnumerable<SongModel>> SearchSong(SongModel SongData)
         {
-            ResponseModel resp = new ResponseModel();      
-      
+            ResponseModel resp = new ResponseModel();
+          
             IEnumerable<SongModel> songList = await _spotRepo.SearchSong(SongData);
 
             return songList;
@@ -313,6 +335,18 @@ namespace Project123Api.Controllers
             IEnumerable<SongModel> SongList = await _spotRepo.GetFavoriteSongs(SongData);
 
             return SongList;
+        }
+
+
+        [HttpPost("GetFavSongByUser")]
+        public async Task<IActionResult> GetFavSongByUser([FromBody] string userId)
+        {
+            
+            ResponseModel resp = new ResponseModel();
+
+            List<SongModel> SongList = await _spotRepo.GetFavSongByUser(userId);
+
+            return Ok(SongList);
         }
 
 

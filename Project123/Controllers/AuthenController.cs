@@ -41,11 +41,13 @@ namespace Project123.Controllers
                     {
                         response = await responseResult.Content.ReadAsAsync<ResponseModel>();
                         string tokenInfo = response.user_roles;
+                        string tokenUserId = response.user_id;
                         string token = response.access_token;
                         HttpContext.Session.SetString("UserTokenInfo", tokenInfo);
                         HttpContext.Session.SetString("UserToken", token);
-                        // STEP 1: Pass the JWT token in authorization header for subsequent requests
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    HttpContext.Session.SetString("UserId", tokenUserId);
+                    // STEP 1: Pass the JWT token in authorization header for subsequent requests
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
 
                         response.Status = "S";

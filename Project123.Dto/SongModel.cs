@@ -38,6 +38,8 @@ namespace Project123.Dto
 
         public DateTime? CreateSongDate { get; set; } = DateTime.Now;
 
-      
+        public int? UserId { get; set; }
+
+
     }
 }

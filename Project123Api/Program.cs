@@ -23,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Project123Api.Middlewares;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,12 +110,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = issuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
             RoleClaimType = ClaimTypes.Role, // Specify that the role is included in the token
-            ClockSkew = TimeSpan.Zero,
+            ClockSkew = TimeSpan.Zero
+           
         };
         options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
 
     });
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Admin/LoginPage"; // Path to the login page
+       
+    });
 
 //builder.Services.AddCors(options =>
 //{

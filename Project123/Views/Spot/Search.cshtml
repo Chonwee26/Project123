@@ -334,7 +334,7 @@
                     // Check if result.Data is an array
                     if (Array.isArray(result.Data) && result.Data.length > 0) {
                         result.Data.forEach(function (genre) {
-
+                            var genreIdEncoded = encodeURIComponent(genre.GenreId);
                             // genre.GenreId ต้องเป็นชื่อเดียวกับ controller
                             var genreHtml = `
                       <a href="@Url.Action("Genre", "Spot")?genreId=${genre.GenreId}">

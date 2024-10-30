@@ -6,7 +6,6 @@
 @section Styles{
     <style type="text/css">
 
-
         .box-status {
             width: 120px;
             border: solid 1px;
@@ -37,7 +36,6 @@
             font-weight: bold;
         }
 
-
         .accept-area {
             min-height: 25px;
             border: 2px dashed green;
@@ -47,7 +45,6 @@
             color: green;
             font-weight: bold;
         }
-
 
         .remove-area {
             min-height: 25px;
@@ -61,7 +58,6 @@
     </style>
 }
 <div class="col-12">
-
 
     <div class="row">
         <div id="dvStatus" class="col-9">
@@ -92,7 +88,6 @@
                 </div>
             </div>
 
-
             <div class="trash-area">
                 Drag here to remove status
             </div>
@@ -103,20 +98,14 @@
                         Accept
                     </div>
 
-
                     <div class="remove-area col-5">
                         Remove
                     </div>
                 </div>
             </div>
-
-
         </div>
-
     </div>
 </div>
-
-
 
 @section Scripts{
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -141,9 +130,7 @@
             },
         ]
         $(document).ready(function () {
-            bindingTableStatus(dataStatus);
-
-         
+            bindingTableStatus(dataStatus);       
         });
 
         $('.box-status').draggable({
@@ -176,7 +163,6 @@
             }
         });
 
-
         $('.accept-area').droppable({
             accept: '.box-receive',
             hoverClass: 'ui-droppable-hover',
@@ -188,7 +174,6 @@
                 bindingTableStatus(dataStatus);
             }
         });
-
 
         $('.dvBoxStatus').droppable({
             accept: '.box-receive',
@@ -212,7 +197,6 @@
                 lengthchange: false,
                 scrollx: true,
                 info: false,
-
                 columns: [
 
                     {
@@ -231,7 +215,6 @@
                             return data.Quantity;
 
                         }
-
                     },
                     {
                         data: null, className: 'text-center', orderable: false,
@@ -245,13 +228,8 @@
                             }
                             else {
                                 return html = `<div class="box-receive" data-row="${meta.row}"></div>`
-                            }
-
-                         
-                        
-
+                            }                                             
                         }
-
                     }
 
                 ],
@@ -262,8 +240,7 @@
                         hoverClass: 'ui-droppable-hover',
                         drop: function (event, ui) {
                             var statusValue = $(ui.draggable).attr('value');
-                            var rowIndex = $(this).index(); // Get the index of the row
-                         
+                            var rowIndex = $(this).index(); // Get the index of the row                        
 
                             // Update status in the data array
                             dataStatus[rowIndex].Status = statusValue;
@@ -272,8 +249,7 @@
                             bindingTableStatus(dataStatus);
                         }
 
-                              // Make each status cell draggable for removal
-                  
+                              // Make each status cell draggable for removal                 
 
                     });
                     $('.box-receive').draggable({

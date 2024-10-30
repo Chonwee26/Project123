@@ -149,7 +149,8 @@
         var ArtistName = '';
         var AlbumName = '';
         var songData = [];
-        var AlbumImage ='';
+        var AlbumImage = '';
+          var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
 
@@ -468,7 +469,8 @@
 
             await $.ajax({
                 type: 'POST',
-                url: '@Url.Action("GetFavoriteSongs1", "Spot")',
+                url: '@Url.Action("GetFavSongByUser1", "Spot")',
+                data: { UserId: userId },
                 dataType: "json",
                 success: function (result) {
 
