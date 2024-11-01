@@ -59,7 +59,7 @@
 
             .main-content:hover {
                 overflow-y: auto;
-                /*padding: 15px 0px 15px 15px !important;*/
+                padding: 15px 0px 15px 15px !important;
             }
 
         .aside {
@@ -254,7 +254,9 @@
             height: 50px;
         }
 
-      
+        .circle,.circle a img {
+            border-radius: 50%;
+        }
 
         .imgArtist {
             display: flex !important;
@@ -1158,7 +1160,7 @@
     });
         }*@
 
-        function getAlbumSideLayout() {
+        function getAlbumSideLayout1() {
     $.ajax({
         type: 'POST',
         url: '@Url.Action("GetAlbum1", "Spot")',
@@ -1180,6 +1182,63 @@
     </div>`;
 
 $('.lib-sidebar').append(albumHtml);
+            });
+            // Initialize tooltips after appending the content
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        },
+        error: function (request, status, error) {
+            console.log(error);
+        }
+    });
+        }
+
+
+                function getAlbumSideLayout() {
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetFavAlbumAndArtistByUser1", "Spot")',
+        dataType: "json",
+        success: function (result) {
+            debugger
+            result.Data.forEach(function (sideData, index) {
+                debugger
+                var sideFavData = result.Data
+                if (sideFavData[index].FavoriteArtist) {
+
+                    var Html = `
+                       <div class="imgArtist circle" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
+                            title="
+                                      ${sideData.ArtistName}<br>
+                                    <span>Artist</span>
+                                ">
+
+                     <a href="@Url.Action("ArtistDetails", "Spot")?artistname=${sideData.ArtistName}">
+                        <img src="${sideData.ArtistImagePath}" />
+                    </a>
+
+                       </div>`;
+
+                }
+                else {
+
+
+                    var Html = `
+                    <div class="imgArtist" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
+                         title="
+                                   ${sideData.AlbumName}<br>
+                                  ${sideData.ArtistName}
+                             ">
+                  <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${sideData.AlbumId}">
+                     <img src="${sideData.AlbumImagePath}" />
+                 </a>
+
+                    </div>`;
+                }
+
+                $('.lib-sidebar').append(Html);
             });
             // Initialize tooltips after appending the content
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

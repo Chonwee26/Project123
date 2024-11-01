@@ -232,6 +232,31 @@ namespace Project123Api.Controllers
 
             return response;
         }
+
+
+
+        [HttpPost("FavoriteArtist")]
+        public async Task<ResponseModel> FavoriteArtist(SpotSidebarModel artistData)
+        {
+            ResponseModel response = new ResponseModel();
+
+
+            try
+            {
+                response = await _spotRepo.FavoriteArtist(artistData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+
         [HttpPost("RemoveSong")]
         public async Task<ResponseModel> RemoveSong(SongModel SongData)
         {
@@ -336,7 +361,18 @@ namespace Project123Api.Controllers
 
             return SongList;
         }
+       
 
+                [HttpPost("GetFavAlbumAndArtistByUser")]
+        public async Task<IActionResult> GetFavAlbumAndArtistByUser([FromBody] string userId)
+        {
+
+            ResponseModel resp = new ResponseModel();
+
+            List<SpotSidebarModel> AlbumAndArtistList = await _spotRepo.GetFavAlbumAndArtistByUser(userId);
+
+            return Ok(AlbumAndArtistList);
+        }
 
         [HttpPost("GetFavSongByUser")]
         public async Task<IActionResult> GetFavSongByUser([FromBody] string userId)
@@ -353,6 +389,7 @@ namespace Project123Api.Controllers
         [HttpPost("SearchSpot")]
         public async Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData)
         {
+
             ResponseModel resp = new ResponseModel();
 
             IEnumerable<SearchSpotModal> searchSpotList = await _spotRepo.SearchSpot(searchData);

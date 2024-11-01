@@ -994,10 +994,10 @@ namespace Project123.Controllers
 
 
         [HttpPost("Spot/SearchSpot1/")]
-
         public async Task<IActionResult> SearchSpot(SearchSpotModal searchData)
         {
 
+            searchData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
             // Check if SongName is null before proceeding
             List<SearchSpotModal> searchSpotList = new List<SearchSpotModal>();
 
@@ -1013,7 +1013,6 @@ namespace Project123.Controllers
                     try
                     {
                
-
                         // Create a copy of songData with nullified IFormFile properties for serialization
 
 
@@ -1031,7 +1030,6 @@ namespace Project123.Controllers
                                 this.response.Status = "S";
                                 this.response.Message = "Success";
                             }
-
 
                         }
 
@@ -1098,6 +1096,57 @@ namespace Project123.Controllers
 
                         //var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
                         var responseResult = await client.PostAsync("api/Spot/FavoriteSong", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+        }
+
+
+        [HttpPost("Spot/FavoriteArtist1")]
+        public async Task<IActionResult> FavoriteArtist(SpotSidebarModel artistData)
+        {
+            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {
+                    
+
+
+
+
+
+                        // Create a copy of songData with nullified IFormFile properties for serialization
+
+
+                        string requestJson = JsonConvert.SerializeObject(artistData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        //var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/FavoriteArtist", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -1818,6 +1867,62 @@ namespace Project123.Controllers
                 }
             }
             return Json(new { success = this.response.Success, message = this.response.Message, Data = albumList });
+        }
+
+        [HttpPost("Spot/GetFavAlbumAndArtistByUser1")]
+        public async Task<IActionResult> GetFavAlbumAndArtistByUser(string userId)
+        {
+            userId = HttpContext.Session.GetString("UserId");
+            List<SpotSidebarModel> spotSidebarList = new List<SpotSidebarModel>();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                try
+                {
+                    var client = _apiHelper.CreateClient();
+                    client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+
+
+
+
+
+                    string requestJson = JsonConvert.SerializeObject(userId);
+
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetFavAlbumAndArtistByUser", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        spotSidebarList = await response.Content.ReadAsAsync <List<SpotSidebarModel>>();
+
+                        if (spotSidebarList != null && spotSidebarList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Successfully retrieved Album and Artist .";
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = "No Album and Artist found.";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error: {response.ReasonPhrase}";
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = $"Request failed: {ex.Message}";
+                }
+            }
+
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = spotSidebarList });
         }
 
 

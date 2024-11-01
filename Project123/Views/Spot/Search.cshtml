@@ -118,6 +118,17 @@
         .main-content-browse {
 
         }
+
+        .dv-genre{
+            margin-right:30px;
+        }
+        .dv-genre a{
+            text-decoration:none;
+            color:unset;
+        }
+            .dv-genre a:hover {
+                color: unset;
+            }
        
     </style>
 }
@@ -127,23 +138,43 @@
         <div>
             <input class="form-control" type="text" id="txtSearch" />
             <div class="main-content-music row">
-                <h3>Songs</h3>
-                <div class="main-content-music-song">
+                <div class="main-content-hidden"style="display:none;">
 
+                    <div class="main-content-music-song">
+                        <h3>Songs</h3>
+                        <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%" style="background-color: #121212; ">
+                            <thead>
+                                <tr class="">
+
+                                    <th style="width:40px !important">#</th>
+                                    <th>Title</th>
+                                    <th style="min-width:20px !important; max-width:20px!important;"></th>
+                                    <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="main-content-music-artist">
+                        <h3>Artist</h3>
+
+                    </div>
+
+                    <div class="main-content-music-album">
+                        <h3>Albums</h3>
+
+                    </div>
                 </div>
+             
 
-                <h3>Artist</h3>
-                <div class="main-content-music-artist">
-
-                </div>
-
-                <h3>Albums</h3>
-                <div class="main-content-music-album">
-
-                </div>
-
-                <h3>Browse all</h3>
                 <div class="main-content-browse row" style=" border-color:white;">
+                 <h3>Browse all</h3>
+                
+                    
 
                 </div>
                 @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
@@ -219,6 +250,9 @@
         $('#txtSearch').on('keyup', function () {
             searchTerm = $(this).val();
             if (searchTerm.trim() !== "") {
+
+                $('.main-content-browse').html("");
+                $('.main-content-hidden').show();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("SearchSpot1", "Spot")',
@@ -253,6 +287,10 @@
                     }
                 });
             }
+            else {
+                $('.main-content-browse').show();
+                $('.main-content-hidden').hide();
+            }
         });
 
 
@@ -275,6 +313,7 @@
                  </div>
              </div>
          `;
+                debugger
                 $('.main-content-music').append(albumHtml);
                 $('.main-content-artist').append(albumHtml);
                 $('.main-content-album').append(albumHtml);
@@ -297,8 +336,8 @@
 
         function getBrowse() {
             searchGenre();
-            getAlbumContainer();
-            getArtist();
+            //getAlbumContainer();
+            //getArtist();
         }
 
         //$('#aside').on('change', function () {
@@ -329,20 +368,24 @@
                 success: function (result) {
 
                     // Clear existing genres before appending new ones
-                    $('.main-content-browse').empty();
-
+                 /*   $('.main-content-browse').empty();*/
+                  
                     // Check if result.Data is an array
                     if (Array.isArray(result.Data) && result.Data.length > 0) {
                         result.Data.forEach(function (genre) {
-                            var genreIdEncoded = encodeURIComponent(genre.GenreId);
+                            var genreIdEncoded = btoa(genre.GenreId);
+                            console.log(genreIdEncoded);
                             // genre.GenreId ต้องเป็นชื่อเดียวกับ controller
                             var genreHtml = `
+                           
+                            <div class="dv-genre">
                       <a href="@Url.Action("Genre", "Spot")?genreId=${genre.GenreId}">
-                        <div class="song-genre-div col-lg-3 col-4">
+                        <div class="song-genre-div">
                             <label class="genre-label">${genre.GenreName}</label>
                             <img src="${genre.GenreImagePath}" alt="${genre.GenreName}" class="genre-image">
                         </div>
                           </a>
+                          </div>
                         `;
 
                             // Append the genre HTML to the main content

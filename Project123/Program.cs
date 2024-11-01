@@ -106,7 +106,7 @@ builder.Services.AddHttpClient("BaseClient", client =>
 builder.Services.AddDistributedMemoryCache(); // Required for session storage
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.IdleTimeout = TimeSpan.FromMinutes(120); // Set session timeout //FromHours(2);
     options.Cookie.HttpOnly = true; // Set cookie as HttpOnly
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
