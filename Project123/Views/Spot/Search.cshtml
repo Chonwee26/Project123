@@ -253,6 +253,7 @@
 
                 $('.main-content-browse').html("");
                 $('.main-content-hidden').show();
+                /*$('.main-content-music-artist').empty();*/
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("SearchSpot1", "Spot")',
@@ -262,10 +263,10 @@
                         debugger
                         searchSongContainer(result.data);
 
-                        $('.dv-content').on('click', function () {
+                        @*$('.dv-content').on('click', function () {
                             var albumId = $(this).data('album-id');
                             window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
-                        });
+                        });*@
 
                         /*    songData = result.Data;*/
                         //songData = result.Data.forEach(function (song, index) {
@@ -295,44 +296,76 @@
 
 
 
-        function searchSongContainer(searchData) {
+      function searchSongContainer(searchData) {
+    debugger;
 
-            searchData.forEach(function (album, index) {
+    const appendedArtists = []; // Array to keep track of appended artist names
 
-                count = index + 1;
-                var albumHtml = `
-             <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-                 <div class="music-content">
-                     <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
-                 </div>
-                 <div class="music-content-title">
-                     <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
-             title="${album.AlbumName}">${album.AlbumName}</h6>
-                     <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
-             title="${album.ArtistName}">${album.ArtistName}</p>
-                 </div>
-             </div>
-         `;
-                debugger
-                $('.main-content-music').append(albumHtml);
-                $('.main-content-artist').append(albumHtml);
-                $('.main-content-album').append(albumHtml);
+    searchData.forEach(function (album, index) {
+        count = index + 1;
 
-                // Initialize tooltips after appending the content
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                });
+        var albumHtml = `
+            <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+                <div class="music-content">
+                    <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+                </div>
+                <div class="music-content-title">
+                    <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                        title="${album.AlbumName}">${album.AlbumName}</h6>
+                    <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                        title="${album.ArtistName}">${album.ArtistName}</p>
+                </div>
+            </div>
+        `;
 
+        const artistName = album.ArtistName;
+        debugger
+        // Check if the artist name has already been appended
+        if (!appendedArtists.includes(artistName) && album.ArtistImagePath != null) {
+            appendedArtists.push(artistName); // Add artist name to the array
 
-                $('.dv-content').on('click', function () {
+            var artistHtml = `
+                <div class="col-xxl-2 col-lg-4 col-6 dv-content artist-name" data-artist-name="${album.ArtistName}">
+                    <div class="music-content">
+                        <img id="music_pic${count}" src="${album.ArtistImagePath}" class="img-music-content" />
+                    </div>
+                    <div class="music-content-title">
+                        <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                            title="${artistName}">${artistName}</h6>
+                        <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                            title="${artistName}">Artist</p>
+                    </div>
+                </div>
+            `;
 
-                    var albumId = $(this).data('album-id');
-                    window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
-
-                });
-            });
+            $('.main-content-music-artist').append(artistHtml);
         }
+
+         $('.main-content-music').append(albumHtml);
+         $('.main-content-album').append(albumHtml);
+
+        // Initialize tooltips after appending the content
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        $('.dv-content').on('click', function (event) {
+            // Only trigger this if the element clicked is not .artistID
+            if (!$(event.target).closest('.artistID').length) {
+                var albumId = $(this).data('album-id');
+                window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId;
+            }
+        });
+
+        $('.artist-name').on('click', function (event) {
+            event.stopPropagation(); // Prevents the .dv-content click from triggering
+            var artistname = $(this).data('artist-name');
+            window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + artistname;
+        });
+    });
+}
+
 
         function getBrowse() {
             searchGenre();
@@ -369,7 +402,7 @@
 
                     // Clear existing genres before appending new ones
                  /*   $('.main-content-browse').empty();*/
-                  
+
                     // Check if result.Data is an array
                     if (Array.isArray(result.Data) && result.Data.length > 0) {
                         result.Data.forEach(function (genre) {
@@ -377,7 +410,7 @@
                             console.log(genreIdEncoded);
                             // genre.GenreId ต้องเป็นชื่อเดียวกับ controller
                             var genreHtml = `
-                           
+
                             <div class="dv-genre">
                       <a href="@Url.Action("Genre", "Spot")?genreId=${genre.GenreId}">
                         <div class="song-genre-div">
@@ -506,7 +539,7 @@ $.ajax({
            debugger
            var artistname = $(this).data('artistname-name');
            window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + artistname
-            
+
        });
    },
    error: function (request, status, error) {

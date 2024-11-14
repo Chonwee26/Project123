@@ -21,6 +21,7 @@ namespace Project123.Dto
 
         [Column("AlbumImage")]
         public string? AlbumImagePath { get; set; }
+        public int? AlbumGenre { get; set; }
 
     }
 }

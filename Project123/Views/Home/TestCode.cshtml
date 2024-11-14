@@ -1,297 +1,88 @@
 ﻿<!DOCTYPE html>
-<html>
-<body>
-
-    <p>Click the button to open an about:blank page in a new browser window that is 200px wide and 100px tall.</p>
-
-    <button onclick="myFunction()">Try it</button>
-
-    <script>
-        function myFunction() {
-            // Open a new window with specific width and height
-            var myWindow = window.open("", "MsgWindow", "width=200,height=100");
-
-            // Write content to the new window
-            var html = `<div><h1>Hello World!</h1></div>`;
-            myWindow.document.write(html);
-
-            // Optional: Close the document stream to make sure content is rendered
-            myWindow.document.close();
-        }
-    </script>
-
-</body>
-</html>
-
-
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player with AJAX Navigation</title>
+    @*<link rel="stylesheet" href="styles.css">*@
 <style>
-    .song-genre-div {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding-bottom: 60px; /* Space for the footer */
+    }
+
+    #main-content {
+        padding: 20px;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
         padding: 10px;
-        border-radius: 5px;
-        width: 300px;
     }
 
-    .genre-label {
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    .genre-image {
-        width: 50px;
-        height: 50px;
-        transform: rotate(30deg);
-        transition: transform 0.3s ease;
+    #music-player audio {
+        width: 100%;
+        max-width: 300px;
     }
 </style>
 
+</head>
+<body>
 
-<div class="song-genre-div">
-    <label class="genre-label">Rock</label>
-    <img src="your-image-url.jpg" alt="Genre Image" class="genre-image">
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+    <div id="main-content">
+        <!-- Content will be loaded here via AJAX -->
+        <h1>Welcome to the Music Player App</h1>
+        <p>Click on links to navigate without stopping the music.</p>
+    </div>
 
-    $(document).ready(function () {
-        var genre = "Rock";  // You can dynamically get this value from your data
-        var color;
-
-        switch (genre) {
-            case "Rock":
-                color = "#FF5733";  // Example color for Rock
-                break;
-            case "Jazz":
-                color = "#3375FF";  // Example color for Jazz
-                break;
-            case "Pop":
-                color = "#FF33F7";  // Example color for Pop
-                break;
-            default:
-                color = "#E0E0E0";  // Default color
-                break;
-        }
-
-        $('.song-genre-div').css('background-color', color);
-    });
-
-     function readedHistoryFinish() {
-     debugger
-     $.ajax({
-         type: 'GET',
-         url: "@Url.Content("~/Orders/InspectionPage")?handler=ReadHistoryFinish",
-         global:false,
-         beforeSend: function (xhr) {
-             xhr.setRequestHeader("XSRF-TOKEN",
-                 $('input:hidden[name="__RequestVerificationToken"]').val());
-         },
-         success: function (result) {
-             debugger
-             if (result.success) {
-                 searchHistoryFinish();
-             } else {
-                 Swal.fire(
-                     i18next.t('common:swal.error'),
-                     result.message == "" ? i18next.t('common:swal.errormessage') : result.message,
-                     'error'
-                 );
-             }
-         },
-         error: function (req, status, error) {
-             Swal.fire(
-                 i18next.t("common:swal.error"),
-                 error,
-                 'error'
-             )
-         }
-     });
- }
-
- function countNumberNotiFinish() {
-     console.log("run refresh 10 minute Noti Count");
-     $.ajax({
-         type: 'GET',
-         url: "@Url.Content("~/Orders/InspectionPage")?handler=SearchHistoryFinish",
-         global: false,
-         beforeSend: function (xhr) {
-             xhr.setRequestHeader("XSRF-TOKEN",
-                 $('input:hidden[name="__RequestVerificationToken"]').val());
-         },
-         success: function (result) {
-             debugger
-             if (result.success) {
-                 var CountNotiUnread = 0;
-                 result.data.forEach(notification => {
-                     if (notification.ReadStatus == 0) {
-                         CountNotiUnread++;
-                     }
-                 });
-                 const lblCountMsgUnread = document.getElementById('lblCountMsgUnread');
-                 lblCountMsgUnread.textContent = CountNotiUnread;
-                 if (CountNotiUnread > 0) {
-                     $("#lblCountMsgUnread").fadeIn();
-
-                 } else {
-                     $("#lblCountMsgUnread").fadeOut();
-
-                 }
-             } else {
-                 Swal.fire(
-                     i18next.t('common:swal.error'),
-                     result.message == "" ? i18next.t('common:swal.errormessage') : result.message,
-                     'error'
-                 );
-             }
-         },
-         error: function (req, status, error) {
-             Swal.fire(
-                 i18next.t("common:swal.error"),
-                 error,
-                 'error'
-             )
-         }
-     });
- }
-
- function searchHistoryFinish() {
-     debugger
-
-     $.ajax({
-         type: 'GET',
-         url: "@Url.Content("~/Orders/InspectionPage")?handler=SearchHistoryFinish",
-         global: false,
-         beforeSend: function (xhr) {
-             xhr.setRequestHeader("XSRF-TOKEN",
-                 $('input:hidden[name="__RequestVerificationToken"]').val());
-         },
-         success: function (result) {
-             debugger
-             if (result.success) {
-                 initNotiBell(result.data);
-             } else {
-                 Swal.fire(
-                     i18next.t('common:swal.error'),
-                     result.message == "" ? i18next.t('common:swal.errormessage') : result.message,
-                     'error'
-                 );
-             }
-         },
-         error: function (req, status, error) {
-             Swal.fire(
-                 i18next.t("common:swal.error"),
-                 error,
-                 'error'
-             )
-         }
-     });
- }
-
- function initNotiBell(dataList) {
-     debugger
-     const notificationList = document.getElementById('notificationList');
-     const notificationCount = document.getElementById('notificationCount');
-     const lblCountMsgUnread = document.getElementById('lblCountMsgUnread');
-
-     // Function to create notification item
-     var CountNotiUnread = 0;
-
-     function createNotificationItem(notification) {
-         const item = document.createElement('li');
-         item.className = 'notification-item li-pointer-hover';
-         item.onclick = function () {
-             $('#btnGroupHeader').hide();
-             $('#tabDetail a[href="#cu_Detail"]').tab('show');
-             $.ajax({
-                 type: "POST",
-                 url: "@Url.Content("~/Orders/InspectionPage")?handler=OpenInspectionDetail",
-                 data: { ProjectNo: notification.ProjectNo, SiteCode: notification.SiteCode },
-                 beforeSend: function (xhr) {
-                     xhr.setRequestHeader("XSRF-TOKEN",
-                         $('input:hidden[name="__RequestVerificationToken"]').val());
-                 },
-                 success: function (result) {
-                     if (result.redirect) {
-                         //token expired
-                         window.location.replace(result.redirect);
-                         return;
-                     }
-                     if (result.success == undefined) {
-                         $("#btnCloseDetail").show();
-                         $("#cu_Detail").html(result);
-                         $("#cu_Detail").localize(); //enforce translate
-
-                     } else {
-                         //case error
-                         Swal.fire(
-                             i18next.t('common:swal.error'),
-                             result.message == "" ? i18next.t('common:swal.errormessage') : result.message,
-                             'error'
-                         ).then((result) => {
-                             closeDetailTab();
-                         });
-                     }
-                 },
-                 error: function (error) {
-                     console.log(error);
-                 }
-             });
-
-         };
-         item.innerHTML = `
-             <div class="notification-title">${notification.NotifyTitle}</div>
-             <div class="notification-desc">${notification.NotifyMessage}</div>
-             <div class="notification-time">${notification.Reference5} &nbsp&nbsp ID:${notification.Recipient}</div>
-         `;
-         if (notification.ReadStatus == 0) {
-             CountNotiUnread++;
-         }
-         return item;
-     }
-
-     // Populate notifications
-     notificationList.replaceChildren();
-     if (dataList != null) {
-         dataList.forEach(notification => {
-             notificationList.appendChild(createNotificationItem(notification));
-         });
-         // Update notification count
-         notificationCount.textContent = dataList.length;
-         lblCountMsgUnread.textContent = CountNotiUnread;
-         if (CountNotiUnread > 0) {
-             $("#lblCountMsgUnread").fadeIn();
-
-         } else {
-             $("#lblCountMsgUnread").fadeOut();
-
-         }
-     }
-
-
-
- }
-</script>
-
-<li class="nav-item dropdown hidden-caret" id="divMsgInspec" style="display:none;">
-    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false" id="btnNotification" onclick="readedHistoryFinish();" role="button">
-        <div class="navmenu-bg">
-            <i class="fa-solid fa-bell icon-outline icon-outline-bell" style="font-size:22px;"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge badge-bell rounded-pill bg-danger" id="lblCountMsgUnread" style="display:none;">
-                0
-                <span class="visually-hidden">unread messages</span>
-            </span>
+    <!-- Music Player in a fixed footer -->
+    <footer>
+        <div id="music-player">
+            <audio id="audio" controls>
+                <source src="/uploads/Aimer/Album_4015/Sign.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
         </div>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end notifications" aria-labelledby="btnNotification">
-        <li class="dropdown-header">
-            You have <span id="notificationCount">0</span> notifications
-        </li>
-        <div id="notificationList" style="max-height: 400px; overflow-y: auto;">
-            <!-- Notifications will be dynamically inserted here -->
-        </div>
-    </ul>
-</li>
+    </footer>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Example links for navigation
+            $('#main-content').append(`
+        <nav>
+            <a href="https://localhost:7166/" class="nav-link">Page 1</a> |
+            <a href="page2.html" class="nav-link">Page 2</a>
+        </nav>
+    `);
 
+            // Load content with AJAX on link click
+            $('body').on('click', 'a.nav-link', function (e) {
+                e.preventDefault();
+                const url = $(this).attr('href');
+
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        $('#main-content').html(data);
+                        history.pushState(null, null, url);
+                    }
+                });
+            });
+
+            // Handle back/forward navigation
+            window.onpopstate = function () {
+                location.reload(); // Reload current content when back/forward is used
+            };
+        });
+
+    </script>
+</body>
+</html>

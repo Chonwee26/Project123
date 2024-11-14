@@ -10,15 +10,15 @@ namespace Project123.Controllers
     public class DataModel
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
     public class BaseController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiHelper _apiHelper;
+        //private readonly ApiHelper _apiHelper;
         protected ResponseModel response;
 
         public BaseController(/*ApiHelper apiHelper,*/IHttpClientFactory httpClientFactory)
@@ -28,10 +28,10 @@ namespace Project123.Controllers
             response = new ResponseModel();
         }
 
-        // This method can be called from derived controllers
+       // This method can be called from derived controllers
         protected async Task<IActionResult> GetProtectedData(string endpoint)
         {
-            string token = HttpContext.Session.GetString("UserToken");
+            string token = HttpContext.Session.GetString("UserToken")??string.Empty;
 
             if (string.IsNullOrEmpty(token))
             {

@@ -51,6 +51,10 @@
 
                 </div>
                 <span id="txtErrorLogin" class="mb-2" style="display:none; color:red;">กรุณาใส่ข้อมูลให้ถูกต้อง</span>
+                <div class="form-group">
+                    <input type="checkbox" id="chkRememberMe" name="RememberMe" />
+                    <label for="RememberMe">Remember Me</label>
+                </div>
                 <div class="form-group mb-4">
                     <button type="submit" class="btn btn-primary" id="btnLogin">Log in</button>
                     <a href="#">Forgot Password?</a>
@@ -103,6 +107,7 @@
 
                     Email: $('#txtEmail').val(),
                     Password: $('#txtPassword').val(),
+                    RememberMe: $('#chkRememberMe').prop('checked'),
 
                 };
 
@@ -118,7 +123,7 @@
                                 SweetAlert('success', userName);
                                 localStorage.setItem('access_token', result.message);
                                 var token = localStorage.getItem('access_token');
-                                window.location.href = "https://localhost:7166/Shipment/SearchShipmentPage";
+                                window.location.href = "https://localhost:7166/Home/MusicSpotPage";
 
                                 /*    bindingTable(result.Data);*/
                             }

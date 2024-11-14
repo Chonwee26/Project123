@@ -85,7 +85,7 @@
         }
 
         .music-content:hover {
-            background-color: #8f2c8fa8; /* or any color you prefer */
+            background-color: #8f2c8fa8; 
         }
 
         .music-content:active {
@@ -117,7 +117,7 @@
             background-image: none !important;
         }
 
-        .btn-edit-album, .btn-delete, .btn-edit-song, .btn-edit-artist, .btn-edit-genre {
+        .btn-edit-album, .btn-delete, .btn-edit-song, .btn-edit-artist, .btn-edit-genre, btn-album-plus{
             cursor: pointer;
         }
         .select2-container--open {
@@ -156,8 +156,9 @@
                                 <div class="col-12">
                                     <h6>Select Genres</h6>
                                     <div class="input-group">
-                                        <select class=' form-control select2' id="ddlAlbumGenres" style="width: 100% !important;"place-holder="Select Genres">
-                                        </select>
+                                        @*<select class=' form-control select2' id="ddlAlbumGenres" style="width: 100% !important;" place-holder="Select Genres">
+                                        </select>*@
+                                        @Html.DropDownList("ddlAlbumGenre", new SelectList(ViewBag.GenreList, "GenreId", "GenreName"), "--- Select ---", new { @class = "select2 form-control",@style = "width:100%" })
                                     </div>
                                 </div>
                             </div>
@@ -386,6 +387,7 @@
                                     </div>
 
                                     <div class="col-6 d-flex justify-content-end">
+                                        <button class="btn btn-secondary me-3" type="button" onclick="clearSearchAlbumValue()">Clear Value</button>
                                         <button class="btn btn-secondary me-3" type="button" onclick="createAlbum()">Create Album</button>
                                         <button class="btn btn-secondary" type="button" onclick="searchAlbum()">Search Album</button>
                                     </div>
@@ -527,7 +529,7 @@
                                     <div class="col-12 col-sm-12 col-md-6 ">
                                         <h6>Artist Genres</h6>
                                         <div class="input-group">
-                                            <select class="form-control select2" id="txtSearchArtistGenres" placeholder="Artist Genres">
+                                            <select class="form-control select2" id="ddlSearchArtistGenres" placeholder="Artist Genres">
                                                 <option value="">Select</option>
                                                 <option value="MALE">Male</option>
                                                 <option value="FEMALE">Female</option>
@@ -541,7 +543,7 @@
                                     <div class="col-4">
                                     </div>
                                     <div class="col-8 d-flex justify-content-end mt-3">
-                                        <button class="btn btn-secondary me-3" type="button" onclick="clearValue()">Clear Value</button>
+                                        <button class="btn btn-secondary me-3" type="button" onclick="clearArtistValue()">Clear Value</button>
                                         @*<button class="btn btn-secondary me-3" type="button" onclick="createArtist()">Create Artist</button>*@
                                         <button type="button" id="btnCreateArtist" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#artistModal">
                                             Create Artist
@@ -594,7 +596,7 @@
                                     <div class="col-4">
                                     </div>
                                     <div class="col-8 d-flex justify-content-end mt-3">
-                                        <button class="btn btn-secondary me-3" type="button" onclick="clearValue()">Clear Value</button>
+                                        <button class="btn btn-secondary me-3" type="button" onclick="clearGenreValue()">Clear Value</button>
                                         @*<button class="btn btn-secondary me-3" type="button" onclick="createArtist()">Create Artist</button>*@
                                         <button type="button" id="btnCreateGenre" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#genreModal">
                                             Create Genre
@@ -647,6 +649,7 @@
         var saveGenreStatus;
         var artistId;
         var genreId;
+        var genreList = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.GenreList))');
             /*    var rowDataEdit;*/
 
         $(document).ready(function () {
@@ -664,32 +667,33 @@
             console.log(BtnAlbumData);
             $('#txtEditAlbumName').val(BtnAlbumData.AlbumName);
             $('#txtEditAlbumArtist').val(BtnAlbumData.ArtistName);
-            $('#albumEditModalImagePreview').attr('src', BtnAlbumData.AlbumImagePath)
-            $('#ddlAlbumGenres').empty();
-            $('#ddlAlbumGenres').append('<option value="">Select</option>')
-            if (BtnAlbumData) {
+            $('#albumEditModalImagePreview').attr('src', BtnAlbumData.AlbumImagePath);
+            $('#ddlAlbumGenre').val(BtnAlbumData.AlbumGenre).change();
+            //$('#ddlAlbumGenres').empty();
+            //$('#ddlAlbumGenres').append('<option value="">Select</option>')
+            //if (BtnAlbumData) {
 
-                $('#ddlAlbumGenres').append(`<option value="${BtnAlbumData.AlbumId}">${BtnAlbumData.ArtistName}</option>`)
-                $('#ddlAlbumGenres').select2({
-                    dropdownParent: $('#albumModal'),
-                    allowClear: false,
+            //    $('#ddlAlbumGenres').append(`<option value="${BtnAlbumData.AlbumId}">${BtnAlbumData.ArtistName}</option>`)
+            //    $('#ddlAlbumGenres').select2({
+            //        dropdownParent: $('#albumModal'),
+            //        allowClear: false,
 
-                });
+            //    });
 
-                $('#ddlAlbumGenres').val(BtnAlbumData.ArtistName);
-                $('#modal').modal('show');
-            }
-            else {
+            //    $('#ddlAlbumGenres').val(BtnAlbumData.ArtistName);
+            //    $('#modal').modal('show');
+            //}
+            //else {
 
-                $('#ddlAlbumGenres').select2({
-                    allowClear: false,
+            //    $('#ddlAlbumGenres').select2({
+            //        allowClear: false,
 
-                });
+            //    });
 
 
-                $('#modal').modal('show');
-            }
 
+            //}
+            $('#modal').modal('show');
         });
         $('#albumEditImagePreview').click(function () {
 
@@ -779,8 +783,8 @@
         }
 
         $('#btnSaveGenreModal').click(function () {
-          
-            
+
+
             if (saveGenreStatus == "Update") {
                 createGenre(genreId);
             }
@@ -791,7 +795,7 @@
         });
 
         $('#btnSaveArtistModal').click(function () {
-         
+
             if (saveArtistStatus == "Update") {
                 createArtist(artistId);
             }
@@ -959,7 +963,7 @@
             frmArtist = {
                 ArtistId: $("#txtSearchArtistId").val(),
                 ArtistName: $("#txtSearchArtistName").val(),
-                ArtistGenres: $('#txtSearchArtistGenres').val()
+                ArtistGenres: $('#ddlSearchArtistGenres').val()
             }
             console.log('frmArtist', frmArtist);
 
@@ -1086,6 +1090,7 @@ $.ajax({
                 data: frmSearch,
                 dataType: "json",
                 success: function (result) {
+                    
                     bindingTableAlbum(result.Data);
                     /* bindingTable(result.Data); */
                 },
@@ -1122,6 +1127,7 @@ $.ajax({
             formData.append("AlbumName", $("#txtAlbumName").val());
             formData.append("ArtistName", $("#txtAlbumArtist").val());
             formData.append("AlbumImage", $("#fileAlbumImage")[0].files[0]);
+            formData.append("AlbumGenre", $("#ddlAlbumGenre").val());
 
             $.ajax({
                 url: '@Url.Action("CreateAlbum1", "Spot")',
@@ -1141,7 +1147,7 @@ $.ajax({
                 function saveEditGenre() {
     var formData = new FormData();
     formData.append("GenreName", $("#txtEditGenreName").val());
-  
+
     formData.append("GenreImage", $("#fileEditGenreImage")[0].files[0]);
     formData.append("GenreIdId", BtnAlbumData.AlbumId);
 
@@ -1187,8 +1193,11 @@ $.ajax({
             formData.append("AlbumName", $("#txtEditAlbumName").val());
             formData.append("ArtistName", $("#txtEditAlbumArtist").val());
             formData.append("AlbumImage", $("#fileEditAlbumImage")[0].files[0]);
+            formData.append("AlbumGenre", $('#ddlAlbumGenre').val());
+            formData.append("AlbumImagePath", BtnAlbumData.AlbumImagePath);
             formData.append("AlbumId", BtnAlbumData.AlbumId);
 
+            console.log('fromdata', formData);
             $.ajax({
                 url: '@Url.Action("EditAlbum1", "Spot")',
                 type: 'POST',
@@ -1236,32 +1245,55 @@ $.ajax({
                     });
                 }
             }
+        function clearSearchAlbumValue() {
+            //$('#txtAlbumArtist').val("");
+            //$('#txtAlbumName').val("");
+            //$('#fileAlbumImage').val("");
+            $('#albumForm')[0].reset();
+            $('#albumImagePreview').attr('src', '#').hide();
+            $('#tblDataTableAlbum').dataTable().empty();
+        };
 
-                function clearAlbumValue() {
-                    $('#albumSongForm')[0].reset();
-                    $('#albumArtistSongForm')[0].reset();
-                    $('#tblDataTableSongAlbum').dataTable().empty();
-                    $('#tblDataTableSearchArtistSongAlbum').dataTable().empty();
-                };
+        function clearAlbumValue() {
+            $('#albumSongForm')[0].reset();
+            $('#albumArtistSongForm')[0].reset();
+            $('#tblDataTableSongAlbum').dataTable().empty();
+            $('#tblDataTableSearchArtistSongAlbum').dataTable().empty();
+        };
 
-                function clearValue() {
-                    $('#fileSongFile').val(null);
-                    $('#albumForm')[0].reset();
-                    $('#songForm')[0].reset();
-                    $('#tblDataTableAlbum').dataTable().empty();
-                    $('#tblDataTableSong').dataTable().empty();
+        function clearValue() {
+            $('#fileSongFile').val(null);
+            //$('#albumForm')[0].reset();
+            $('#songForm')[0].reset();
+            //$('#tblDataTableAlbum').dataTable().empty();
+            $('#tblDataTableSong').dataTable().empty();
 
-                    // Reset audio preview
-                    $('#songAudioPreview').attr('src', '#');
-                    $('#audiocontrolPreview').hide();
+            // Reset audio preview
+            $('#songAudioPreview').attr('src', '#');
+            $('#audiocontrolPreview').hide();
 
-                    // Reset image preview
-                    $('#albumImagePreview').attr('src', '#').hide();
-                    $('#songImagePreview').attr('src', '#').hide();
+            // Reset image preview
+            /*  $('#albumImagePreview').attr('src', '#').hide();*/
+            $('#songImagePreview').attr('src', '#').hide();
 
-                    // Clear any text related to the duration
-                    $('#duration').text('');
-                }
+            // Clear any text related to the duration
+            $('#duration').text('');
+        };
+
+        function clearArtistValue() {
+
+            $('#ArtistForm')[0].reset();
+            $('#ddlSearchArtistGenres').val('').change();
+            //$('#ArtistForm')[0].reset();
+            $('#tblDataTableArtist').dataTable().empty();
+        };
+
+        function clearGenreValue() {
+            $('#genreForm')[0].reset();
+            $('#tblDataTableGenre').dataTable().empty();
+        };
+
+
                 function bindingTableSong(songData) {
                     $('#dvTableSong').show();
                     // Initialize DataTable

@@ -123,7 +123,7 @@
             <h1>@Model.GenreName</h1>
             <div class="main-content-music row">
                 <h3>@Model.GenreName</h3>
-                <h3 class="text-end">Show All</h3>
+                <span class="text-end">Show All</span>
                 <div class="main-content-genre">
 
                 </div>
@@ -299,8 +299,50 @@
  }
 
 
-
         function getGenreContainer() {
+ $.ajax({
+     type: 'POST',
+     url: '@Url.Action("SearchDataFromGenre1", "Spot")',
+     data: {AlbumGenre : @Model.GenreId},
+     dataType: "json",
+     success: function (result) {
+         result.Data.forEach(function (album, index) {
+             count = index + 1;
+             var albumHtml = `
+         <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
+             <div class="music-content">
+                 <img id="music_pic${count}" src="${album.AlbumImagePath}" class="img-music-content" />
+             </div>
+             <div class="music-content-title">
+                 <h6 class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+         title="${album.AlbumName}">${album.AlbumName}</h6>
+                 <p class="link-opacity-100-hover text-content" href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+         title="${album.ArtistName}">${album.ArtistName}</p>
+             </div>
+         </div>
+     `;
+             $('.main-content-genre').append(albumHtml);
+             // Initialize tooltips after appending the content
+             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+             tooltipTriggerList.map(function (tooltipTriggerEl) {
+                 return new bootstrap.Tooltip(tooltipTriggerEl)
+             });
+         });
+
+         $('.dv-content').on('click', function () {
+             var albumId = $(this).data('album-id');
+             window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+         });
+     },
+     error: function (request, status, error) {
+         console.log(error);
+     }
+ });
+    }
+
+
+
+        @*function getGenreContainer() {
      $.ajax({
          type: 'POST',
          url: '@Url.Action("GetAlbum1", "Spot")',
@@ -338,7 +380,7 @@
              console.log(error);
          }
      });
-        }
+        }*@
 
 
 

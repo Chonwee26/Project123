@@ -89,20 +89,7 @@
             </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
-
-            @*<button class="button-control btn-media btn-album-shuffle" type="button">
-                    <i class="fa-solid icon-control fa-shuffle"></i>
-                </button>
-                <div class="" style="background-color:black;">
-
-                    <button class="button-control btn-media btn-media-play">
-                        <i class="fa-solid icon-control fa-circle-play"></i>
-                    </button>
-                    <button class="button-control btn-media btn-media-pause">
-                        <i class="fa-solid icon-control fa-circle-pause"></i>
-                    </button>
-                </div>*@
-
+      
             <table id="tblDataTableSong" class="table table-dark table-hover table-borderless" width="100%">
                 <thead>
                     <tr class="">
@@ -117,29 +104,7 @@
             </table>
         </div>
     </div>
-    <div class="content aside col-lg-3 col-6" id="aside">
-        @*<div>
-                <aside class="aside-content px-3">
-                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                    <div class="img-aside-content">
-                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                    </div>
-                    <h3>17さいのうた。</h3>
-                    <h6>Yuika</h6>
-
-                    <div class="aside-about-artist">
-                        <div class="aside-about-artist-img">
-                            <h6>About the artist</h6>
-                        </div>
-                        <div class="aside-about-artist-title">
-                            <h6>Yuika</h6>
-                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                        </div>
-                    </div>
-                </aside>
-
-            </div>*@
+    <div class="content aside col-lg-3 col-6" id="aside">      
     </div>
 </div>
 
@@ -165,9 +130,9 @@
 
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
-                if ($('#aside').css('display') == 'none') {
-                    toggleAsideDisplay();
-                }
+                //if ($('#aside').css('display') == 'none') {
+                //    toggleAsideDisplay();
+                //}
             });
             $(document).on('click', '.dv-content', function () {
                 ;
@@ -240,7 +205,7 @@
                  dataType: "json",
                  global: false,
     success: function (result) {
-        debugger
+   
     /*    songData = result.Data;*/
         //songData = result.Data.forEach(function (song, index) {
         //    songData.push(song.SongFilePath)

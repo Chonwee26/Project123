@@ -25,8 +25,7 @@ namespace Project123.Controllers
         public async Task<IActionResult> Login(AdminModel UserData)
         {
             ResponseModel response = new ResponseModel();
-
-         
+   
                 try
                 {
                     string requestJson = JsonConvert.SerializeObject(UserData);

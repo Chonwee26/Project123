@@ -18,7 +18,7 @@
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
     <style>
-
+    
 
         .btn-favorite{
             cursor:pointer;
@@ -36,10 +36,11 @@
         }
             .content {
             border-radius: 20px;
-            height: calc(100vh - 75px); /* Adjust height to account for the bottom bar */
-            overflow: hidden;
+            height: calc(100vh - 90px); /* Adjust height to account for the bottom bar */
+            overflow: hidden;       
            
         }
+          
         .about-artist {
             background: #393838;
             padding: 10px;
@@ -47,28 +48,41 @@
         }
         .main-content {
             background-color: #0e0d0d;
-            margin-right: 10px;
+            /*margin-right: 10px;*/
             height: 100%;
-            padding: 15px;
             background-image: linear-gradient(#762676a8, #0e0d0d);
             scrollbar-color: black gray;
-            overflow-y:hidden; /* For browsers that support it, this avoids pushing the content */
-           /* Adds padding to reserve space for the scrollbar */
-          
+            overflow-y: hidden; /* For browsers that support it, this avoids pushing the content */
+            /* Adds padding to reserve space for the scrollbar */
+            margin-right: 15px;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
         }
+
+
+
 
             .main-content:hover {
                 overflow-y: auto;
-                padding: 15px 0px 15px 15px !important;
+                /*padding: 15px 0px 15px 15px !important;*/
+              
+               
             }
+                /* Adjust width on hover to keep space for scrollbar */
+     
+
 
         .aside {
             display: flex;
             background-color: #262626;
-            padding: 15px;
-            overflow-y: auto;
+            padding:15px;
+            overflow-y: hidden;
             height: 100%;
             color: white;
+            padding-right:15px;
+        }
+        .aside:hover{
+            overflow-y:auto;
         }
 
         .main-content-music {
@@ -177,14 +191,22 @@
         html, body {
             height: 100%;
             margin: 0;
-            overflow: hidden;
-         
+            /*overflow: hidden;*/
+           
          
         }
 
         body {
             background-color: black;
+            min-width: 874px;
+        }
 
+
+        @@media (max-width: 874px) {
+            .main-content {
+                overflow-x: auto;
+                
+            }
         }
 
         #main {
@@ -195,9 +217,9 @@
         }
 
         .sidebar {
-            position: fixed;
+            position: absolute;
             left: 0;
-            height: calc(100vh - 75px);
+            height: calc(100vh - 90px);
             display: flex !important;
             flex-direction: column;
             z-index: 1;
@@ -209,7 +231,7 @@
             scrollbar-color: black gray;
             padding: 10px;
             box-sizing: border-box;
-           
+            scrollbar-width: thin;
         }
             .sidebar:hover {
                 overflow-y: auto;
@@ -947,7 +969,7 @@
         });
 
         function bindingMediaLayout(data,image,albumName) {
-
+            
             $('#dv-bottomside').empty();
             $('#aside').empty();
             var bottomMedia = `
@@ -958,12 +980,9 @@
 
             <div class="bottomside-title" style = "margin-bottom:5px;">
                 <a class="title-artist" href="" style="color:white;margin:0;font-size:1rem; font-weight:500;" >${data.SongName}</a> <br>
-                <a  class="title-artist" href="" style="color:gray;">${data.ArtistName}</a>
+                  <a class="title-artist" href="/Spot/ArtistDetails?artistname=${encodeURIComponent(data.ArtistName)}" style="color:gray;">${data.ArtistName}</a>
             </div>`;
             $('#dv-bottomside').append(bottomMedia);
-
-
-
 
             var aside = `<div class="dv-aside">
     <aside class="aside-content">
@@ -1002,7 +1021,7 @@
                 global: false,
                 dataType: "json",
                 success: function (result) {
-                    debugger
+
                     $('.aside-about-artist-title p').text(result.Data[0].ArtistBio);
                 },
 
@@ -1012,7 +1031,6 @@
             });
 
             $('#aside').append(aside);
-
         }
         $('#fileSongFile').change(function (e) {
 
@@ -1027,7 +1045,6 @@
                 // Ensure seconds are displayed with two digits
                 var formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
                 audioDurationElement.text('Duration: ' + minutes + ':' + formattedSeconds);
-
                 $('#durationInput').val(parseInt(duration));
             });
 
@@ -1040,7 +1057,6 @@
             audioControl.load(); // Reload audio player to apply the new source
             $('#audiocontrol').show();
         });
-
 
         $('#tblDataTableSongAlbum tbody').on('click', 'tr', function () {
             console.log('hispot');
@@ -1056,8 +1072,6 @@
                 console.error('Row data is null or undefined');
             }
         });
-
-
 
         function getAlbumContainer() {
             $.ajax({
@@ -1083,7 +1097,6 @@
                     </div>
                 `;
                         $('.main-content-music').append(albumHtml);
-
                         // Initialize tooltips after appending the content
                         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
                         tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -1092,25 +1105,15 @@
                     });
 
                     $('.dv-content').on('click', function () {
-
                         var albumId = $(this).data('album-id');
                         window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
-
                     });
-
-
-
-
-
                 },
 
                 error: function (request, status, error) {
                     console.log(error);
                 }
-
-
             });
-
         }
 
             function getAlbum() {
@@ -1195,20 +1198,26 @@ $('.lib-sidebar').append(albumHtml);
     });
         }
 
-
                 function getAlbumSideLayout() {
     $.ajax({
         type: 'POST',
         url: '@Url.Action("GetFavAlbumAndArtistByUser1", "Spot")',
         dataType: "json",
+        global:false,
         success: function (result) {
-            debugger
+            $('#libSideBar').empty();
+            var Heart = `               <div class=""style="text-align:center;">
+       <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+   </div>`
+            $('.lib-sidebar').append(Heart);
             result.Data.forEach(function (sideData, index) {
-                debugger
+
                 var sideFavData = result.Data
                 if (sideFavData[index].FavoriteArtist) {
 
                     var Html = `
+
+
                        <div class="imgArtist circle" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
                             title="
                                       ${sideData.ArtistName}<br>
@@ -1218,13 +1227,9 @@ $('.lib-sidebar').append(albumHtml);
                      <a href="@Url.Action("ArtistDetails", "Spot")?artistname=${sideData.ArtistName}">
                         <img src="${sideData.ArtistImagePath}" />
                     </a>
-
                        </div>`;
-
                 }
                 else {
-
-
                     var Html = `
                     <div class="imgArtist" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
                          title="
@@ -1234,10 +1239,10 @@ $('.lib-sidebar').append(albumHtml);
                   <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${sideData.AlbumId}">
                      <img src="${sideData.AlbumImagePath}" />
                  </a>
-
                     </div>`;
                 }
 
+                //$(Html).hide().appendTo('.lib-sidebar').fadeIn();
                 $('.lib-sidebar').append(Html);
             });
             // Initialize tooltips after appending the content
@@ -1251,7 +1256,6 @@ $('.lib-sidebar').append(albumHtml);
         }
     });
 }
-
 
         function toggleAsideDisplay() {
             $('#aside').toggle();

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
 
 namespace Project123.Dto
 {
@@ -14,5 +16,8 @@ namespace Project123.Dto
         public string ?Password { get; set; }
 
         public string? Role { get; set; }
+        [NotMapped]
+        public bool RememberMe { get; set; }
+
     }
 }

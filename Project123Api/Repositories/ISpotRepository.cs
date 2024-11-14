@@ -1,5 +1,6 @@
 ﻿using ApacheTech.Common.Extensions.System;
 using AuthenticationPlugin;
+using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +20,8 @@ namespace Project123Api.Repositories
         Task<ResponseModel> CreateSong(SongModel SongData);
         Task<ResponseModel> UpdateSong(SongModel SongData);
         Task<ResponseModel> FavoriteSong(SongModel songData);
-        Task<ResponseModel> FavoriteArtist(SpotSidebarModel artistData);
+        Task<IEnumerable<SpotSidebarModel>> FavoriteArtist(SpotSidebarModel artistData);
+        Task<IEnumerable<SpotSidebarModel>> FavoriteAlbum(SpotSidebarModel albumData);
         Task<ResponseModel> DeleteSong(SongModel SongData);
         Task<ResponseModel> RemoveSong(SongModel SongData);
      
@@ -37,8 +39,12 @@ namespace Project123Api.Repositories
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
         Task<IEnumerable<ArtistModel>>SearchArtist(ArtistModel artistData);
         Task<IEnumerable<GenreModel>>SearchGenre(GenreModel genreData);
+        Task<IEnumerable<AlbumModel>> SearchDataFromGenre(AlbumModel albumData);
         Task<IEnumerable<AlbumModel>>GetAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>> GetFavoriteSongs(SongModel SongData);
+        Task<IEnumerable<SpotSidebarModel>> GetFavoriteArtist(SpotSidebarModel artistData);
+        Task<IEnumerable<SpotSidebarModel>> GetFavoriteAlbum(SpotSidebarModel artistData);
+        Task<IEnumerable<GenreModel>> GetGenre();
         Task<List<SongModel>> GetFavSongByUser(string userId);
         Task<List<SpotSidebarModel>> GetFavAlbumAndArtistByUser(string userId);
         Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData);
@@ -170,8 +176,8 @@ namespace Project123Api.Repositories
         public async Task<ResponseModel> CreateAlbum(AlbumModel AlbumData)
         {
             ResponseModel response = new ResponseModel();
-            string sqlCreateSong = @"INSERT INTO Albums (AlbumName, ArtistName, AlbumImage) 
-                             VALUES (@AlbumName, @ArtistName, @AlbumImage)";
+            string sqlCreateSong = @"INSERT INTO Albums (AlbumName, ArtistName, AlbumImage,AlbumGenre) 
+                             VALUES (@AlbumName, @ArtistName, @AlbumImage,@AlbumGenre)";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -183,6 +189,7 @@ namespace Project123Api.Repositories
                     command.Parameters.AddWithValue("@AlbumName", AlbumData.AlbumName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@ArtistName", AlbumData.ArtistName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@AlbumImage", AlbumData.AlbumImagePath ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@AlbumGenre", AlbumData.AlbumGenre ?? (object)DBNull.Value);
                    
 
                     await command.ExecuteNonQueryAsync();
@@ -209,7 +216,8 @@ namespace Project123Api.Repositories
             string sqlCreateSong = @" UPDATE Albums
                                     SET AlbumName = @AlbumName,
                                     ArtistName = @ArtistName,
-                                    AlbumImage = @AlbumImage
+                                    AlbumImage = @AlbumImage,
+                                    AlbumGenre = @AlbumGenre
                                     WHERE AlbumId = @AlbumId";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -223,7 +231,7 @@ namespace Project123Api.Repositories
                     command.Parameters.AddWithValue("@ArtistName", AlbumData.ArtistName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@AlbumImage", AlbumData.AlbumImagePath ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@AlbumId", AlbumData.AlbumId ?? (object)DBNull.Value);
-                   
+                    command.Parameters.AddWithValue("@AlbumGenre", AlbumData.AlbumGenre ?? (object)DBNull.Value);
 
                     await command.ExecuteNonQueryAsync();
 
@@ -1029,6 +1037,72 @@ namespace Project123Api.Repositories
             return songList;
         }
 
+        public async Task<IEnumerable<AlbumModel>> SearchDataFromGenre(AlbumModel albumData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            List<AlbumModel> albumList = new List<AlbumModel>();
+            string sqlSelect = @"SELECT s.AlbumId,s.AlbumName, s.ArtistName,s.AlbumImage,s.AlbumGenre
+                     FROM dbo.Albums s WHERE s.AlbumGenre = @AlbumGenre";
+
+            // Create the list of parameters
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+    {
+       
+           new SqlParameter("@AlbumGenre",albumData.AlbumGenre)
+    };
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                AlbumModel album = new AlbumModel
+                                {
+                                    AlbumId = reader.GetInt32("AlbumId"),
+                                    AlbumName = reader["AlbumName"].ToString(),
+                                    ArtistName = reader["ArtistName"].ToString(),
+                                    AlbumImagePath = reader["AlbumImage"].ToString(),
+                                    AlbumGenre = reader.GetInt32("AlbumGenre"),
+
+                                };
+                                albumList.Add(album);
+                            }
+                        }
+                    }
+                }
+
+                if (albumList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return albumList;
+        }
+
         public async Task<IEnumerable<GenreModel>> SearchGenre(GenreModel genreData)
         {
             ResponseModel response = new ResponseModel();
@@ -1228,7 +1302,7 @@ namespace Project123Api.Repositories
             }
 
             List<AlbumModel> albumList = new List<AlbumModel>();
-            string sqlSelect = @"SELECT s.AlbumId,s.AlbumName, s.ArtistName,s.AlbumImage
+            string sqlSelect = @"SELECT s.AlbumId,s.AlbumName, s.ArtistName,s.AlbumImage,s.AlbumGenre
                      FROM dbo.Albums s";
 
             List<string> sqlWhereClauses = new List<string>();
@@ -1239,9 +1313,10 @@ namespace Project123Api.Repositories
                 sqlWhereClauses.Add("s.AlbumId = @AlbumId");
                 sqlParameters.Add(new SqlParameter("@AlbumId", AlbumData.AlbumId.Value));
             }
-
-
-
+            if (AlbumData.AlbumGenre.HasValue)
+            {
+                sqlParameters.Add(new SqlParameter("@AlbumGenre", AlbumData.AlbumGenre));
+            }
             if (!string.IsNullOrEmpty(AlbumData.AlbumName))
             {
                 sqlWhereClauses.Add("s.AlbumName = @AlbumName");
@@ -1259,7 +1334,7 @@ namespace Project123Api.Repositories
                 sqlWhereClauses.Add("s.AlbumImage = @AlbumImage");
                 sqlParameters.Add(new SqlParameter("@AlbumImage", AlbumData.AlbumImagePath));
             }
-
+        
 
 
 
@@ -1288,6 +1363,7 @@ namespace Project123Api.Repositories
                                     AlbumName = reader["AlbumName"].ToString(),
                                     ArtistName = reader["ArtistName"].ToString(),                                                             
                                     AlbumImagePath = reader["AlbumImage"].ToString(),
+                                    AlbumGenre = reader["AlbumGenre"] != DBNull.Value ? Convert.ToInt32(reader["AlbumGenre"]) : (int?)null,
                                 };
                                 albumList.Add(album);
                             }
@@ -1383,14 +1459,15 @@ namespace Project123Api.Repositories
             return albumList;
         }
 
-        public async Task<ResponseModel> FavoriteArtist(SpotSidebarModel artistData)
+        public async Task<IEnumerable<SpotSidebarModel>> FavoriteArtist(SpotSidebarModel artistData)
         {
             ResponseModel response = new ResponseModel();
+            List<SpotSidebarModel> artistList = new List<SpotSidebarModel>();
 
             string sqlMerge = @"
         MERGE INTO UserArtists AS target
         USING (SELECT @UserId AS UserId, @ArtistId AS ArtistId) AS source
-        ON target.UserId = source.UserId AND target.SongId = source.SongId
+        ON target.UserId = source.UserId AND target.ArtistId = source.ArtistId
         WHEN MATCHED THEN
             UPDATE SET 
                 FavoriteArtist = @FavoriteArtist,
@@ -1399,37 +1476,114 @@ namespace Project123Api.Repositories
             INSERT (UserId, ArtistId, FavoriteArtist, FavoriteDate)
             VALUES (@UserId, @ArtistId, @FavoriteArtist, @FavoriteDate);";
 
+            string sqlSelect = "SELECT UserId, ArtistId, FavoriteArtist, FavoriteDate FROM UserArtists WHERE UserId = @UserId And ArtistId = @ArtistId";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlMerge, connection);
-                    command.Parameters.AddWithValue("@UserId", artistData.UserId);
-                    command.Parameters.AddWithValue("@ArtistId", artistData.ArtistId ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FavoriteArtist", artistData.FavoriteArtist ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FavoriteDate", artistData.FavoriteDate ?? (object)DBNull.Value);
+                    // Execute the MERGE statement
+                    SqlCommand mergeCommand = new SqlCommand(sqlMerge, connection);
+                    mergeCommand.Parameters.AddWithValue("@UserId", artistData.UserId);
+                    mergeCommand.Parameters.AddWithValue("@ArtistId", artistData.ArtistId ?? (object)DBNull.Value);
+                    mergeCommand.Parameters.AddWithValue("@FavoriteArtist", artistData.FavoriteArtist ?? (object)DBNull.Value);
+                    mergeCommand.Parameters.AddWithValue("@FavoriteDate", artistData.FavoriteDate ?? (object)DBNull.Value);
+                    await mergeCommand.ExecuteNonQueryAsync();
 
-                    await command.ExecuteNonQueryAsync();
-
-                    response.Status = "S";
-                    response.Message = "Favorite Artist successfully.";
+                    // Execute the SELECT statement to retrieve updated data
+                    SqlCommand selectCommand = new SqlCommand(sqlSelect, connection);
+                    selectCommand.Parameters.AddWithValue("@UserId", artistData.UserId);
+                    selectCommand.Parameters.AddWithValue("@ArtistId", artistData.ArtistId ?? (object)DBNull.Value);
+                    using (SqlDataReader reader = await selectCommand.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            artistList.Add(new SpotSidebarModel
+                            {
+                                UserId = Convert.ToInt32(reader["UserId"]),
+                                ArtistId = reader["ArtistId"] != DBNull.Value ? Convert.ToInt32(reader["ArtistId"]) : (int?)null,
+                                FavoriteArtist = Convert.ToBoolean(reader["FavoriteArtist"]),
+                                FavoriteDate = reader["FavoriteDate"] as DateTime?
+                            });
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
                     response.Status = "E";
                     response.Message = ex.Message;
                 }
-                finally
+            }
+
+            return artistList;
+        }
+
+
+        public async Task<IEnumerable<SpotSidebarModel>> FavoriteAlbum(SpotSidebarModel albumData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<SpotSidebarModel> albumList = new List<SpotSidebarModel>();
+
+            string sqlMerge = @"
+        MERGE INTO UserAlbums AS target
+        USING (SELECT @UserId AS UserId, @AlbumId AS AlbumId) AS source
+        ON target.UserId = source.UserId AND target.AlbumId = source.AlbumId
+        WHEN MATCHED THEN
+            UPDATE SET 
+                FavoriteAlbum = @FavoriteAlbum,
+                FavoriteDate = @FavoriteDate
+        WHEN NOT MATCHED THEN
+            INSERT (UserId, AlbumId, FavoriteAlbum, FavoriteDate)
+            VALUES (@UserId, @AlbumId, @FavoriteAlbum, @FavoriteDate);";
+
+            string sqlSelect = "SELECT UserId, AlbumId, FavoriteAlbum, FavoriteDate FROM UserAlbums WHERE UserId = @UserId And AlbumId = @AlbumId";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                try
                 {
-                    connection.Close();
+                    // Execute the MERGE statement
+                    SqlCommand mergeCommand = new SqlCommand(sqlMerge, connection);
+                    mergeCommand.Parameters.AddWithValue("@UserId", albumData.UserId);
+                    mergeCommand.Parameters.AddWithValue("@AlbumId", albumData.AlbumId ?? (object)DBNull.Value);
+                    mergeCommand.Parameters.AddWithValue("@FavoriteAlbum", albumData.FavoriteAlbum ?? (object)DBNull.Value);
+                    mergeCommand.Parameters.AddWithValue("@FavoriteDate", albumData.FavoriteDate ?? (object)DBNull.Value);
+                    await mergeCommand.ExecuteNonQueryAsync();
+
+                    // Execute the SELECT statement to retrieve updated data
+                    SqlCommand selectCommand = new SqlCommand(sqlSelect, connection);
+                    selectCommand.Parameters.AddWithValue("@UserId", albumData.UserId);
+                    selectCommand.Parameters.AddWithValue("@AlbumId", albumData.AlbumId ?? (object)DBNull.Value);
+                    using (SqlDataReader reader = await selectCommand.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            albumList.Add(new SpotSidebarModel
+                            {
+                                UserId = Convert.ToInt32(reader["UserId"]),
+                                AlbumId = reader["AlbumId"] != DBNull.Value ? Convert.ToInt32(reader["AlbumId"]) : (int?)null,
+                                FavoriteAlbum = Convert.ToBoolean(reader["FavoriteAlbum"]),
+                                FavoriteDate = reader["FavoriteDate"] as DateTime?
+                            });
+                        }
+                    }
+                    response.Status = "S";
+                    response.Message = "";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
                 }
             }
 
-            return response;
+            return albumList;
         }
+
 
 
 
@@ -1631,7 +1785,7 @@ namespace Project123Api.Repositories
                    FROM dbo.Song s
                    FULL JOIN dbo.Albums a ON s.AlbumId = a.AlbumId
                    INNER JOIN dbo.UserSongs usr ON s.SongId = usr.SongId
-                   WHERE s.FavoriteSong = 1 AND  usr.UserId = @userId
+                   WHERE usr.FavoriteSong = 1 AND  usr.UserId = @userId
                    ORDER BY usr.FavoriteDate desc ";
 
             //List<SqlParameter> sqlParameters = new List<SqlParameter>();
@@ -1778,6 +1932,188 @@ namespace Project123Api.Repositories
             return songList;
         }
 
+
+        public async Task<IEnumerable<SpotSidebarModel>> GetFavoriteAlbum(SpotSidebarModel albumData)
+        {
+            ResponseModel response = new ResponseModel();
+            DataTable dataTable = new DataTable();
+            List<SpotSidebarModel> albumList = new List<SpotSidebarModel>();
+
+            string sqlSelect = @"SELECT al.AlbumId,
+                                al.FavoriteAlbum,
+                                al.FavoriteDate
+                         FROM dbo.UserAlbums al
+                         WHERE al.FavoriteAlbum = 1 AND al.UserId = @UserId AND al.AlbumId = @AlbumId";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+    {
+        new SqlParameter("@UserId", albumData.UserId), 
+        new SqlParameter("@AlbumId", albumData.AlbumId) 
+    };
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Fill the DataTable with the query results
+                            adapter.Fill(dataTable);
+                        }
+                    }
+
+                    // Map DataTable rows to SongModel objects
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        SpotSidebarModel album = new SpotSidebarModel
+                        {
+                            AlbumId = Convert.ToInt32(row["AlbumId"]),
+                            FavoriteAlbum = Convert.ToBoolean(row["FavoriteAlbum"]),
+                            FavoriteDate = Convert.ToDateTime(row["FavoriteDate"])
+                        };
+
+                        albumList.Add(album);
+                    }
+                }
+                if (albumList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+            return albumList;
+        }
+
+        public async Task<IEnumerable<SpotSidebarModel>> GetFavoriteArtist(SpotSidebarModel artistData)
+        {
+            ResponseModel response = new ResponseModel();
+            DataTable dataTable = new DataTable();
+            List<SpotSidebarModel> artistList = new List<SpotSidebarModel>();
+
+            string sqlSelect = @"SELECT ar.ArtistId,
+                                ar.FavoriteArtist,
+                                ar.FavoriteDate
+                         FROM dbo.UserArtists ar
+                         WHERE ar.FavoriteArtist = 1 AND ar.UserId = @UserId AND ar.ArtistId = @ArtistId";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+    {
+        new SqlParameter("@UserId", artistData.UserId), // Assuming UserId is a property in SpotSidebarModel
+        new SqlParameter("@ArtistId", artistData.ArtistId) // Assuming UserId is a property in SpotSidebarModel
+    };
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.AddRange(sqlParameters.ToArray());
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Fill the DataTable with the query results
+                            adapter.Fill(dataTable);
+                        }
+                    }
+
+                    // Map DataTable rows to SongModel objects
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        SpotSidebarModel artist = new SpotSidebarModel
+                        {
+                            ArtistId = Convert.ToInt32(row["ArtistId"]),
+                            FavoriteArtist = Convert.ToBoolean(row["FavoriteArtist"]),
+                            FavoriteDate = Convert.ToDateTime(row["FavoriteDate"])
+                        };
+
+                        artistList.Add(artist);
+                    }
+                }
+                if (artistList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+            return artistList;
+        }
+
+
+        public async Task<IEnumerable<GenreModel>> GetGenre()
+        {
+            List<GenreModel> genreList = new List<GenreModel>();
+            string sqlSelect = @"SELECT *
+                                FROM Genre";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(sqlSelect, connection))
+                    {
+                        DataTable dtResult = new DataTable();
+                        adapter.Fill(dtResult);
+
+
+                        foreach (DataRow row in dtResult.Rows)
+                        {
+                            GenreModel model = new GenreModel
+                            {
+                                GenreId = row["GenreId"] != DBNull.Value ? Convert.ToInt32(row["GenreId"]) : 0,
+                                GenreName = row["GenreName"].ToString() ?? string.Empty
+                              
+                            };
+                            genreList.Add(model);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                var msg = ex.Message;
+                // Optionally, rethrow or handle the exception as needed
+            }
+
+            return genreList;
+        }
+
         public async Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData)
         {
             ResponseModel response = new ResponseModel();
@@ -1801,13 +2137,13 @@ namespace Project123Api.Repositories
                 UserSongs AS usr ON usr.SongId = so.SongId
             WHERE 
                 (UPPER(so.SongName) LIKE UPPER(@searchData)
-                 OR UPPER(art.ArtistName) LIKE UPPER(@searchData)
-                 OR UPPER(alb.AlbumName) LIKE UPPER(@searchData))
+                 OR UPPER(art.ArtistName) LIKE UPPER(@searchData+'%')
+                 OR UPPER(alb.AlbumName) LIKE UPPER(@searchData+'%'))
                  AND (usr.UserId = @UserId OR usr.UserId IS NULL);
                 ";
 
             // Add wildcards to the search parameter in C#
-            string searchParameter = $"%{searchData.ArtistName}%"; // Assuming searchData has a SearchTerm property
+            string searchParameter = $"{searchData.ArtistName}"; // Assuming searchData has a SearchTerm property
 
             // Create the list of parameters
             List<SqlParameter> sqlParameters = new List<SqlParameter>
@@ -1842,6 +2178,7 @@ namespace Project123Api.Repositories
                                     SongGenres = reader["SongGenres"] as string ?? string.Empty,
                                     SongImagePath = reader["SongImage"] as string ?? string.Empty,
                                     AlbumImagePath = reader["AlbumImage"] as string ?? string.Empty,
+                                    ArtistImagePath = reader["ArtistImage"] as string ?? string.Empty,
                                     FavoriteSong = reader.IsDBNull(reader.GetOrdinal("FavoriteSong")) ? (bool?)false : reader.GetBoolean(reader.GetOrdinal("FavoriteSong")),
                                     FavoriteDate = reader.IsDBNull(reader.GetOrdinal("FavoriteDate")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("FavoriteDate"))
                                 };

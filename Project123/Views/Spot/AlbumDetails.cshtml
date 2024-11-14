@@ -92,10 +92,6 @@
             </div>*@
         <div class="main-content-music">
 
-
-
-
-
             <button class="button-control  btn-media btn-album-play btn-media-play" style="background-color: unset; margin-left: 20px;">
                 <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:46px  "></i>
             </button>
@@ -104,21 +100,17 @@
             </button>
 
             <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
-                <i class="fa-solid  fa-shuffle" style="color:#FFF;" id="iconAlbumShuffle"></i>
+                <i class="fa-solid icon-control  fa-shuffle" style="color: #FFF; font-size: 41px;" id="iconAlbumShuffle"></i>
             </button>
 
-            <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
-                <i class="fa-solid fa-circle-plus" style="color: #e52cf9;" id="iconAlbumPlus"></i>
+            <button class="button-control btn-media btn-album-plus" type="button" style="background-color: unset; margin-left: 30px; ">
+                <i class="fa-solid icon-control fa-circle-plus" style="color: #e52cf9; font-size: 45px;" id="iconAlbumSave"></i>
             </button>
 
-            <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
-                <i class="fa-solid fa-circle-check" style="color: #e52cf9;" id="iconAlbumPlus"></i>
-            </button>
-       
-
-
-
-
+            @*<button class="button-control btn-media btn-album-saved" type="button" style="background-color: unset; margin-left: 30px;">
+                <i class="fa-solid fa-circle-check" style="color: #e52cf9;" id="iconAlbumCheck"></i>
+            </button>*@
+            
         </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
@@ -188,7 +180,8 @@
         var ArtistName = '@Model?.ArtistName';
         var AlbumName = '@Model?.AlbumName';
         var songData = [];
-        var AlbumImage ='@Model?.AlbumImagePath';
+        var AlbumImage = '@Model?.AlbumImagePath';
+        var albumFavData ;
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
             $('.btn-album-pause').addClass('hide-element')
@@ -196,14 +189,15 @@
             //getAlbumContainer();
       /*      toggleAsideDisplay();*/
             searchSongs();
+            GetFavAlbum()
 
             $('.img-music-content').on('click', function () {
 
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
-                if ($('#aside').css('display') == 'none') {
-                    toggleAsideDisplay();
-                }
+                //if ($('#aside').css('display') == 'none') {
+                //    toggleAsideDisplay();
+                //}
             });
             $(document).on('click', '.dv-content', function () {
                 ;
@@ -219,6 +213,108 @@
                 toggleAsideDisplay();
             });
         });
+        function GetFavAlbum() {
+
+                   $.ajax({
+           type: 'POST',
+           url: '@Url.Action("GetFavoriteAlbum1", "Spot")',
+           data: {
+               AlbumId: AlbumId
+           },
+
+           global: false,
+           dataType: "json",
+           success: function (result) {
+            
+               debugger;
+               if (result.Data.length > 0) {
+                   albumFavData = result.Data[0].FavoriteAlbum;
+
+                   if (albumFavData) {
+                       $('#iconAlbumSave').removeClass('fa-circle-plus').addClass('fa-circle-check');
+                   } else {
+                       $('#iconAlbumSave').removeClass('fa-circle-check').addClass('fa-circle-plus');
+                   }
+               }
+               else {
+                   albumFavData = albumFavData == undefined ? false : albumFavData;
+               }
+
+           },
+           error: function (request, status, error) {
+               console.log(error);
+           }
+       });
+
+
+            @*$.ajax({
+                type: 'POST',
+                url: '@Url.Action("FavoriteAlbum1", "Spot")',
+                data: {
+                    AlbumId: AlbumId
+                },
+
+                global: false,
+                dataType: "json",
+                success: function (result) {
+                    debugger
+
+                    if (result.Data.length > 0) {
+
+                        if (rowData.FavoriteSong) {
+                            $('#iconAlbumSave').removeClass('fa-circle-plus').addClass('fa-regular');
+
+                        }
+                        else {
+                            $('#iconAlbumSave').removeClass('fa-regular').addClass('fa-circle-plus');
+                        }
+                    }
+
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });*@
+
+
+
+
+        }
+        $('.btn-album-plus').click(function () {
+            debugger
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("FavoriteAlbum1", "Spot")',
+                data: {
+                    AlbumId: AlbumId,
+                    FavoriteAlbum: !albumFavData
+                },
+                global: false,
+                dataType: "json",
+                success: function (result) {
+                   
+                    debugger
+                    if (result.Data.length > 0) {
+                        albumFavData = result.Data[0].FavoriteAlbum;
+                        if (albumFavData) {
+                            $('#iconAlbumSave').removeClass('fa-circle-plus').addClass('fa-circle-check');
+                        } else {
+                            $('#iconAlbumSave').removeClass('fa-circle-check').addClass('fa-circle-plus');
+                        }
+                        setTimeout(function () {
+                            getAlbumSideLayout();
+                        }, 100);
+                    }
+                    else {
+
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
 
         $('.btn-album-shuffle').click(function () {
 
@@ -239,11 +335,11 @@
             var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
 
             if (rowData.FavoriteSong) {
-                $('#iconLove' + rowData.SongId).removeClass('fa-solid').addClass('fa-regular');
+                $('#iconLove' + rowData.SongId).removeClass('fa-solid').addClass('fa-circle-check');
 
             }
             else {
-                $('#iconLove' + rowData.SongId).removeClass('fa-regular').addClass('fa-solid');
+                $('#iconLove' + rowData.SongId).removeClass('fa-circle-check').addClass('fa-solid');
             }
 
             //var favData = {

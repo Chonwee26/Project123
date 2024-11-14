@@ -68,7 +68,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             OnTokenValidated = context =>
             {
-                Console.WriteLine("Token validated for user: " + context.Principal.Identity.Name);
+                Console.WriteLine("Token validated for user: " + context?.Principal?.Identity?.Name);
                 return Task.CompletedTask;
             }
         };

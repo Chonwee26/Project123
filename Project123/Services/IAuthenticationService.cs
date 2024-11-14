@@ -18,7 +18,7 @@ namespace Project123.Services
             public HttpClient CreateClient()
             {
                 var client = new HttpClient();
-                var token = _httpContextAccessor.HttpContext.Session.GetString("UserToken") ?? string.Empty;
+                var token = _httpContextAccessor.HttpContext?.Session.GetString("UserToken") ?? string.Empty;
                 if (!string.IsNullOrEmpty(token))
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

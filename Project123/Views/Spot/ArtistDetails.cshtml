@@ -49,9 +49,9 @@
             flex-direction: column;
         }
 
-        .music-content-title {
+      /*  .music-content-title {
             margin-top: 10px;
-        }
+        }*/
 
         .img-music-content,
         .img-aside {
@@ -78,6 +78,7 @@
             max-height: 320px;
             max-width: 220px;
             border-radius: 8px;
+            padding:10px;
         }
 
             .dv-content:hover {
@@ -138,6 +139,7 @@
 
 
                     <h1>@Model.ArtistName</h1>
+                  <button class="btn btn-secondary btn-follow">Follow</button>
                     @*<p>Artist: @Model.ArtistName</p>*@
                 </div>
             </div>
@@ -230,13 +232,17 @@
         var ArtistName1 = '@Model.ArtistName';
         var ArtistBio = '@Model.ArtistBio';
         var ArtistName = decodeHTMLEntities(ArtistName1); ////////decode แปลงจาก ญี่ปุ่น
-     debugger
+        var ArtistId = '@Model.ArtistId';
+        var FavoriteArtist;
+
+      
 
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
          /*   getAlbum();*/
             //getAlbumContainer();
             getArtistAlbumContainer();
+            getFavArtist();
             //searchAlbum();
             //searchSongs();
 
@@ -244,10 +250,54 @@
 
                 var imgSrc = $(this).attr('src');
                 $('#aside_pic').attr('src', imgSrc);
-                if ($('#aside').css('display') == 'none') {
-                    toggleAsideDisplay();
-                }
+                //if ($('#aside').css('display') == 'none') {
+                //    toggleAsideDisplay();
+                //}
             });
+
+            $('.btn-follow').click(function () {
+                //rowData.FavoriteDate = new Date($.now());
+                //rowData.FavoriteSong = !rowData.FavoriteSong;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("FavoriteArtist1", "Spot")',
+                    global: false,
+                    data: {
+                        ArtistId: ArtistId,
+                        FavoriteArtist: !FavoriteArtist
+
+
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        debugger
+                        if (result.Data.length > 0) {
+                            FavoriteArtist = result.Data[0].FavoriteArtist
+                            if (result.Data[0].FavoriteArtist) {
+                                $('.btn-follow').text('Following');
+                            }
+                            else {
+                                $('.btn-follow').text('Follow');
+                            }
+                        }
+                        setTimeout(function () {
+                            getAlbumSideLayout();
+                        },100);
+                      
+
+                    },
+                    error: function (request, status, error) {
+                        console.log(error);
+                    }
+                });
+
+                $('.dv-content').on('click', function () {
+                     
+                    var albumId = $(this).data('album-id');
+                    window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+                });
+            });
+
             $(document).on('click', '.dv-content', function () {
                 ;
                 var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
@@ -280,9 +330,9 @@
            },
            dataType: "json",
            success: function (result) {
-               debugger
+                
                result.Data.forEach(function (album, index) {
-                   debugger
+                    
                    count = index + 1;
                    var albumHtml = `
                <div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
@@ -299,7 +349,7 @@
                });
 
                $('.dv-content').on('click', function () {
-                   debugger
+                    
                    var albumId = $(this).data('album-id');
                    window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
                });
@@ -317,10 +367,40 @@
 
        });
 
-   }
+           }
+
+        function getFavArtist() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFavoriteArtist1", "Spot")',
+                global: false,
+                data: {
+                    ArtistId: ArtistId
 
 
-      
+                },
+                dataType: "json",
+                success: function (result) {
+                    debugger
+                    if (result.Data.length > 0) {
+                        FavoriteArtist = result.Data[0].FavoriteArtist
+                        if (result.Data[0].FavoriteArtist) {
+                            $('.btn-follow').text('Following');
+                        }
+                        else {
+                            $('.btn-follow').text('Follow');
+                        }
+                    }
+
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+
              function searchAlbum() {
          frmSearch = {
 
@@ -342,7 +422,7 @@
      }
 
         $('.title-Artist').on('click', function () {
-            debugger
+             
             var albumId = $(this).data('album-id');
             window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + ArtistName
         });
@@ -364,7 +444,7 @@
         });
 
         async function searchSongs() {
-            debugger
+             
             let frmSearch = {
 
                 AlbumId: AlbumId
@@ -426,7 +506,7 @@
                         render: function (data, type, row) {
                             var html = `<div><span class="title-song">${data.SongName}</span></div>
      <div><a class="title-artist" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}">${data.ArtistName}</a></div>`;
-     debugger
+      
                             return html
                         }
                     },
@@ -454,7 +534,7 @@
 
 
         //    if ($('#aside').css('display') == 'none') {
-        //        debugger
+        //         
         //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
         //    }
         //    else {

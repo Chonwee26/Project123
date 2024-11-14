@@ -8,6 +8,7 @@ using Project123Api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
 using static Project123.Services.IAuthenticationService;
+using System.Net.Http;
 
 
 namespace Project123.Controllers
@@ -36,10 +37,33 @@ namespace Project123.Controllers
         {
             return View();
         }
-        public IActionResult SpotAdminPage()
+        public async Task<IActionResult> SpotAdminPage()
         {
-
-                return View();                    
+            List<GenreModel> genreList = new List<GenreModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                //using (var client = _httpClientFactory.CreateClient("BaseClient"))
+                try
+                {
+                    var responseG = await client.GetAsync("/api/Spot/GetGenre");
+                    if (responseG.IsSuccessStatusCode)
+                    {
+                        genreList = await responseG.Content.ReadAsAsync<List<GenreModel>>();
+                    }
+                 
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            ViewBag.GenreList = genreList;
+            return View();                    
         }
 
 
@@ -91,10 +115,9 @@ namespace Project123.Controllers
             {
                 return Json(new { status = "E", success = false, message = "Genre not found" });
             }
-
+         
             return View("Genre", genre);
         }
-
 
         public IActionResult AlbumDetails(int albumId)
         {
@@ -432,7 +455,8 @@ namespace Project123.Controllers
                             AlbumData.AlbumId,
                             AlbumData.ArtistName,
                             AlbumData.AlbumName,
-                            AlbumData.AlbumImagePath
+                            AlbumData.AlbumImagePath,
+                            AlbumData.AlbumGenre
                            
                         };
 
@@ -484,10 +508,10 @@ namespace Project123.Controllers
                         {
                             return Json(new { status = "E", success = false, message = "Album AlbumName is missing." });
                         }
-                        if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
-                        {
-                            return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
-                        }
+                        //if (string.IsNullOrEmpty(AlbumData.AlbumImagePath))
+                        //{
+                        //    return Json(new { status = "E", success = false, message = "Album AlbumImagePath is missing." });
+                        //}
 
 
 
@@ -510,7 +534,8 @@ namespace Project123.Controllers
                             AlbumData.AlbumId,
                             AlbumData.ArtistName,
                             AlbumData.AlbumName,
-                            AlbumData.AlbumImagePath
+                            AlbumData.AlbumImagePath,
+                            AlbumData.AlbumGenre
 
 
                         };
@@ -969,7 +994,7 @@ namespace Project123.Controllers
                         string requestJson = JsonConvert.SerializeObject(songDataCopy);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                        var responseResult = await client.PostAsync("api/Spot/SongUpdate", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
                             this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
@@ -996,7 +1021,6 @@ namespace Project123.Controllers
         [HttpPost("Spot/SearchSpot1/")]
         public async Task<IActionResult> SearchSpot(SearchSpotModal searchData)
         {
-
             searchData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
             // Check if SongName is null before proceeding
             List<SearchSpotModal> searchSpotList = new List<SearchSpotModal>();
@@ -1009,13 +1033,9 @@ namespace Project123.Controllers
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:7061/");
-
                     try
-                    {
-               
+                    {             
                         // Create a copy of songData with nullified IFormFile properties for serialization
-
-
                         string requestJson = JsonConvert.SerializeObject(searchData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
@@ -1030,7 +1050,6 @@ namespace Project123.Controllers
                                 this.response.Status = "S";
                                 this.response.Message = "Success";
                             }
-
                         }
 
                         else
@@ -1046,7 +1065,6 @@ namespace Project123.Controllers
                     }
                 }
             }
-
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message ,data = searchSpotList });
         }
 
@@ -1071,8 +1089,6 @@ namespace Project123.Controllers
                             return Json(new { status = "E", success = false, message = "Song name is missing." });
                         }
 
-
-
                         if (string.IsNullOrEmpty(songData.ArtistName))
                         {
                             return Json(new { status = "E", success = false, message = "Artist name is missing." });
@@ -1082,12 +1098,7 @@ namespace Project123.Controllers
                         {
                             return Json(new { status = "E", success = false, message = "Song file path is missing." });
                         }
-
-                  
-                       
-
-
-
+                                   
                         // Create a copy of songData with nullified IFormFile properties for serialization
                  
 
@@ -1118,10 +1129,11 @@ namespace Project123.Controllers
         }
 
 
-        [HttpPost("Spot/FavoriteArtist1")]
-        public async Task<IActionResult> FavoriteArtist(SpotSidebarModel artistData)
+        [HttpPost("Spot/FavoriteAlbum1")]
+        public async Task<IActionResult> FavoriteAlbum(SpotSidebarModel albumData)
         {
-            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            List<SpotSidebarModel> albumList = new List<SpotSidebarModel>();
+            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1133,23 +1145,15 @@ namespace Project123.Controllers
 
                     try
                     {
-                    
-
-
-
-
-
                         // Create a copy of songData with nullified IFormFile properties for serialization
-
-
-                        string requestJson = JsonConvert.SerializeObject(artistData);
+                        string requestJson = JsonConvert.SerializeObject(albumData);
                         HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
                         //var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
-                        var responseResult = await client.PostAsync("api/Spot/FavoriteArtist", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/FavoriteAlbum", httpContent);
                         if (responseResult.IsSuccessStatusCode)
                         {
-                            this.response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                            albumList = await responseResult.Content.ReadAsAsync<List<SpotSidebarModel>>();
                         }
                         else
                         {
@@ -1165,7 +1169,49 @@ namespace Project123.Controllers
                 }
             }
 
-            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message, Data = albumList });
+        }
+
+        [HttpPost("Spot/FavoriteArtist1")]
+        public async Task<IActionResult> FavoriteArtist(SpotSidebarModel artistData)
+        {
+            List<SpotSidebarModel> artistList = new List<SpotSidebarModel>();
+            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+
+                    try
+                    {               
+                        string requestJson = JsonConvert.SerializeObject(artistData);
+                        HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                        //var responseResult = await client.PostAsync("api/Spot/UpdateSong", httpContent);
+                        var responseResult = await client.PostAsync("api/Spot/FavoriteArtist", httpContent);
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            artistList = await responseResult.Content.ReadAsAsync <List<SpotSidebarModel>>();
+                        }
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error: {responseResult.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = ex.Message;
+                    }
+                }
+            }
+
+            return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message,Data = artistList });
         }
 
         [HttpPost("Spot/DeleteSong1")]
@@ -1226,9 +1272,6 @@ namespace Project123.Controllers
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
 
-
-
-
         [HttpPost("Spot/DeleteAlbum1")]
 
         public async Task<IActionResult>DeleteAlbum(AlbumModel AlbumData)
@@ -1282,8 +1325,6 @@ namespace Project123.Controllers
             }
             return Json(new { status = this.response.Status, success = this.response.Success, message = this.response.Message });
         }
-
-
 
         [HttpPost("Spot/DeleteGenre1")]
 
@@ -1872,7 +1913,7 @@ namespace Project123.Controllers
         [HttpPost("Spot/GetFavAlbumAndArtistByUser1")]
         public async Task<IActionResult> GetFavAlbumAndArtistByUser(string userId)
         {
-            userId = HttpContext.Session.GetString("UserId");
+            userId = HttpContext.Session.GetString("UserId") ?? string.Empty;
             List<SpotSidebarModel> spotSidebarList = new List<SpotSidebarModel>();
 
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -1925,6 +1966,35 @@ namespace Project123.Controllers
             return Json(new { success = this.response.Success, message = this.response.Message, Data = spotSidebarList });
         }
 
+
+        [HttpGet("Spot/GetGenre")]
+
+        public async Task<IActionResult> GetGenre()
+        {
+            List<GenreModel> genreList = new List<GenreModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                var client =_apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+                try
+                {
+                    var response = await client.GetAsync("/api/Spot/GetGenre");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        genreList = await response.Content.ReadAsAsync<List<GenreModel>>();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = genreList });
+        }
+        
 
         [HttpPost("Spot/GetFavSongByUser1")]
         public async Task<IActionResult> GetFavSongByUser( string userId)
@@ -1981,7 +2051,116 @@ namespace Project123.Controllers
             return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
         }
 
+        [HttpPost("Spot/GetFavoriteAlbum1")]
+        public async Task<IActionResult> GetFavoriteAlbum(SpotSidebarModel albumData)
+        {
+            //SongData.FavoriteDate = null;
+            //SongData.CreateSongDate = null;
+            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            List<SpotSidebarModel> albumDataList = new List<SpotSidebarModel>();
 
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+
+                    string requestJson = JsonConvert.SerializeObject(albumData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetFavoriteAlbum", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        albumDataList = await response.Content.ReadAsAsync<List<SpotSidebarModel>>();
+
+                        if (albumDataList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Success";
+                        }
+
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error:";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error:";
+                    }
+                }
+
+
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = albumDataList });
+        }
+
+
+        [HttpPost("Spot/GetFavoriteArtist1")]
+        public async Task<IActionResult> GetFavoriteArtist(SpotSidebarModel artistData)
+        {
+            //SongData.FavoriteDate = null;
+            //SongData.CreateSongDate = null;
+            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            List<SpotSidebarModel> artistDataList = new List<SpotSidebarModel>();
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+                try
+                {
+
+                    string requestJson = JsonConvert.SerializeObject(artistData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("/api/Spot/GetFavoriteArtist", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        artistDataList = await response.Content.ReadAsAsync<List<SpotSidebarModel>>();
+
+                        if (artistDataList.Count > 0)
+                        {
+                            this.response.Status = "S";
+                            this.response.Message = "Success";
+                        }
+
+                        else
+                        {
+                            this.response.Status = "E";
+                            this.response.Message = $"Error:";
+                        }
+                    }
+                    else
+                    {
+                        this.response.Status = "E";
+                        this.response.Message = $"Error:";
+                    }
+                }
+
+
+                catch (HttpRequestException ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+            return Json(new { success = this.response.Success, message = this.response.Message, Data = artistDataList });
+        }
 
 
         [HttpPost("Spot/GetFavoriteSongs1")]
@@ -2038,6 +2217,65 @@ namespace Project123.Controllers
             return Json(new { success = this.response.Success, message = this.response.Message, Data = songDataList });
         }
 
+
+
+        [HttpPost("Spot/SearchDataFromGenre1")]
+        public async Task<IActionResult> SearchDataFromGenre(AlbumModel albumData)
+        {
+            ResponseModel resp = new ResponseModel();
+            List<AlbumModel> albumList = new List<AlbumModel>();
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/");
+
+
+                try
+                {
+                    string requestJson = JsonConvert.SerializeObject(albumData);
+                    HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+
+                    var response = await client.PostAsync("/api/Spot/SearchDataFromGenre", httpContent);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        albumList = await response.Content.ReadAsAsync<List<AlbumModel>>();
+
+                        if (albumList.Count > 0)
+                        {
+                            resp.Status = "S";
+                            resp.Message = "Success";
+                        }
+
+                        else
+                        {
+                            resp.Status = "E";
+                            resp.Message = $"Error:";
+                        }
+
+
+                        ////this.response = System.Text.Json.JsonSerializer.Deserialize<ResponseModel>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    }
+                    else
+                    {
+                        resp.Status = "E";
+                        resp.Message = $"Error:";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    this.response.Status = "E";
+                    this.response.Message = ex.Message;
+                }
+            }
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message, Data = albumList });
+        }
 
         [HttpPost("Spot/SearchGenre1")]
         public async Task<IActionResult> SearchGenre(GenreModel genreData)

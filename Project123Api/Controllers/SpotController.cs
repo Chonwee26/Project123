@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project123.Dto;
 using Project123Api.Repositories;
+using System.Collections.Generic;
 
 namespace Project123Api.Controllers
 {
@@ -235,15 +236,17 @@ namespace Project123Api.Controllers
 
 
 
-        [HttpPost("FavoriteArtist")]
-        public async Task<ResponseModel> FavoriteArtist(SpotSidebarModel artistData)
+        [HttpPost("FavoriteAlbum")]
+        public async Task<IEnumerable<SpotSidebarModel>> FavoriteAlbum(SpotSidebarModel albumData)
         {
             ResponseModel response = new ResponseModel();
+
+            IEnumerable<SpotSidebarModel>?albumList = Enumerable.Empty<SpotSidebarModel>();
 
 
             try
             {
-                response = await _spotRepo.FavoriteArtist(artistData);
+               albumList = await _spotRepo.FavoriteAlbum(albumData);
                 //response.Status = "S";
                 //response.Message = "User created successfully.";
             }
@@ -253,7 +256,32 @@ namespace Project123Api.Controllers
                 response.Status = "E";
             }
 
-            return response;
+
+            return albumList;
+        }
+
+
+        [HttpPost("FavoriteArtist")]
+        public async Task<IEnumerable<SpotSidebarModel>> FavoriteArtist(SpotSidebarModel artistData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            IEnumerable<SpotSidebarModel> artistList = Enumerable.Empty<SpotSidebarModel>();
+
+            try
+            {
+               artistList = await _spotRepo.FavoriteArtist(artistData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+        
+                    
+            return artistList;
         }
 
 
@@ -361,9 +389,30 @@ namespace Project123Api.Controllers
 
             return SongList;
         }
-       
 
-                [HttpPost("GetFavAlbumAndArtistByUser")]
+        [HttpPost("GetFavoriteArtist")]
+        public async Task<IEnumerable<SpotSidebarModel>> GetFavoriteArtist(SpotSidebarModel artistData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<SpotSidebarModel> artistList = await _spotRepo.GetFavoriteArtist(artistData);
+
+            return artistList;
+        }
+
+        [HttpPost("GetFavoriteAlbum")]
+        public async Task<IEnumerable<SpotSidebarModel>> GetFavoriteAlbum(SpotSidebarModel albumData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<SpotSidebarModel> albumList = await _spotRepo.GetFavoriteAlbum(albumData);
+
+            return albumList;
+        }
+
+
+
+        [HttpPost("GetFavAlbumAndArtistByUser")]
         public async Task<IActionResult> GetFavAlbumAndArtistByUser([FromBody] string userId)
         {
 
@@ -383,6 +432,13 @@ namespace Project123Api.Controllers
             List<SongModel> SongList = await _spotRepo.GetFavSongByUser(userId);
 
             return Ok(SongList);
+        }
+
+        [HttpGet("GetGenre")]
+        public async Task<IEnumerable<GenreModel>> GetGenre()
+        {
+            IEnumerable<GenreModel> genreList = await _spotRepo.GetGenre();
+            return await Task.FromResult(genreList);
         }
 
 
@@ -427,6 +483,18 @@ namespace Project123Api.Controllers
             IEnumerable<GenreModel> genreList = await _spotRepo.SearchGenre(genreData);
 
             return genreList;
+        }
+
+
+
+        [HttpPost("SearchDataFromGenre")]
+        public async Task<IEnumerable<AlbumModel>> SearchDataFromGenre(AlbumModel albumData)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            IEnumerable<AlbumModel> albumList = await _spotRepo.SearchDataFromGenre(albumData);
+
+            return albumList;
         }
     }
 }
