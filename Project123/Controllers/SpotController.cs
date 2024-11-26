@@ -74,7 +74,8 @@ namespace Project123.Controllers
 
         public IActionResult FavoriteSong()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            
+            var userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
             ViewBag.UserId = Convert.ToInt32(userId);
             return View();
         }
@@ -1021,7 +1022,8 @@ namespace Project123.Controllers
         [HttpPost("Spot/SearchSpot1/")]
         public async Task<IActionResult> SearchSpot(SearchSpotModal searchData)
         {
-            searchData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+           
+            searchData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             // Check if SongName is null before proceeding
             List<SearchSpotModal> searchSpotList = new List<SearchSpotModal>();
 
@@ -1071,7 +1073,8 @@ namespace Project123.Controllers
         [HttpPost("Spot/FavoriteSong1")]
         public async Task<IActionResult> FavoriteSong(SongModel songData)
         {
-            songData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+
+            songData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1133,7 +1136,7 @@ namespace Project123.Controllers
         public async Task<IActionResult> FavoriteAlbum(SpotSidebarModel albumData)
         {
             List<SpotSidebarModel> albumList = new List<SpotSidebarModel>();
-            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1176,7 +1179,7 @@ namespace Project123.Controllers
         public async Task<IActionResult> FavoriteArtist(SpotSidebarModel artistData)
         {
             List<SpotSidebarModel> artistList = new List<SpotSidebarModel>();
-            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1802,7 +1805,7 @@ namespace Project123.Controllers
         {
             ResponseModel resp = new ResponseModel();
             List<SongModel> SongList = new List<SongModel>();
-            SongData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            SongData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 // Temporarily bypass SSL certificate validation (not for production use)
@@ -1913,7 +1916,8 @@ namespace Project123.Controllers
         [HttpPost("Spot/GetFavAlbumAndArtistByUser1")]
         public async Task<IActionResult> GetFavAlbumAndArtistByUser(string userId)
         {
-            userId = HttpContext.Session.GetString("UserId") ?? string.Empty;
+            userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
+
             List<SpotSidebarModel> spotSidebarList = new List<SpotSidebarModel>();
 
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -2010,11 +2014,7 @@ namespace Project123.Controllers
                 {
                     var client = _apiHelper.CreateClient();
                     client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
-
-
-                 
-
-
+              
                     string requestJson = JsonConvert.SerializeObject(userId);
 
                     HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
@@ -2056,7 +2056,7 @@ namespace Project123.Controllers
         {
             //SongData.FavoriteDate = null;
             //SongData.CreateSongDate = null;
-            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            albumData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             List<SpotSidebarModel> albumDataList = new List<SpotSidebarModel>();
 
             using (HttpClientHandler handler = new HttpClientHandler())
@@ -2112,7 +2112,7 @@ namespace Project123.Controllers
         {
             //SongData.FavoriteDate = null;
             //SongData.CreateSongDate = null;
-            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId"));
+            artistData.UserId = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
             List<SpotSidebarModel> artistDataList = new List<SpotSidebarModel>();
 
             using (HttpClientHandler handler = new HttpClientHandler())

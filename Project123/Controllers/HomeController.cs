@@ -29,9 +29,18 @@ namespace Project123.Controllers
         public IActionResult MusicSpotPage()
         {
 
+            if (HttpContext.Session.GetString("UserId") == null &&!HttpContext.Request.Cookies.ContainsKey("AuthToken"))
+            {
+                return RedirectToAction("LoginPage", "Admin");
+            }
+            string userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
 
-            var userId = HttpContext.Session.GetString("UserId");
+          
+         
             ViewBag.UserId = Convert.ToInt32(userId);
+
+           
+
             return View();
           
         }

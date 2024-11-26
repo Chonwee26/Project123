@@ -408,6 +408,28 @@ namespace Project123.Controllers
             // Clear the user's session
             HttpContext.Session.Clear();
 
+
+
+            // Delete specific cookies
+            var cookieNamesToDelete = new List<string> { "UserId", "UserToken", "UserTokenInfo" };
+
+            foreach (var cookieName in cookieNamesToDelete)
+            {
+                if (Request.Cookies[cookieName] != null)
+                {
+                    Response.Cookies.Delete(cookieName);
+                }
+            }
+
+
+
+            //// Loop through all cookies in the request and delete them
+            //foreach (var cookie in Request.Cookies)
+            //{
+            //    Response.Cookies.Delete(cookie.Key);
+            //}
+
+
             resp.Status = "S";
             resp.Message = "Log out Success";
 

@@ -2172,6 +2172,7 @@ namespace Project123Api.Repositories
                                 {
                                     SongId = reader.IsDBNull(reader.GetOrdinal("SongId")) ? 0 : reader.GetInt32(reader.GetOrdinal("SongId")),
                                     AlbumId = reader.IsDBNull(reader.GetOrdinal("AlbumId")) ? 0 : reader.GetInt32(reader.GetOrdinal("AlbumId")),
+                                    AlbumName = reader["AlbumName"] as string ?? string.Empty,
                                     ArtistName = reader["ArtistName"] as string ?? string.Empty,
                                     SongFilePath = reader["SongFile"] as string ?? string.Empty,
                                     SongName = reader["SongName"] as string ?? string.Empty,

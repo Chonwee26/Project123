@@ -50,18 +50,21 @@
                 Your browser does not support the audio element.
             </audio>
         </div>
+        <button id="playPause">Play/Pause</button>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
     <script>
         $(document).ready(function () {
             // Example links for navigation
             $('#main-content').append(`
-        <nav>
-            <a href="https://localhost:7166/" class="nav-link">Page 1</a> |
-            <a href="page2.html" class="nav-link">Page 2</a>
-        </nav>
-    `);
+            <nav>
+                <a href="https://localhost:7166/" class="nav-link">Page 1</a> |
+                <a href="page2.html" class="nav-link">Page 2</a>
+            </nav>
+        `);
 
             // Load content with AJAX on link click
             $('body').on('click', 'a.nav-link', function (e) {
@@ -82,7 +85,18 @@
                 location.reload(); // Reload current content when back/forward is used
             };
         });
+        const option = {
+            container: '#music-player',
+            waveColor: 'rgb(200, 0, 200)',
+            progressColor: 'rgb(100, 0, 100)',
+            url: '/uploads/Aimer/Album_4015/Sign.mp3',
+        }
+      
 
+        const wavesurfer = WaveSurfer.create(option)
+        $('#playPause').on('click', () => {
+            wavesurfer.playPause();
+        })
     </script>
 </body>
 </html>

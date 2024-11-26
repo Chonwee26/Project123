@@ -243,6 +243,10 @@
                                                     </label>
                                                     </div>`
                 }
+                else if (userInput.includes("spot")){
+                    window.location.href = "https://localhost:7166/Home/MusicSpotPage"
+                    //botchatResponse = getBotResponse(window.location.href = "https://localhost:7166/Home/MusicSpotPage");
+                }
                 else {
                      botchatResponse = getBotResponse("I don't understand bro")
                 }

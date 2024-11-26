@@ -85,6 +85,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark " asp-area="" asp-controller="Admin" asp-action="LoginPage">Login</a>
                                     <a class="nav-link  text-dark" asp-area="" asp-controller="Admin" asp-action="RegisterPage">Register </a>
+                                    <a class="nav-link  text-dark" asp-area="" asp-controller="Home" asp-action="MusicSpotPage">MusicSpotPage </a>
                                 </li>
                             </ul>
                         </li>
@@ -182,11 +183,11 @@
               function logOut() {
             $.ajax({
     type: 'POST',
-    url: '@Url.Action("Logout", "Admin")',
+    url: '@Url.Action("Logout1", "Authen")',
     dataType: "json",
     success: function (result) {
         if (result.success) {
-          
+            window.location.href = "https://localhost:7166/Admin/LoginPage";
         }
         //bindingTableSongAlbum(result.Data);
         /* bindingTable(result.Data); */

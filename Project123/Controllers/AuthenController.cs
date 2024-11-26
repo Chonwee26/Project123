@@ -38,13 +38,51 @@ namespace Project123.Controllers
 
                     if (responseResult.IsSuccessStatusCode)
                     {
-                        response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+
+                  
+                  
+                    response = await responseResult.Content.ReadAsAsync<ResponseModel>();
                         string tokenInfo = response.user_roles;
                         string tokenUserId = response.user_id;
                         string token = response.access_token;
-                        HttpContext.Session.SetString("UserTokenInfo", tokenInfo);
+                    if (UserData.RememberMe)
+                    {
+                        HttpContext.Response.Cookies.Append("UserId", tokenUserId, new CookieOptions
+                        {
+                            Expires = DateTimeOffset.Now.AddDays(1),
+                            HttpOnly = true,
+                            IsEssential = true,
+                            SameSite = SameSiteMode.None, // Allows cross-site usage if needed
+                            Secure = true // Required if SameSite is None; ensures it's only sent over HTTPS
+                        });
+
+
+
+                        // Issue a persistent cookie with a longer expiration
+                        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            SameSite = SameSiteMode.Lax,
+                            Expires = DateTime.UtcNow.AddDays(1) // Adjust expiration as needed
+                        });
+                    }
+                    else
+                    {
+                        //// Session-only cookie (no explicit expiration)
+                        //HttpContext.Response.Cookies.Append("AuthToken", token.AccessToken, new CookieOptions
+                        //{
+                        //    HttpOnly = true,
+                        //    Secure = true
+                        //});
                         HttpContext.Session.SetString("UserToken", token);
-                    HttpContext.Session.SetString("UserId", tokenUserId);
+
+                        HttpContext.Session.SetString("UserId", tokenUserId);
+                    }
+                        HttpContext.Session.SetString("UserTokenInfo", tokenInfo);
+
+
+                   
                     // STEP 1: Pass the JWT token in authorization header for subsequent requests
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -109,14 +147,37 @@ namespace Project123.Controllers
         [HttpPost("Logout1")]
         public IActionResult Logout()
         {
-            ResponseModel response = new ResponseModel();
-
+            ResponseModel resp = new ResponseModel();
             // Clear the user's session
             HttpContext.Session.Clear();
-            response.Status = "S";
-            response.Message = "Log out Success";
 
-            return Json(new { status = response.Status, success = response.Success, message = response.Message });
+
+
+            // Delete specific cookies
+            var cookieNamesToDelete = new List<string> { "UserId", "UserToken", "UserTokenInfo", "AuthToken" };
+
+            foreach (var cookieName in cookieNamesToDelete)
+            {
+                if (Request.Cookies[cookieName] != null)
+                {
+                    Response.Cookies.Delete(cookieName);
+                }
+            }
+
+
+
+            //// Loop through all cookies in the request and delete them
+            //foreach (var cookie in Request.Cookies)
+            //{
+            //    Response.Cookies.Delete(cookie.Key);
+            //}
+
+
+            resp.Status = "S";
+            resp.Message = "Log out Success";
+
+
+            return Json(new { status = resp.Status, success = resp.Success, message = resp.Message });
         }
     }
 }

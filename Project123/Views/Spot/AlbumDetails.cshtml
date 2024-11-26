@@ -181,7 +181,8 @@
         var AlbumName = '@Model?.AlbumName';
         var songData = [];
         var AlbumImage = '@Model?.AlbumImagePath';
-        var albumFavData ;
+        var albumFavData;
+        let playedIndexes = new Set();
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
             $('.btn-album-pause').addClass('hide-element')
@@ -226,7 +227,7 @@
            dataType: "json",
            success: function (result) {
             
-               debugger;
+               ;
                if (result.Data.length > 0) {
                    albumFavData = result.Data[0].FavoriteAlbum;
 
@@ -257,7 +258,7 @@
                 global: false,
                 dataType: "json",
                 success: function (result) {
-                    debugger
+                    
 
                     if (result.Data.length > 0) {
 
@@ -281,7 +282,7 @@
 
         }
         $('.btn-album-plus').click(function () {
-            debugger
+            
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("FavoriteAlbum1", "Spot")',
@@ -293,7 +294,7 @@
                 dataType: "json",
                 success: function (result) {
                    
-                    debugger
+                    
                     if (result.Data.length > 0) {
                         albumFavData = result.Data[0].FavoriteAlbum;
                         if (albumFavData) {
@@ -458,9 +459,31 @@
 
         // Handle shuffle button
         $('.btn-media-shuffle').off('click').on('click', function () {
-            shuffleArray(shuffledIndexes);  // Shuffle the indexes only
-            currentIndex = 0; // Reset current index after shuffle
-            var shuffledRowData = table.row(shuffledIndexes[currentIndex]).data();
+            //shuffleArray(shuffledIndexes);  // Shuffle the indexes only
+            //currentIndex = 0; // Reset current index after shuffle
+            //var shuffledRowData = table.row(shuffledIndexes[currentIndex]).data();
+            //updateAudioPlayer(shuffledRowData);
+
+
+            // Check if all songs have been played
+            if (playedIndexes.size === shuffledIndexes.length) {
+                playedIndexes.clear(); // Reset when all songs are played
+            }
+
+            // Create an array of unplayed indexes
+            const unplayedIndexes = shuffledIndexes.filter(index => !playedIndexes.has(index));
+
+            // Shuffle only the unplayed indexes
+            shuffleArray(unplayedIndexes);
+
+            // Get the next song to play (first unplayed after shuffle)
+            currentIndex = unplayedIndexes[0];
+
+            // Mark the current index as played
+            playedIndexes.add(currentIndex);
+
+            // Fetch and play the song data
+            const shuffledRowData = table.row(currentIndex).data();
             updateAudioPlayer(shuffledRowData);
         });
 

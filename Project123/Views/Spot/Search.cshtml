@@ -120,6 +120,7 @@
         }
 
         .dv-genre{
+            display:flex;
             margin-right:30px;
         }
         .dv-genre a{
@@ -142,31 +143,40 @@
 
                     <div class="main-content-music-song">
                         <h3>Songs</h3>
-                        <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%" style="background-color: #121212; ">
-                            <thead>
-                                <tr class="">
+                        <div class="content-show-music-song">
+                            <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%" style="background-color: #121212; ">
+                                <thead>
+                                    <tr class="">
 
-                                    <th style="width:40px !important">#</th>
-                                    <th>Title</th>
-                                    <th style="min-width:20px !important; max-width:20px!important;"></th>
-                                    <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
+                                        <th style="width:40px !important">#</th>
+                                        <th>Title</th>
+                                        <th style="min-width:20px !important; max-width:20px!important;"></th>
+                                        <th style="width:20px !important"><i class="fa-regular fa-clock"></i></th>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        
 
                     </div>
 
                     <div class="main-content-music-artist">
                         <h3>Artist</h3>
+                        <div class="content-show-music-artist">
+
+                        </div>
 
                     </div>
 
                     <div class="main-content-music-album">
                         <h3>Albums</h3>
 
+                        <div class="content-show-music-album">
+
+                        </div>
                     </div>
                 </div>
              
@@ -251,8 +261,10 @@
             searchTerm = $(this).val();
             if (searchTerm.trim() !== "") {
 
-                $('.main-content-browse').html("");
+                //('.main-content-browse').html("");
+                $('.main-content-browse').hide();
                 $('.main-content-hidden').show();
+                $('.main-content-music-artist').html("");
                 /*$('.main-content-music-artist').empty();*/
                 $.ajax({
                     type: 'POST',
@@ -301,7 +313,8 @@
 
     const appendedArtists = []; // Array to keep track of appended artist names
 
-    searchData.forEach(function (album, index) {
+          searchData.forEach(function (album, index) {
+        debugger
         count = index + 1;
 
         var albumHtml = `
@@ -342,7 +355,9 @@
         }
 
          $('.main-content-music').append(albumHtml);
+            //  $('.content-show-music-song').append(albumHtml);
          $('.main-content-album').append(albumHtml);
+            //  $('.content-show-music-album').append(albumHtml);
 
         // Initialize tooltips after appending the content
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

@@ -36,7 +36,7 @@ builder.Configuration
 builder.Services.AddControllers();
 
 
-builder.Services.AddSession();
+//builder.Services.AddSession();
 
 builder.Services.AddHttpContextAccessor();
 // Add logging services
@@ -49,7 +49,7 @@ builder.Logging.SetMinimumLevel(LogLevel.Information); // Set minimum logging le
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the timeout as needed
+    options.IdleTimeout = TimeSpan.FromMinutes(120); // Set the timeout as needed
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 }); // Add this line
@@ -62,7 +62,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Project123 API", Version = "v1" });
 });
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -91,6 +91,8 @@ builder.Services.AddScoped<ISpotRepository, SpotRepository>();
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
 var issuer = builder.Configuration.GetValue<string>("Tokens:Issuer");
 var accessExpireSeconds = builder.Configuration.GetValue<int>("Tokens:AccessExpireSeconds");
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -116,12 +118,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
 
     });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Admin/LoginPage"; // Path to the login page
-       
-    });
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.LoginPath = "/Admin/LoginPage";
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+});
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.LoginPath = "/Admin/LoginPage"; // Path to the login page
+//        options.ExpireTimeSpan = TimeSpan.FromDays(30); // Set a long expiration for "Remember Me"
+//        options.SlidingExpiration = false; // Prevents resetting expiration on every request
+
+//    });
 
 //builder.Services.AddCors(options =>
 //{
@@ -168,11 +185,14 @@ app.UseRouting();
 
 app.UseCors("AllowSpecificOrigin");
 
+
+app.UseSession(); // Add this line
+
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseSession(); // Add this line
 
 app.MapControllers();
 

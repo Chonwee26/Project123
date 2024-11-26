@@ -57,6 +57,7 @@
             margin-right: 15px;
             scrollbar-gutter: stable;
             scrollbar-width: thin;
+            padding-left:20px;
         }
 
 
@@ -231,6 +232,8 @@
             scrollbar-color: black gray;
             padding: 10px;
             box-sizing: border-box;
+            
+            scrollbar-gutter: stable;
             scrollbar-width: thin;
         }
             .sidebar:hover {
@@ -454,7 +457,7 @@
                     </div>
 
                     <div id="sidebarSearch">
-                        <a href="/Spot/Search" class="btn nav-link" id="btnSearch"data-page="search"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
+                        <a href="/Spot/Search" class="btn nav-link" id="btnSearch" data-page="search"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
                         @*<a href="/Spot/SpotAdminPage" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>*@
 
                     </div>
@@ -469,49 +472,49 @@
 
                 </div>
                 <div class="lib-sidebar" id="libSideBar">
-                    <div class=""style="text-align:center;">
-                        <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+                    <div class="" style="text-align:center;">
+                        <a href="/Spot/FavoriteSong" class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
                     </div>
                     @*<div class="imgArtist">
-                        <img src="~/picture/shipment_pic3.jpg" />
-                    </div>*@
+                            <img src="~/picture/shipment_pic3.jpg" />
+                        </div>*@
 
-             
 
-                 
+
+
                 </div>
             </nav>
         </div>
     </header>
     @*<div class="container">
         <main role="main" class="pb-3">*@
-<div id="main">
-    <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
-    @RenderBody()
-    <div class="container-fluid content aside col-lg-3 col-6" id="aside">
-        @*<div class="dv-aside">
-                <aside class="aside-content px-3">
-                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                    <div class="img-aside-content">
-                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                    </div>
-                    <h3>17さいのうた。</h3>
-                    <h6>Yuika</h6>
+    <div id="main">
+        <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
+        @RenderBody()
+        <!--<div class="container-fluid content aside col-lg-3 col-6" id="aside">-->
+            @*<div class="dv-aside">
+                    <aside class="aside-content px-3">
+                        <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                        <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                        <div class="img-aside-content">
+                            <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                        </div>
+                        <h3>17さいのうた。</h3>
+                        <h6>Yuika</h6>
 
-                    <div class="aside-about-artist">
-                        <div class="aside-about-artist-img">
-                            <h6>About the artist</h6>
+                        <div class="aside-about-artist">
+                            <div class="aside-about-artist-img">
+                                <h6>About the artist</h6>
+                            </div>
+                            <div class="aside-about-artist-title">
+                                <h6>Yuika</h6>
+                                <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                            </div>
                         </div>
-                        <div class="aside-about-artist-title">
-                            <h6>Yuika</h6>
-                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                        </div>
-                    </div>
-                </aside>
-            </div>*@
+                    </aside>
+                </div>*@
+        <!--</div>-->
     </div>
-</div>
     @*</main>
         </div>*@
 
@@ -522,20 +525,22 @@
                     <div class="d-flex col-4" id="dv-bottomside">
                         @*<div class="dv-bottomside-image" style="margin:5px 15px 0px 15px">
 
-                            <img class="img-bottomside" src="~/picture/Japan-2107x1406.jpg" />
-                        </div>
-                        <div class="bottomside-title">
-                            <h6 style="color:white;margin:0" class="">Trying to stay alive</h6>
-                            <p style="color:gray;">xenophuria</p>
-                        </div>*@
+                                <img class="img-bottomside" src="~/picture/Japan-2107x1406.jpg" />
+                            </div>
+                            <div class="bottomside-title">
+                                <h6 style="color:white;margin:0" class="">Trying to stay alive</h6>
+                                <p style="color:gray;">xenophuria</p>
+                            </div>*@
                     </div>
-                    <div class="content bottomside-control col-4" style="padding:0;">
+                    <div class="content bottomside-control col-4" id="musicPlayer" style="padding:0;">
 
                         <div class="col-12 d-flex justify-content-center">
-                            <audio class="col-12" id="audiocontrol" controls="" style="height:38px;display:none">
-                                <source id="songAudio" src="blobdosomething" type="audio/mp3">
-                                Your brownser does not support this audio elemento
-                            </audio>
+                            <div id="waveFormAudio">
+                                <audio class="col-12" id="audiocontrol" controls="" style="height:38px;display:none">
+                                    <source id="songAudio" src="blobdosomething" type="audio/mp3">
+                                    Your brownser does not support this audio elemento
+                                </audio>
+                            </div>
                             <button class="button-control btn-media btn-media-shuffle" type="button">
                                 <i class="fa-solid icon-control fa-shuffle" id="iconMediaShuffle"></i>
                             </button>
@@ -568,7 +573,7 @@
                             <span class="media-time" id="endMediaTime" style="color: white; padding-left: 12px; margin-top: 3px; font-size: 14px ">0:00</span>
 
                         </div>
-                       
+
 
                     </div>
 
@@ -579,13 +584,13 @@
 
 
                             @*<button class="button-control"><i class="btn-media-play fa-solid icon-control fa-play"></i></button>
-        <button class="button-control"><i class="btn-media-pause fa-solid icon-control fa-pause"></i></button>*@
+                                <button class="button-control"><i class="btn-media-pause fa-solid icon-control fa-pause"></i></button>*@
 
                             <button class="button-control"><i class="btn-media-volume fa-solid icon-control fa-volume-low"></i></button>
                             <input type="range" class="btn-media-volume-bar" id="btnVolumeBar" min="0" max="1" step="0.01" value="">
 
-                            <button class="button-control"><i class="btn-media-fullscreen icon-control fa-solid fa-up-right-and-down-left-from-center"style="font-size:16px"></i></button>
-                            <button class="button-control"><i class="btn-media-miniPlayer icon-control fa-solid fa-arrow-up-right-from-square"style="font-size:16px"></i></button>
+                            <button class="button-control"><i class="btn-media-fullscreen icon-control fa-solid fa-up-right-and-down-left-from-center" style="font-size:16px"></i></button>
+                            <button class="button-control"><i class="btn-media-miniPlayer icon-control fa-solid fa-arrow-up-right-from-square" style="font-size:16px"></i></button>
                         </div>
                     </div>
                 </div>
@@ -602,6 +607,10 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
+    @*script wavesufer*@
+    <script src="https://unpkg.com/wavesurfer.js@7"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
+
     <script>
 
 
@@ -622,6 +631,8 @@
         var progressBar = $('#progressBar');
 
         $(document).ready(function () {
+          
+
 
 
             document.addEventListener('keypress', function (event) {
@@ -855,10 +866,10 @@
             jQuery('div.dv-animation').fadeOut('slow');
             $(".sidebar").resizable({
                 handles: 'e', // Enable resizing from the east (right) edge
-                minWidth: 107,
+                minWidth: 101,
                 maxWidth: 420,
                 resize: function (event, ui) {
-                    $('#main').css('margin-left', ui.size.width -7 + 'px' );
+                    $('#main').css('margin-left', ui.size.width  + 'px' );
                 }
             });
             getAlbumSideLayout();
@@ -867,6 +878,20 @@
 
 
         });
+
+
+
+        //const wavesurfer = WaveSurfer.create({
+        //    container: '#waveFromAudio',
+        //    waveColor: 'rgb(200, 0, 200)',
+        //    progressColor: 'rgb(100, 0, 100)',
+        //    url: '/examples/audio/demo.wav',
+        //})
+        //wavesurfer.on('click', () => {
+        //    wavesurfer.play()
+        //})
+
+
         ////test pushs
         //$('.nav-link').on('click', function (e) {
         //    e.preventDefault();
@@ -969,7 +994,7 @@
         });
 
         function bindingMediaLayout(data,image,albumName) {
-            
+
             $('#dv-bottomside').empty();
             $('#aside').empty();
             var bottomMedia = `

@@ -828,7 +828,7 @@
 
 
         $('#tblDataTableGenre').on('click', '.btn-edit-genre', function () {
-            debugger;
+            
             saveGenreStatus = "Update";
             rowDataGenre = $('#tblDataTableGenre').DataTable().row($(this).closest('tr')).data();
             genreId = rowDataGenre.GenreId;
@@ -846,7 +846,6 @@
             $('#genreModal').modal('show');
 
         });
-
 
                 $('#tblDataTableSong').on('click', '.btn-edit-song', function () {
                     SaveStatus = "Update";
@@ -1019,7 +1018,6 @@
        });
    }
 
-
         function createGenre(genreId) {
              genreId = genreId == null || genreId == undefined ? "" : genreId;
 
@@ -1055,7 +1053,7 @@
             });
         }
         function searchGenre() {
-               debugger
+               
        frmGenre = {
            GenreId: $("#txtSearchGenreId").val(),
            GenreName: $("#txtSearchGenreName").val(),
@@ -1077,8 +1075,8 @@ $.ajax({
         console.log(error);
     }
 });
-   }
-
+        }
+   
         function searchAlbum() {
             frmSearch = {
                 AlbumName: $("#txtAlbumName").val(),
@@ -1413,7 +1411,7 @@ $.ajax({
                 data: frmSearchArtist,
                 dataType: "json",
                 success: function (result) {
-                    debugger
+                    
                     bindingTableArtistSongAlbum(result.Data);
 
                     if (result.status == "S") {
@@ -1495,7 +1493,7 @@ $.ajax({
             //    AlbumName: rowDataAlbum.AlbumName,
 
             //}
-            debugger
+                              
             frmDelete = rowDataAlbum
 
             await $.ajax({

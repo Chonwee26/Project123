@@ -82,6 +82,8 @@ namespace Project123Api.Controllers
                 resp.Status = "S";
                 resp.Message = "Authentication successful";
 
+              
+               // Redirect to trigger cookie persistence
                 return Ok(new
                 {
                     status = resp.Status,

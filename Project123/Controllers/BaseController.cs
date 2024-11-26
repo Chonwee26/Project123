@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Project123.Dto;
 using System.Net.Http.Headers;
 using static Project123.Services.IAuthenticationService;
@@ -17,6 +18,8 @@ namespace Project123.Controllers
 
     public class BaseController : Controller
     {
+
+
         private readonly IHttpClientFactory _httpClientFactory;
         //private readonly ApiHelper _apiHelper;
         protected ResponseModel response;
@@ -28,7 +31,26 @@ namespace Project123.Controllers
             response = new ResponseModel();
         }
 
-       // This method can be called from derived controllers
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var path = context.HttpContext.Request.Path.Value;
+
+            // Exclude Login and Register pages from the check Register2
+            if (!path.Contains("LoginPage") && !path.Contains("RegisterPage")&&!path.Contains("Login1") && !path.Contains("Register2"))
+            {
+                if (HttpContext.Session.GetString("UserId") == null &&
+                    !HttpContext.Request.Cookies.ContainsKey("AuthToken"))
+                {
+                    // Redirect to the Login page
+                    context.Result = RedirectToAction("LoginPage", "Admin");
+                }
+            }
+
+
+            base.OnActionExecuting(context);
+        }
+
+        // This method can be called from derived controllers
         protected async Task<IActionResult> GetProtectedData(string endpoint)
         {
             string token = HttpContext.Session.GetString("UserToken")??string.Empty;

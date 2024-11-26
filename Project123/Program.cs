@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using static Project123.Services.IAuthenticationService;
+using static Project123.Services.CookieRedirectMiddleware;
+using Project123.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +25,20 @@ builder.Services.AddSingleton<MyService>();
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-builder.Services.AddControllersWithViews().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-});
+//builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+//builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+//{
+//    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+//    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+//});
+
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -36,8 +46,8 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 
 builder.Services.AddHttpClient();
-builder.Services.AddControllersWithViews();
-builder.Services.AddControllers();
+//builder.Services.AddControllersWithViews();
+//builder.Services.AddControllers();
 
 // Configure JWT authentication
 var key = builder.Configuration.GetValue<string>("Tokens:Key");
@@ -110,11 +120,30 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Set cookie as HttpOnly
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
-
+builder.Services.AddAuthentication("Cookies").AddCookie(); // If using cookies for authentication
 
 
 
 var app = builder.Build();
+
+
+//app.Use(async (context, next) =>
+//{
+//    // Check for "UserToken" cookie
+//    var userToken = context.Request.Cookies["UserToken"];
+
+//    if (string.IsNullOrEmpty(userToken) && !context.Request.Path.StartsWithSegments("/Admin/LoginPage"))
+//    {
+//        // If no cookie, redirect to login page
+//        context.Response.Redirect("/Admin/LoginPage");
+//    }
+//    else
+//    {
+//        // If cookie exists, proceed to the next middleware
+//        await next();
+//    }
+//});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -129,31 +158,31 @@ else
 
 
 
+
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 //app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSession();
+
+
 
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();   // Enable authorization middleware
 
 
 // Enable session middleware
-app.UseSession(); // This must come before UseAuthentication and UseAuthorization
 
-app.UseEndpoints(endpoints =>
-{
-    // Web routes
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+//app.UseMiddleware<CookieRedirectMiddleware>(); // Add your custom middleware
 
-    // API routes
-    endpoints.MapControllerRoute(
-        name: "api",
-        pattern: "api/{controller}/{action}/{id?}");
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "api",
+    pattern: "api/{controller}/{action}/{id?}");
 
 app.MapControllers();
 
