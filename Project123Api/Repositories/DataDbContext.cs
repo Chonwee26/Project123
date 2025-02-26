@@ -33,7 +33,8 @@ namespace Project123Api.Repositories
             modelBuilder.Entity<GenreModel>()
              .Ignore(a => a.GenreImage);
 
-
+            modelBuilder.Entity<AdminModel>()
+            .Ignore(a => a.ProfileImage);
 
 
             modelBuilder.Entity<SongModel>()

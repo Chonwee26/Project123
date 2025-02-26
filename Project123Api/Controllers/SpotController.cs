@@ -191,6 +191,46 @@ namespace Project123Api.Controllers
             return response;
         }
 
+        [HttpPost("DeleteProfile")]
+        public async Task<ResponseModel> DeleteProfile(AdminModel adminData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _spotRepo.DeleteProfile(adminData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+        [HttpPost("UpdateProfile")]
+        public async Task<ResponseModel> UpdateProfile(AdminModel adminData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _spotRepo.UpdateProfile(adminData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
 
         [HttpPost("UpdateSong")]
         public async Task<ResponseModel> UpdateSong(SongModel SongData)
@@ -442,6 +482,24 @@ namespace Project123Api.Controllers
         }
 
 
+        //[HttpPost("GetProfileImage")]
+        //public async Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData)
+        //{
+        //    adminData.Id = Convert.ToInt32(HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"]);
+        //    IEnumerable<AdminModel> adminList = await _spotRepo.GetProfileImage(adminData);
+        //    return adminList;
+        //}
+
+        [HttpPost("GetProfileImage")]
+        public async Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData)
+        {
+         
+            IEnumerable<AdminModel> adminList = await _spotRepo.GetProfileImage(adminData);
+            return adminList;
+        }
+
+
+
         [HttpPost("SearchSpot")]
         public async Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData)
         {
@@ -496,5 +554,7 @@ namespace Project123Api.Controllers
 
             return albumList;
         }
+
+
     }
 }

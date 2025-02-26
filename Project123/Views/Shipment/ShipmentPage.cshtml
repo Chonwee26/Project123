@@ -428,7 +428,7 @@
 
 
 
-                            <div class="  col-8 p-3 d-flex   ">
+                            <div class="col-8 p-3 d-flex">
 
                                 <button type="button" id="btnCreate" class="btn btn-success mx-2 px-4 ">สร้าง</button>
                                 <!-- Button trigger modal -->
@@ -438,7 +438,7 @@
 
                             </div>
 
-                            <div class="  col-4 p-3 d-flex  justify-content-end ">
+                            <div class="col-4 p-3 d-flex justify-content-end ">
 
                                 <button type="button" id="btnReset" class="btn btn-secondary mx-2 px-4 ">ล้าง</button>
                                 <button type="submit" id="btnSearch" class="btn btn-primary mx-2 px-4 ">ค้นหา</button>
@@ -456,17 +456,18 @@
                                 <table id="tblDataTable" class="table table-bordered" width="100%">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>แก้ไขสินค้า</th>
-                                            <th>หมายเลขออเดอร์</th>
-                                            <th>ชื่อ</th>
-                                            <th>เบอร์โทรศัพท์</th>
-                                            <th>ที่เก็บสินค้า</th>
-                                            <th style="width:400px!important;">สถานะสินค้า</th>
-                                            <th>วันจัดส่ง</th>
-                                            <th>ลบสินค้า</th>
-
+                                            <th rowspan="2">แก้ไขสินค้า</th>
+                                            <th rowspan="2">หมายเลขออเดอร์</th>
+                                            <th rowspan="2">ชื่อ</th>
+                                            <th rowspan="2">เบอร์โทรศัพท์</th>
+                                            <th rowspan="2">ที่เก็บสินค้า</th>
+                                            <th rowspan="2" style="width:400px!important;">สถานะสินค้า</th>
+                                            <th rowspan="2">วันจัดส่ง</th>
+                                            <th colspan="2">ลบสินค้า</th> <!-- Grouped header -->
                                         </tr>
+                                     
                                     </thead>
+
                                     <tbody>
                                     </tbody>
                                 </table>
@@ -1288,17 +1289,26 @@
                         className: 'text-center',
                         orderable: false,
                         data: null,
-                        defaultContent: '<i class="fa-solid fa-trash btn-delete"></i>',
-
+                        render: function (data, type, row) {
+                            return `<i class="fa-solid fa-trash btn-delete" style="cursor: pointer;"></i>`;
+                        }
                     },
-                    //{
-                    //    data: 'CreateDate', classNmae: 'text-left', orderable: false,
-                    //    render: function (data, type, row) {
+                    {
+                        className: 'text-center',
+                        orderable: false,
+                        data: null,
+                        render: function (data, type, row) {
+                            return `<i class="fa-solid fa-flag btn-delete-green" style="color: green; cursor: pointer;"></i>`;
+                        }
+                        //{
+                        //    data: 'CreateDate', classNmae: 'text-left', orderable: false,
+                        //    render: function (data, type, row) {
 
-                    //      /*  return data.CreateDate;*/
-                    //        return data;
-                    //    }
-                    //}
+                        //      /*  return data.CreateDate;*/
+                        //        return data;
+                        //    }
+                        //}
+                    }
 
                 ]
 

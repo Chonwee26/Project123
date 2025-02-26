@@ -4,5 +4,41 @@
       "Default": "Information",
       "Microsoft.AspNetCore": "Warning"
     }
+  },
+
+  //for hotmail
+  //"EmailSettings": {
+  //  "SMTPServer": "smtp.office365.com",
+  //  "Port": 587,
+  //  "SenderEmail": "chonwee26@hotmail.com",
+  //  "SenderName": "Project123_Spot",
+  //  "Password": "rvadiiggygfkkzje"
+  //},
+
+  // for gmail
+  "EmailSettings": {
+    "SMTPServer": "smtp.gmail.com",
+    "Port": 587,
+    "SenderEmail": "xzonewar01@gmail.com",
+    "SenderName": "Project123_Spot",
+    "Password": "bvaxfrtziwkglmpv"
+  },
+
+
+  "BaseAddress": "https://Project123.com",
+  "Tokens": {
+    "Key": "ABCDEFGHIJKLMNOPKRSTUVWSYXZHAPPYHAPPYWEWILLWE",
+    "Issuer": "localhost:7061",
+    //"Issuer": "https://Project123.com",
+    "AccessExpireSeconds": "86400"
+  },
+
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\Local; Database=ShipmentDB;Trusted_Connection=True;MultipleActiveResultSets=true;"
+    //"DefaultConnection": "Server=(localdb)\\Local; Database=ShipmentDB;Trusted_Connection=True;MultipleActiveResultSets=true;"
+    //"Server=(localdb)\\GENPF2AVQ9Y\\GENERWIZ;Database=Shipment;Trusted_Connection=True;MultipleActiveResultSets=true;"
+    //"DefaultConnection": "Server=sql_server_container;Database=ShipmentDB;User Id=sa;Password=YourStrong@Passw0rd;MultipleActiveResultSets=true;"
   }
+
 }

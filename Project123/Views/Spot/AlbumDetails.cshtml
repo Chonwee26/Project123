@@ -52,14 +52,13 @@
         .btn-edit-album, .btn-delete, btn-edit-song {
             cursor: pointer;
         }
-   
-      
+
 
     </style>
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
+    <div class="content main-content col-9">
         <div>
             <div class="album-details d-flex">
                 <div class="dv-album-img">
@@ -82,51 +81,51 @@
             </div>
 
             @*<div class="col-xxl-2 col-lg-4 col-6 dv-content" data-album-id="${album.AlbumId}">
-                <div class="music-content">
-                    <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
-                </div>
-                <div class="music-content-title">
-                    <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
-                    <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
-                </div>
-            </div>*@
-        <div class="main-content-music">
+                    <div class="music-content">
+                        <img id="music_pic${count}" src="@Model.AlbumImagePath" class="img-music-content" alt="@Model.AlbumName"  />
+                    </div>
+                    <div class="music-content-title">
+                        <h6 class="link-opacity-100-hover" href="#">@Model.AlbumName</h6>
+                        <p class="link-opacity-100-hover" href="#">@Model.ArtistName</p>
+                    </div>
+                </div>*@
+            <div class="main-content-music">
 
-            <button class="button-control  btn-media btn-album-play btn-media-play" style="background-color: unset; margin-left: 20px;">
-                <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:46px  "></i>
-            </button>
-            <button class="button-control btn-media btn-album-pause btn-media-pause" style="background-color: unset; margin-left: 20px;">
-                <i class="fa-solid icon-control fa-circle-pause" style="color:#e52cf9; font-size:40px "></i>
-            </button>
+                <button class="button-control  btn-media btn-album-play btn-media-play" style="background-color: unset; margin-left: 20px;">
+                    <i class="fa-solid  fa-circle-play icon-control" style="color:#e52cf9; font-size:46px  "></i>
+                </button>
+                <button class="button-control btn-media btn-album-pause btn-media-pause" style="background-color: unset; margin-left: 20px;">
+                    <i class="fa-solid icon-control fa-circle-pause" style="color:#e52cf9; font-size:40px "></i>
+                </button>
 
-            <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
-                <i class="fa-solid icon-control  fa-shuffle" style="color: #FFF; font-size: 41px;" id="iconAlbumShuffle"></i>
-            </button>
+                <button class="button-control btn-media btn-album-shuffle" type="button" style="background-color: unset; margin-left: 30px;">
+                    <i class="fa-solid icon-control  fa-shuffle" style="color: #FFF; font-size: 41px;" id="iconAlbumShuffle"></i>
+                </button>
 
-            <button class="button-control btn-media btn-album-plus" type="button" style="background-color: unset; margin-left: 30px; ">
-                <i class="fa-solid icon-control fa-circle-plus" style="color: #e52cf9; font-size: 45px;" id="iconAlbumSave"></i>
-            </button>
+                <button class="button-control btn-media btn-album-plus" type="button" style="background-color: unset; margin-left: 30px; ">
+                    <i class="fa-solid icon-control fa-circle-plus" style="color: #e52cf9; font-size: 45px;" id="iconAlbumSave"></i>
+                </button>
 
-            @*<button class="button-control btn-media btn-album-saved" type="button" style="background-color: unset; margin-left: 30px;">
-                <i class="fa-solid fa-circle-check" style="color: #e52cf9;" id="iconAlbumCheck"></i>
-            </button>*@
-            
-        </div>
+                @*<button class="button-control btn-media btn-album-saved" type="button" style="background-color: unset; margin-left: 30px;">
+                        <i class="fa-solid fa-circle-check" style="color: #e52cf9;" id="iconAlbumCheck"></i>
+                    </button>*@
+
+            </div>
         </div>
         <div class="col-12" id="dvTableAlbum" style="display:block; margin-top:20px;">
 
             @*<button class="button-control btn-media btn-album-shuffle" type="button">
-                <i class="fa-solid icon-control fa-shuffle"></i>
-            </button>
-            <div class="" style="background-color:black;">
+                    <i class="fa-solid icon-control fa-shuffle"></i>
+                </button>
+                <div class="" style="background-color:black;">
 
-                <button class="button-control btn-media btn-media-play">
-                    <i class="fa-solid icon-control fa-circle-play"></i>
-                </button>
-                <button class="button-control btn-media btn-media-pause">
-                    <i class="fa-solid icon-control fa-circle-pause"></i>
-                </button>
-            </div>*@
+                    <button class="button-control btn-media btn-media-play">
+                        <i class="fa-solid icon-control fa-circle-play"></i>
+                    </button>
+                    <button class="button-control btn-media btn-media-pause">
+                        <i class="fa-solid icon-control fa-circle-pause"></i>
+                    </button>
+                </div>*@
             <table id="tblDataTableSong" class="table table-dark table-hover table-bordered" width="100%" style="background-color: #121212; ">
                 <thead>
                     <tr class="">
@@ -142,34 +141,13 @@
                 </tbody>
             </table>
         </div>
-       
+
     </div>
 
 
   
-    <div class="content aside col-lg-3 col-6" id="aside">
-        @*<div>
-                <aside class="aside-content px-3">
-                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                    <div class="img-aside-content">
-                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                    </div>
-                    <h3>17さいのうた。</h3>
-                    <h6>Yuika</h6>
-
-                    <div class="aside-about-artist">
-                        <div class="aside-about-artist-img">
-                            <h6>About the artist</h6>
-                        </div>
-                        <div class="aside-about-artist-title">
-                            <h6>Yuika</h6>
-                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                        </div>
-                    </div>
-                </aside>
-
-            </div>*@
+    <div class="content aside col-3" id="aside">
+       
     </div>
 </div>
 
@@ -183,15 +161,15 @@
         var AlbumImage = '@Model?.AlbumImagePath';
         var albumFavData;
         let playedIndexes = new Set();
-        @*var ArtistName = @Model.ArtistName;*@
+      
         $(document).ready(function () {
             $('.btn-album-pause').addClass('hide-element')
          /*   getAlbum();*/
             //getAlbumContainer();
       /*      toggleAsideDisplay();*/
             searchSongs();
-            GetFavAlbum()
-
+            GetFavAlbum();
+         
             $('.img-music-content').on('click', function () {
 
                 var imgSrc = $(this).attr('src');
@@ -214,6 +192,9 @@
                 toggleAsideDisplay();
             });
         });
+
+
+      
         function GetFavAlbum() {
 
                    $.ajax({
@@ -226,7 +207,7 @@
            global: false,
            dataType: "json",
            success: function (result) {
-            
+
                ;
                if (result.Data.length > 0) {
                    albumFavData = result.Data[0].FavoriteAlbum;
@@ -258,7 +239,7 @@
                 global: false,
                 dataType: "json",
                 success: function (result) {
-                    
+
 
                     if (result.Data.length > 0) {
 
@@ -282,7 +263,7 @@
 
         }
         $('.btn-album-plus').click(function () {
-            
+
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("FavoriteAlbum1", "Spot")',
@@ -293,8 +274,8 @@
                 global: false,
                 dataType: "json",
                 success: function (result) {
-                   
-                    
+
+
                     if (result.Data.length > 0) {
                         albumFavData = result.Data[0].FavoriteAlbum;
                         if (albumFavData) {
@@ -413,12 +394,14 @@
 
       $('#tblDataTableSong tbody').on('dblclick', 'tr', function () {
 
-    var table = $('#tblDataTableSong').DataTable();
-    var rowDataAlbum = table.row(this).data();
+          var table = $('#tblDataTableSong').DataTable();
+
+          var rowDataAlbum = table.row(this).data();
+  
     var tableAllIndex = table.rows().count() - 1;
     var currentIndex = table.row(this).index();
-    var shuffledIndexes = [...Array(tableAllIndex + 1).keys()]; // Create an array of row indices
-
+          var shuffledIndexes = [...Array(tableAllIndex + 1).keys()]; // Create an array of row indices
+         
     if (rowDataAlbum) {
         bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
         if (!$('#aside').is(':visible')) {

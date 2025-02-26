@@ -13,6 +13,7 @@ using Project123.Dto;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using static Project123.Services.IAuthenticationService;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Project123.Controllers
 {
@@ -47,6 +48,14 @@ namespace Project123.Controllers
         {
             return View();
         }
+
+        public IActionResult ForgetPasswordPage(string token)
+        {
+            token = string.IsNullOrEmpty(token) ? "" : token;
+            ViewBag.Token = token;
+            return View();
+        }
+
 
 
         public IActionResult TabletLoginPage()

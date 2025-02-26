@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project123", "Project123\Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project123Api", "Project123Api\Project123Api.csproj", "{C6213DF5-E694-483B-80FD-AAEFEDA7A991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project123.Dto", "Project123.Dto\Project123.Dto.csproj", "{9DB3F979-FE59-4D22-A698-332650ADA018}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project123.Dto", "Project123.Dto\Project123.Dto.csproj", "{9DB3F979-FE59-4D22-A698-332650ADA018}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

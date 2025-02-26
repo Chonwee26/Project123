@@ -117,19 +117,20 @@
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
+    <div class="content main-content col-9">
 
         <div>
             <h1>@Model.GenreName</h1>
             <div class="main-content-music row">
                 <h3>@Model.GenreName</h3>
-                <span class="text-end">Show All</span>
+                @*<span id="showAllAlbum" class="text-end">Show All</span>*@
+                <a class="text-end"href="@($"{Url.Action("Genre", "Spot")}?genreId={@Model.GenreId}&showall=true")">Show All</a>
                 <div class="main-content-genre">
 
                 </div>
 
 
-                </div>
+            </div>
                 @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
                         <div class=" music-content">
                             <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
@@ -146,7 +147,7 @@
             </div>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-6" id="aside">
+    <div class=" content aside col-3" id="aside">
         @*<div class="dv-aside">
                 <aside class="aside-content px-3">
                     <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -206,6 +207,10 @@
             //});
         });
 
+        //$('#showAllAlbum').click(function () {
+
+        //});
+
 
 
 
@@ -218,7 +223,7 @@
                     data: { ArtistName: searchTerm },
         dataType: "json",
             success: function (result) {
-                debugger
+                
                 searchSongContainer(result.data);
 
 

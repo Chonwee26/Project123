@@ -106,6 +106,101 @@ namespace Project123.Controllers
             return Json(new { status = response.Status, success = response.Success, message = response.Message });
         }
 
+
+        [HttpPost("ChangePassword1")]
+        public async Task<IActionResult> ChangePassword(AdminModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                string requestJson = JsonConvert.SerializeObject(UserData);
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+
+                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                var responseResult = await client.PostAsync("api/Authen/ChangePassword", httpContent);
+
+                if (responseResult.IsSuccessStatusCode)
+                {
+                    response = await responseResult.Content.ReadAsAsync<ResponseModel>();           
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+
+            return Json(new { status = response.Status, success = response.Success, message = response.Message });
+        }
+
+
+        [HttpPost("ChangePasswordByToken1")]
+        public async Task<IActionResult> ChangePasswordByToken(AdminModel UserData , string token)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                string requestJson = JsonConvert.SerializeObject(UserData);
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+
+                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                var responseResult = await client.PostAsync($"api/Authen/ChangePasswordByToken?token={token}", httpContent);
+
+                if (responseResult.IsSuccessStatusCode)
+                {
+                    response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+
+            return Json(new { status = response.Status, success = response.Success, message = response.Message });
+        }
+
+        [HttpPost("ForgetPassword1")]
+        public async Task<IActionResult> ForgetPassword(AdminModel UserData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                string requestJson = JsonConvert.SerializeObject(UserData);
+                var client = _apiHelper.CreateClient();
+                client.BaseAddress = new Uri("https://localhost:7061/"); // Ensure the base address is set
+
+                HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                var responseResult = await client.PostAsync("api/Authen/ForgetPassword", httpContent);
+
+                if (responseResult.IsSuccessStatusCode)
+                {
+                    response = await responseResult.Content.ReadAsAsync<ResponseModel>();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+
+            return Json(new { status = response.Status, success = response.Success, message = response.Message });
+        }
+
         [HttpPost("Register2")]
         public async Task<IActionResult> Register(AdminModel UserData)
         {

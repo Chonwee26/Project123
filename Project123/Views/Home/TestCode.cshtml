@@ -5,98 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player with AJAX Navigation</title>
     @*<link rel="stylesheet" href="styles.css">*@
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding-bottom: 60px; /* Space for the footer */
-    }
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://fonts.googleapis.com/css?family=Noto Sans Thai' rel='stylesheet'>
 
-    #main-content {
-        padding: 20px;
-    }
+    <style>
 
-    footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        padding: 10px;
-    }
+        .dvflex {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+        }
+        #dvContent {
+          height:570px;
+            width: 610px;
+            margin: auto;
+            background-color: #d1d1d1;
+            padding: 0 60px;
+        }
+        #dvImg{
+            height:100px;
+            /*margin-top:60px;*/
+        }
+        #dvCard{
 
-    #music-player audio {
-        width: 100%;
-        max-width: 300px;
-    }
-</style>
+            margin-top:40px;
+            background-color:white;
+            width:100%;
+            /*border-radius:20px;*/
+        }
+
+        
+    </style>
 
 </head>
 <body>
+    <div class="dvflex" id="dvContent">
 
-    <div id="main-content">
-        <!-- Content will be loaded here via AJAX -->
-        <h1>Welcome to the Music Player App</h1>
-        <p>Click on links to navigate without stopping the music.</p>
-    </div>
+        <div class="" id="dvImg">
+           
+            <img src="~/picture/box.png" style="width:80px;height:80px;"alt="logo" />
 
-    <!-- Music Player in a fixed footer -->
-    <footer>
-        <div id="music-player">
-            <audio id="audio" controls>
-                <source src="/uploads/Aimer/Album_4015/Sign.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
         </div>
-        <button id="playPause">Play/Pause</button>
-    </footer>
+        <h1>การขอเปลี่ยนรหัสผ่าน</h1>
+        <span style="margin-top:10px;">
+            เราได้รับคำขอเปลี่ยนรหัสผ่านสำหรับบัญชี <b>Project123</b> ของคุณแล้ว
+            ลิงก์นี้จะหมดอายุใน <b>24 ชั่วโมง</b> หากคุณไม่ได้ร้องขอการเปลี่ยนรหัสผ่าน โปรดละเว้นอีเมลฉบับนี้ บัญชีของคุณจะไม่มีการเปลี่ยนแปลงใดๆ ผู้เล่นคนอื่นอาจป้อนชื่อผู้ใช้ของคุณโดยไม่ได้ตั้งใจ
+        </span>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/wavesurfer.js@7"></script>
-    <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Example links for navigation
-            $('#main-content').append(`
-            <nav>
-                <a href="https://localhost:7166/" class="nav-link">Page 1</a> |
-                <a href="page2.html" class="nav-link">Page 2</a>
-            </nav>
-        `);
+        <div class="dvflex" id="dvCard">
 
-            // Load content with AJAX on link click
-            $('body').on('click', 'a.nav-link', function (e) {
-                e.preventDefault();
-                const url = $(this).attr('href');
+            <h1>hello</h1>
 
-                $.ajax({
-                    url: url,
-                    success: function (data) {
-                        $('#main-content').html(data);
-                        history.pushState(null, null, url);
-                    }
-                });
-            });
+            <a href="" target="_blank">https://localhost:7166/Admin/ResetPassword?token=7a9a7152-4c9a-45e6-a906-dba40665ebef</a>
 
-            // Handle back/forward navigation
-            window.onpopstate = function () {
-                location.reload(); // Reload current content when back/forward is used
-            };
-        });
-        const option = {
-            container: '#music-player',
-            waveColor: 'rgb(200, 0, 200)',
-            progressColor: 'rgb(100, 0, 100)',
-            url: '/uploads/Aimer/Album_4015/Sign.mp3',
-        }
-      
 
-        const wavesurfer = WaveSurfer.create(option)
-        $('#playPause').on('click', () => {
-            wavesurfer.playPause();
-        })
-    </script>
+
+        </div>
+        </div>
+    
+       
 </body>
 </html>

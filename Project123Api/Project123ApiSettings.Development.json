@@ -4,5 +4,23 @@
       "Default": "Information",
       "Microsoft.AspNetCore": "Warning"
     }
+  },
+  //for hotmail
+  //"EmailSettings": {
+  //  "SMTPServer": "smtp.office365.com",
+  //  "Port": 587,
+  //  "SenderEmail": "chonwee26@hotmail.com",
+  //  "SenderName": "Project123_Spot",
+  //  "Password": "rvadiiggygfkkzje"
+  //},
+
+  // for gmail
+  "EmailSettings": {
+    "SMTPServer": "smtp.gmail.com",
+    "Port": 587,
+    "SenderEmail": "xzonewar01@gmail.com",
+    "SenderName": "Project123_Spot",
+    "Password": "bvaxfrtziwkglmpv"
   }
+
 }

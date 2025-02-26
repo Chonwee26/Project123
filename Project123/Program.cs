@@ -20,6 +20,7 @@ builder.Configuration
 // Register ApiHelper
 builder.Services.AddSingleton<ApiHelper>();
 builder.Services.AddSingleton<MyService>();
+//builder.Services.AddSingleton<EmailService>();
 
 // Register IHttpContextAccessor (needed to access session)
 builder.Services.AddHttpContextAccessor();
@@ -44,6 +45,7 @@ builder.Services.AddDbContext<DataDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
+
 
 builder.Services.AddHttpClient();
 //builder.Services.AddControllersWithViews();

@@ -24,6 +24,7 @@ using Microsoft.Extensions.Logging;
 using Project123Api.Middlewares;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Project123Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,9 @@ builder.Services.AddDbContext<DataDbContext>(options =>
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 builder.Services.AddScoped<ISpotRepository, SpotRepository>();
+builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
+builder.Services.AddSingleton<EmailService>();
+
 //var key = builder.Configuration.GetValue<string>("Tokens:Key");
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -135,7 +135,7 @@
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-8">
+    <div class="content main-content col-9">
         <div>
             <input class="form-control" type="text" id="txtSearch" />
             <div class="main-content-music row">
@@ -200,7 +200,7 @@
             </div>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-4" id="aside">
+    <div class=" content aside col-3" id="aside">
         @*<div class="dv-aside">
                 <aside class="aside-content px-3">
                     <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -272,7 +272,7 @@
                     data: { ArtistName: searchTerm },
                     dataType: "json",
                     success: function (result) {
-                        debugger
+                         
                         searchSongContainer(result.data);
 
                         @*$('.dv-content').on('click', function () {
@@ -309,12 +309,11 @@
 
 
       function searchSongContainer(searchData) {
-    debugger;
-
+     
     const appendedArtists = []; // Array to keep track of appended artist names
 
           searchData.forEach(function (album, index) {
-        debugger
+         
         count = index + 1;
 
         var albumHtml = `
@@ -332,7 +331,7 @@
         `;
 
         const artistName = album.ArtistName;
-        debugger
+         
         // Check if the artist name has already been appended
         if (!appendedArtists.includes(artistName) && album.ArtistImagePath != null) {
             appendedArtists.push(artistName); // Add artist name to the array
@@ -392,7 +391,7 @@
 
 
         //    if ($('#aside').css('display') == 'none') {
-        //        debugger
+        //         
         //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
         //    }
         //    else {
@@ -551,7 +550,7 @@ $.ajax({
        });
 
           $('.dv-content').on('click', function () {
-           debugger
+            
            var artistname = $(this).data('artistname-name');
            window.location.href = '@Url.Action("ArtistDetails", "Spot")?artistname=' + artistname
 

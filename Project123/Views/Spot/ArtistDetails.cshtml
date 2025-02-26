@@ -128,7 +128,7 @@
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
+    <div class="content main-content col-9">
         <div>
             <div class="album-details d-flex">
                 <div class="dv-album-img">
@@ -201,7 +201,7 @@
         </div>
 
     </div>
-    <div class=" content aside col-lg-3 col-6" id="aside">
+    <div class=" content aside col-3" id="aside">
         <div>
             <aside class="aside-content px-3">
                 <button class="btn" id="btnCloseAside" style="color:white">Close</button>
@@ -270,7 +270,7 @@
                     },
                     dataType: "json",
                     success: function (result) {
-                        debugger
+                        
                         if (result.Data.length > 0) {
                             FavoriteArtist = result.Data[0].FavoriteArtist
                             if (result.Data[0].FavoriteArtist) {
@@ -381,7 +381,7 @@
                 },
                 dataType: "json",
                 success: function (result) {
-                    debugger
+                    
                     if (result.Data.length > 0) {
                         FavoriteArtist = result.Data[0].FavoriteArtist
                         if (result.Data[0].FavoriteArtist) {
@@ -472,10 +472,10 @@
         }
 
 
-        function toggleAsideDisplay() {
-            $('#aside').toggle();
-            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
-        }
+        //function toggleAsideDisplay() {
+        //    $('#aside').toggle();
+        //    $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+        //}
 
 
 

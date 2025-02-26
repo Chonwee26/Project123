@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Project123.Dto;
+using System.Linq;
 using System.Net.Http.Headers;
 using static Project123.Services.IAuthenticationService;
 
@@ -31,24 +32,35 @@ namespace Project123.Controllers
             response = new ResponseModel();
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+      public override void OnActionExecuting(ActionExecutingContext context)
+{
+    var path = context.HttpContext.Request.Path.Value;
+
+    // Exclude Login and Register pages from the check
+    if (!string.IsNullOrEmpty(path) &&
+        !path.Contains("LoginPage") && 
+        !path.Contains("ForgetPasswordPage")&&
+        !path.Contains("ChangePassword")&&
+        !path.Contains("ForgetPassword")&&
+        !path.Contains("RegisterPage") && 
+        !path.Contains("Login1") && 
+        !path.Contains("Register2"))
+    {
+        if (context.HttpContext != null) // Ensure HttpContext is not null
         {
-            var path = context.HttpContext.Request.Path.Value;
+            var session = context.HttpContext.Session;
+            var cookies = context.HttpContext.Request.Cookies;
 
-            // Exclude Login and Register pages from the check Register2
-            if (!path.Contains("LoginPage") && !path.Contains("RegisterPage")&&!path.Contains("Login1") && !path.Contains("Register2"))
+            if (session.GetString("UserId") == null && !cookies.ContainsKey("AuthToken"))
             {
-                if (HttpContext.Session.GetString("UserId") == null &&
-                    !HttpContext.Request.Cookies.ContainsKey("AuthToken"))
-                {
-                    // Redirect to the Login page
-                    context.Result = RedirectToAction("LoginPage", "Admin");
-                }
+                // Redirect to the Login page
+                context.Result = new RedirectToActionResult("LoginPage", "Admin", null);
             }
-
-
-            base.OnActionExecuting(context);
         }
+    }
+
+    base.OnActionExecuting(context);
+}
 
         // This method can be called from derived controllers
         protected async Task<IActionResult> GetProtectedData(string endpoint)

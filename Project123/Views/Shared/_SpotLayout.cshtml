@@ -18,34 +18,36 @@
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
     <style>
-    
 
-        .btn-favorite{
-            cursor:pointer;
-            display:block;
+        .btn-favorite {
+            cursor: pointer;
+            display: block;
         }
+
         #tblDataTableSong:hover .btn-favorite {
             display: block;
         }
 
         table.dataTable thead th, table.dataTable thead td {
-            border-bottom:unset;
+            border-bottom: unset;
         }
+
         tbody, td, tfoot, th, thead, tr {
-            border-style:unset;
+            border-style: unset;
         }
-            .content {
+
+        .content {
             border-radius: 20px;
             height: calc(100vh - 90px); /* Adjust height to account for the bottom bar */
-            overflow: hidden;       
-           
+            overflow: hidden;
         }
-          
+
         .about-artist {
             background: #393838;
             padding: 10px;
             border-radius: 15px;
         }
+
         .main-content {
             background-color: #0e0d0d;
             /*margin-right: 10px;*/
@@ -54,37 +56,35 @@
             scrollbar-color: black gray;
             overflow-y: hidden; /* For browsers that support it, this avoids pushing the content */
             /* Adds padding to reserve space for the scrollbar */
-            margin-right: 15px;
+            /*margin-right: 15px;*/
+            margin-right: 5px;
             scrollbar-gutter: stable;
             scrollbar-width: thin;
-            padding-left:20px;
+            padding-left: 20px;
         }
-
-
-
 
             .main-content:hover {
                 overflow-y: auto;
                 /*padding: 15px 0px 15px 15px !important;*/
-              
-               
             }
-                /* Adjust width on hover to keep space for scrollbar */
-     
-
+        /* Adjust width on hover to keep space for scrollbar */
 
         .aside {
             display: flex;
             background-color: #262626;
-            padding:15px;
+            padding: 15px;
             overflow-y: hidden;
             height: 100%;
             color: white;
-            padding-right:15px;
+            padding-right: 15px;
+            scrollbar-color: black gray;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
         }
-        .aside:hover{
-            overflow-y:auto;
-        }
+
+            .aside:hover {
+                overflow-y: auto;
+            }
 
         .main-content-music {
             margin-top: 20px;
@@ -105,6 +105,7 @@
             margin-top: 10px;
             display: inline-grid;
         }
+
         .text-content {
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -123,11 +124,13 @@
         .img-aside {
             display: flex !important;
             justify-content: center;
-            width: 275px;
-            height: 275px;
-           
-            max-height: 388px;
-            max-width: 388px;
+            /*   width: 275px;
+            height: 275px; */
+            width: 100%;
+            height: 100%;
+            max-height: auto;
+            /*max-width: 268px;*/
+            max-width: 410px;
         }
 
         .img-aside-content,
@@ -144,7 +147,7 @@
         }
 
             .dv-content:hover {
-                background-color: #8f2c8fa8; 
+                background-color: #8f2c8fa8;
             }
 
             .dv-content:active {
@@ -181,20 +184,16 @@
             }
         }
 
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-
         html, body {
             height: 100%;
             margin: 0;
             /*overflow: hidden;*/
-           
-         
         }
 
         body {
@@ -202,11 +201,9 @@
             min-width: 874px;
         }
 
-
         @@media (max-width: 874px) {
             .main-content {
                 overflow-x: auto;
-                
             }
         }
 
@@ -214,7 +211,6 @@
             color: white;
             margin-left: 100px;
             padding: 10px 0px;
-          
         }
 
         .sidebar {
@@ -232,15 +228,14 @@
             scrollbar-color: black gray;
             padding: 10px;
             box-sizing: border-box;
-            
             scrollbar-gutter: stable;
             scrollbar-width: thin;
         }
+
             .sidebar:hover {
                 overflow-y: auto;
-              
             }
-         
+
         .search-sidebar {
             display: flex !important;
             justify-content: center;
@@ -251,11 +246,11 @@
             border-radius: 5px;
         }
 
-            .lib-sidebar {
-                background-color: #262626;
-                padding-top: 12px;
-                border-radius: 5px;
-            }
+        .lib-sidebar {
+            background-color: #262626;
+            padding-top: 12px;
+            border-radius: 5px;
+        }
 
         #bottomBar {
             position: fixed;
@@ -268,18 +263,19 @@
             z-index: 3; /* Ensure bottomBar is above sideBar */
         }
 
-        .bottomside-title{
-          /*  padding-top:15px;*/
-            padding-top:9px;
+        .bottomside-title {
+            /*  padding-top:15px;*/
+            padding-top: 9px;
         }
+
         img {
-           /* border: 1px solid #ddd;*/
+            /* border: 1px solid #ddd;*/
             border-radius: 4px;
             width: 50px;
             height: 50px;
         }
 
-        .circle,.circle a img {
+        .circle, .circle a img {
             border-radius: 50%;
         }
 
@@ -292,18 +288,16 @@
         }
 
         .img-aside-about {
-       
-            max-height: 90px;
-            max-width: 90px;
-            border-radius: 50%; 
-            width:100%;
-            height:100%;
+            height: 80px;
+            width: 80px;
+            border-radius: 50%;
+            /*  width:100%;
+            height:100%;*/
         }
 
         .iconlove {
-           
-         
         }
+
         .button-control {
             display: flex !important;
             justify-content: center;
@@ -313,10 +307,10 @@
             background-color: black;
             border: none;
         }
-        button .button-control button:focus{
-            outline:none;
-        }
 
+        button .button-control button:focus {
+            outline: none;
+        }
 
         .icon-control {
             color: #bdbdbd;
@@ -324,18 +318,15 @@
             transition: transform 0.2s, color 0.2s;
         }
 
-
         .button-control:hover .icon-control {
             transform: scale(1.1);
             color: #ffffff;
         }
 
-
         .button-control:active .icon-control {
             color: #e52cf9;
         }
 
-     
         .imgMainArtist {
             display: flex !important;
             justify-content: center;
@@ -350,6 +341,7 @@
         .dv-bottomside-image {
             margin: 3px;
         }
+
         .white-text {
             color: white !important;
         }
@@ -375,34 +367,31 @@
             background-color: gray; /* or any color you prefer */
         }
 
-        .btn-media{
-            cursor:pointer;
-            font-size:40px;
+        .btn-media {
+            cursor: pointer;
+            font-size: 40px;
         }
 
         .btn-media-play {
-         
         }
 
-        .hide-element{
-            display:none!important;
+        .hide-element {
+            display: none !important;
         }
-       
-
 
         .progress {
             height: 10px;
             margin-top: 10px;
-            width:83%;
-            background-color:unset;
+            width: 83%;
+            background-color: unset;
         }
 
         .progress-bar {
-            background-color: #007bff; /* Blue color for the progress bar */
+            /*background-color: #007bff;*/ /* Blue color for the progress bar */
             width: 100%; /* Initial width is 0%, will be adjusted via JavaScript */
-            cursor: pointer;
-            -webkit-appearance:progress-bar;
-            appearance:progress-bar;
+            /*     cursor: pointer;*/
+            /*   -webkit-appearance:progress-bar;
+            appearance:progress-bar;*/
         }
 
         .icon-color-purple {
@@ -421,66 +410,156 @@
                 text-decoration: underline;
             }
 
-      
-         
-            /*.progress-bar::-webkit-slider-thumb {
+        #btnVolumeBar {
+            /* background: linear-gradient(to right, #82CFD0 0%, #82CFD0 50%, #fff 50%, #fff 100%);*/
+            margin-top: 11px;
+            height: 10px;
+            border-radius: 4px;
+        }
+
+        input[type='range'] {
+            overflow: hidden;
+            -webkit-appearance: none;
+            background-color: #5c5c5b;
+        }
+
+            input[type='range']::-webkit-slider-runnable-track {
+                height: 10px;
+                /*         width:100%;*/
                 -webkit-appearance: none;
-        
+                color: #e52cf9;
+                margin-top: -1px;
+            }
+
+            input[type='range']::-webkit-slider-thumb {
+                width: 11px;
+                -webkit-appearance: none;
+                height: 100%;
+                cursor: pointer;
+                background: white;
+                border-radius: 50%;
+                box-shadow: -1000px 0 0 1000px #9800a9;
+            }
+
+            input [type="range"]::-moz-range-progress {
+                background-color: #e52cf9;
+            }
+
+            input[type="range"]::-moz-range-track {
+                background-color: #e52cf9;
+            }
+            /* IE*/
+            input[type="range"]::-ms-fill-lower {
+                background-color: #e52cf9;
+            }
+
+            input[type="range"]::-ms-fill-upper {
+                background-color: #e52cf9;
+            }
+        /*.progress-bar::-webkit-slider-thumb {
+                -webkit-appearance: none;
+
                 width: 0;*/ /* Set width to 0 */
-                /*height: 0;*/ /* Set height to 0 */
-            /*}*/
-
-
+        /*height: 0;*/ /* Set height to 0 */
+        /*}*/
         /* slider thumb */
-            /*.progress-bar::-webkit-slider-thumb {
+        /*.progress-bar::-webkit-slider-thumb {
                 -webkit-appearance: none;*/ /* Override default look */
-                /*appearance: none;
+        /*appearance: none;
                 display :none;
                 margin-top: -4px;*/ /* Centers thumb on the track */
-                /*background-color: #808080;
+        /*background-color: #808080;
                 border-radius: 0.5rem;
                 height: 1rem;
                 width: 1rem;
             }*/
-          
+        #profileDropdown {
+            top: 13px !important;
+            left: 82px !important;
+            z-index: 1000;
+            background-color: #262626;
+            color: #fff;
+            /*border: 1px solid #ddd;*/
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none;
+            max-height: 200px; /* Set a max-height for the dropdown */
+            overflow-y: auto; /* Allow vertical scrolling */
+        }
 
+        .dropdown-item {
+            color: white;
+        }
 
+            .dropdown-item:focus,
+            .dropdown-item:active {
+                background-color: transparent !important;
+                color: inherit !important; /* Preserve original text color */
+                outline: none; /* Remove focus outline if needed */
+            }
     </style>
 </head>
 <body>
     <header>
         <div class="container-fluid">
+
+            <!-- Dropdown -->
+            <div class="dropdown-menu" id="profileDropdown" style="display: none; position: absolute;">
+                <a class="dropdown-item" href="/Spot/SpotProfilePage">Profile</a>
+                <a class="dropdown-item" id="logoutBtn" onclick="logOut()" href="#">Log Out</a>
+            </div>
+
             <nav class="sidebar">
                 <div class="search-sidebar" id="">
+
+                    <!--<div class="profile imgArtist circle"  data-album-id="0" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="" data-bs-original-title="
+                    LiSA"<br>
+                               <span>Artist</span>
+                           ">-->
+                    @* <a href="/Spot/ArtistDetails?artistname=LiSA">*@
+                    <!--<img style="border-radius:50%;" id="profileImage" src="/uploads/LiSA/LiSA/lalisa.jpg">-->
+                    @*</a>*@
+                    <!--</div>-->
+
+                    <div class="profile imgArtist circle" data-album-id="0" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="">
+
+                        <img style="border-radius:50%;" id="profileImage" src="/picture/blank-profile-picture-973460_640.png" alt="profile image">
+                    </div>
+
+
+
                     <div id="sidebarHome">
-                        <a href="/home/MusicSpotpage" class="btn active-icon nav-link" id="btnHome"><i class="fa-solid fa-house" id="iconHome"></i></a>
+                        @*   <a href="/home/MusicSpotpage" class="btn active-icon nav-link" id="btnHome"><i class="fa-solid fa-house" id="iconHome"></i></a>*@
+                        <a href="/home/MusicSpotpage" class="btn  nav-link" id="btnHome"><i class="fa-solid fa-house gray-text" id="iconHome"></i></a>
                     </div>
 
                     <div id="sidebarSearch">
-                        <a href="/Spot/Search" class="btn nav-link" id="btnSearch" data-page="search"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>
+                        <a href="/Spot/Search" class="btn nav-link" id="btnSearch" data-page="search"><i class="fa-solid fa-magnifying-glass gray-text" id="iconSearch"></i></a>
                         @*<a href="/Spot/SpotAdminPage" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>*@
 
                     </div>
 
-
-
                     <div id="sidebarAdmin">
                         @*<a href="/Spot/Search" class="btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass" id="iconSearch" style="color: #bfbfbf"></i></a>*@
-                        <a href="/Spot/SpotAdminPage" class="btn nav-link" id="btnAdmin"><i class="fa-solid fa-user" id="iconAdmin" style="color: #bfbfbf"></i></a>
+                        <a href="/Spot/SpotAdminPage" class="btn nav-link" id="btnAdmin"><i class="fa-solid fa-user gray-text" id="iconAdmin"></i></a>
 
                     </div>
 
                 </div>
+
                 <div class="lib-sidebar" id="libSideBar">
                     <div class="" style="text-align:center;">
-                        <a href="/Spot/FavoriteSong" class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+
+                        <a href="/Spot/FavoriteSong" class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart gray-text" id="iconLove"></i></a>
+
+                    </div>
+                    <div class="" id="contentLibSideBar">
+
                     </div>
                     @*<div class="imgArtist">
                             <img src="~/picture/shipment_pic3.jpg" />
                         </div>*@
-
-
-
 
                 </div>
             </nav>
@@ -492,27 +571,27 @@
         <partial name="~/Views/Spot/_SpotPreLoader.cshtml" />
         @RenderBody()
         <!--<div class="container-fluid content aside col-lg-3 col-6" id="aside">-->
-            @*<div class="dv-aside">
-                    <aside class="aside-content px-3">
-                        <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                        <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                        <div class="img-aside-content">
-                            <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                        </div>
-                        <h3>17さいのうた。</h3>
-                        <h6>Yuika</h6>
+        @*<div class="dv-aside">
+                <aside class="aside-content px-3">
+                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
+                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
+                    <div class="img-aside-content">
+                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
+                    </div>
+                    <h3>17さいのうた。</h3>
+                    <h6>Yuika</h6>
 
-                        <div class="aside-about-artist">
-                            <div class="aside-about-artist-img">
-                                <h6>About the artist</h6>
-                            </div>
-                            <div class="aside-about-artist-title">
-                                <h6>Yuika</h6>
-                                <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                            </div>
+                    <div class="aside-about-artist">
+                        <div class="aside-about-artist-img">
+                            <h6>About the artist</h6>
                         </div>
-                    </aside>
-                </div>*@
+                        <div class="aside-about-artist-title">
+                            <h6>Yuika</h6>
+                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>*@
         <!--</div>-->
     </div>
     @*</main>
@@ -533,32 +612,54 @@
                             </div>*@
                     </div>
                     <div class="content bottomside-control col-4" id="musicPlayer" style="padding:0;">
-
                         <div class="col-12 d-flex justify-content-center">
+
                             <div id="waveFormAudio">
                                 <audio class="col-12" id="audiocontrol" controls="" style="height:38px;display:none">
+
                                     <source id="songAudio" src="blobdosomething" type="audio/mp3">
                                     Your brownser does not support this audio elemento
+
                                 </audio>
+
                             </div>
+
                             <button class="button-control btn-media btn-media-shuffle" type="button">
+
                                 <i class="fa-solid icon-control fa-shuffle" id="iconMediaShuffle"></i>
+
                             </button>
+
                             <button class="button-control btn-media btn-media-backward">
+
                                 <i class="fa-solid icon-control fa-backward" id="iconMediaBackward"></i>
+
                             </button>
+
                             <button class="button-control btn-media btn-media-play">
+
                                 <i class="fa-solid icon-control fa-circle-play" id="iconMediaPlay"></i>
+
                             </button>
+
                             <button class="button-control btn-media btn-media-pause">
+
                                 <i class="fa-solid icon-control fa-circle-pause" id="iconMediaPause"></i>
+
                             </button>
+
                             <button class="button-control btn-media btn-media-forward">
+
                                 <i class="fa-solid icon-control fa-forward" id="iconMediaForward"></i>
+
                             </button>
+
                             <button class="button-control btn-media btn-media-repeat">
+
                                 <i class="fa-solid icon-control fa-repeat" id="iconMediaRepeat"></i>
+
                             </button>
+
                         </div>
 
                         <div class="botdv-media d-flex">
@@ -567,21 +668,15 @@
 
                                 <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
 
-
-
                             </div>
+
                             <span class="media-time" id="endMediaTime" style="color: white; padding-left: 12px; margin-top: 3px; font-size: 14px ">0:00</span>
 
                         </div>
-
-
                     </div>
-
 
                     <div class="content bottomside-control col-4 ">
                         <div class="col-12 d-flex justify-content-center">
-
-
 
                             @*<button class="button-control"><i class="btn-media-play fa-solid icon-control fa-play"></i></button>
                                 <button class="button-control"><i class="btn-media-pause fa-solid icon-control fa-pause"></i></button>*@
@@ -613,7 +708,6 @@
 
     <script>
 
-
         jQuery(document).ajaxStart(function () {
 
             jQuery('div.dv-animation').show();
@@ -631,9 +725,49 @@
         var progressBar = $('#progressBar');
 
         $(document).ready(function () {
-          
 
 
+            // Set the title attribute dynamically
+
+
+            // Dispose of any old tooltip instance and reinitialize
+
+            getProfileImage()
+            $(audioVolume).val(localStorage.getItem("playerVolume"));
+            console.log(localStorage.getItem("playerVolume"));
+            $(".profile").on("click", function (e) {
+
+                e.stopPropagation();
+                const $dropdown = $("#profileDropdown");
+
+                // Position the dropdown near the clicked element
+                const offset = $(this).offset();
+                $dropdown.css({
+                    top: offset.top + $(this).outerHeight(),
+                    left: offset.left,
+                });
+
+                // Toggle the dropdown visibility
+                $dropdown.toggle();
+
+                //if ($dropdown.is(":visible")) {
+                //    $(".sidebar, .main-content").css("overflow", "hidden");  // Disable scrolling on html and body
+                //}
+                //else {
+                //    $(".sidebar, .main-content").css("overflow", "auto");
+                //}
+
+                // Close the dropdown when clicking outside
+                $(document).on("click", function () {
+                    $dropdown.hide();
+                    //$(".sidebar, .main-content").css("overflow", "auto");
+                });
+            });
+
+            // Prevent closing the dropdown when clicking inside it
+            $("#profileDropdown").on("click", function (e) {
+                e.stopPropagation();
+            });
 
             document.addEventListener('keypress', function (event) {
 
@@ -713,6 +847,9 @@
 
                 audioControl.volume = $(this).val();
 
+                localStorage.setItem("playerVolume", audioControl.volume);
+                console.log(localStorage.getItem("playerVolume"));
+
             })
             $('.btn-media-play').click(function () {
 
@@ -737,8 +874,6 @@
 
                 $('#iconMediaRepeat').toggleClass('icon-color-purple');
 
-
-
                 if (audioControl.loop) {
                     audioControl.loop = false;
                 } else {
@@ -755,16 +890,11 @@
 
             //        progressBar.css('width', currenttime + '%');
 
-
-
             //});
-
-
 
             //$('.progress').click(function (e) {
 
             //});
-
 
             //audioControl.addEventListener('timeupdate', function () {
             //
@@ -779,16 +909,11 @@
 
             //    })
 
-
             //});
-
-
 
             //$('.progress').click(function (e) {
 
             //});
-
-
 
             audioControl.addEventListener('timeupdate', function () {
                 var currentTime = audioControl.currentTime;
@@ -806,7 +931,6 @@
                 $('#startMediaTime').text(minutes + ':' + formattedCurrentSeconds);
                 ////////////////////////
 
-
                 var durationTimeminute = audioControl.duration;
                 var minutes = Math.floor(durationTimeminute / 60);
                 var seconds = Math.floor(durationTimeminute % 60);
@@ -821,14 +945,12 @@
                     $('#endMediaTime').text(minutes + ':' + formattedDurationSeconds);
                 }
 
-
                 ////////////////
                 if (duration > 0) {
                     var progress = (currentTime / duration) * 100;
                     progressBar.val(progress);
                 }
             });
-
 
             progressBar.on('input', function () {
                 var value = $(this).val();
@@ -840,7 +962,6 @@
             });
 
             $('.btn-media-volume').click(function () {
-
 
                 var volumeElement = audioVolume
                 var currentVolume = volumeElement.val();
@@ -872,14 +993,19 @@
                     $('#main').css('margin-left', ui.size.width  + 'px' );
                 }
             });
+
+            //$(".main-content").resizable({
+            //    handles: 'e', // Enable resizing from the east (right) edge
+            //    minWidth: 420,
+            //    maxWidth: 1400,
+            //    resize: function (event, ui) {
+            //        debugger
+            //       // $('#main').css('margin-right', ui.size.width + 'px');
+            //        $('#main').css('margin-right', 100 + 'px');
+            //    }
+            //});
             getAlbumSideLayout();
-
-
-
-
         });
-
-
 
         //const wavesurfer = WaveSurfer.create({
         //    container: '#waveFromAudio',
@@ -890,7 +1016,6 @@
         //wavesurfer.on('click', () => {
         //    wavesurfer.play()
         //})
-
 
         ////test pushs
         //$('.nav-link').on('click', function (e) {
@@ -907,62 +1032,60 @@
         //    console.log('page', page);
         //});
 
+        //        function loadPage(page) {
+        //            let content;
+        //            switch (page) {
+        //                case 'search':
+        //                    content = $('');
+        //                    break;
+        //                case 'contact':
+        //                    content = `  <div class="album-details d-flex">
+        //    <div class="dv-album-img">
+        //        <img src="/picture/Spotify Image/music_pic7_anima.jpg" alt="Anima" class="img-music-content" />
+        //    </div>
 
+        //    <div class="dv-title">
+        //        <h1>Anima</h1>
 
-//        function loadPage(page) {
-//            let content;
-//            switch (page) {
-//                case 'search':
-//                    content = $('');
-//                    break;
-//                case 'contact':
-//                    content = `  <div class="album-details d-flex">
-//    <div class="dv-album-img">
-//        <img src="/picture/Spotify Image/music_pic7_anima.jpg" alt="Anima" class="img-music-content" />
-//    </div>
+        //    </div>
+        //</div>`;
+        //                    break;
+        //                case 'otherpage': // Adding a new case for "otherpage"
+        //                    content = `<div class="album-details d-flex">
+        //    <div class="dv-album-img">
+        //        <img src="/picture/Spotify Image/music_pic11_other.jpg" alt="Other Song" class="img-music-content" />
+        //    </div>
 
-//    <div class="dv-title">
-//        <h1>Anima</h1>
+        //    <div class="dv-title">
+        //        <h1>Other Song</h1>
 
-//    </div>
-//</div>`;
-//                    break;
-//                case 'otherpage': // Adding a new case for "otherpage"
-//                    content = `<div class="album-details d-flex">
-//    <div class="dv-album-img">
-//        <img src="/picture/Spotify Image/music_pic11_other.jpg" alt="Other Song" class="img-music-content" />
-//    </div>
+        //    </div>
+        //</div>`;
+        //                    break;
+        //                default:
+        //                    content = `  <div class="album-details d-flex">
+        //    <div class="dv-album-img">
+        //        <img src="/picture/Spotify Image/music_pic10_rayons.jpg" alt="Rayons" class="img-music-content" />
+        //    </div>
 
-//    <div class="dv-title">
-//        <h1>Other Song</h1>
+        //    <div class="dv-title">
+        //        <h1>Rayons</h1>
 
-//    </div>
-//</div>`;
-//                    break;
-//                default:
-//                    content = `  <div class="album-details d-flex">
-//    <div class="dv-album-img">
-//        <img src="/picture/Spotify Image/music_pic10_rayons.jpg" alt="Rayons" class="img-music-content" />
-//    </div>
+        //    </div>
+        //</div>`;
+        //                    break;
+        //            }
+        //            $('#content').html(content);
+        //        }
 
-//    <div class="dv-title">
-//        <h1>Rayons</h1>
-
-//    </div>
-//</div>`;
-//                    break;
-//            }
-//            $('#content').html(content);
-//        }
-
-//        // Handle browser's back/forward buttons
-//        window.onpopstate = function (event) {
-//            if (event.state && event.state.page) {
-//                loadPage(event.state.page);
-//            } else {
-//                loadPage('home/menupage'); // Default to home page if state is undefined
-//            }
-//        };
+        //        // Handle browser's back/forward buttons
+        //        window.onpopstate = function (event) {
+        //            if (event.state && event.state.page) {
+        //                loadPage(event.state.page);
+        //            } else {
+        //                loadPage('home/menupage'); // Default to home page if state is undefined
+        //            }
+        //        };
 
          function changeIconClass(activeIcon, inactiveIcons) {
             if ($(activeIcon).length > 0) {
@@ -975,23 +1098,31 @@
             });
         }
 
-        $('#btnHome').on('click', function () {
-            changeIconClass('#iconHome', '#iconSearch, #iconLove, #iconAdmin');
-        });
+        //$('.icon-button').on('click', function () {
+        //    debugger
+        //    const activeIcon = $(this).data('target'); // The icon related to this button
+        //    const inactiveIcons = $('.icon').not(activeIcon); // All other icons
 
-        $('#btnSearch').on('click', function () {
-            changeIconClass('#iconSearch', '#iconHome, #iconLove, #iconAdmin');
-        });
+        //    changeIconClass(activeIcon, inactiveIcons);
+        //});
 
-        $('#btnLove').on('click', function () {
+        //$('#btnHome').on('click', function () {
+        //    changeIconClass('#iconHome', '#iconSearch, #iconLove, #iconAdmin');
+        //});
 
-            changeIconClass('#iconLove', '#iconHome, #iconSearch, #iconAdmin');
-        });
+        //$('#btnSearch').on('click', function () {
+        //    changeIconClass('#iconSearch', '#iconHome, #iconLove, #iconAdmin');
+        //});
 
-        $('#btnAdmin').on('click', function () {
+        //$('#btnLove').on('click', function () {
 
-            changeIconClass('#iconAdmin', '#iconHome, #iconSearch, #iconLove');
-        });
+        //    changeIconClass('#iconLove', '#iconHome, #iconSearch, #iconAdmin');
+        //});
+
+        //$('#btnAdmin').on('click', function () {
+
+        //    changeIconClass('#iconAdmin', '#iconHome, #iconSearch, #iconLove');
+        //});
 
         function bindingMediaLayout(data,image,albumName) {
 
@@ -1017,13 +1148,13 @@
             <img id="aside_pic" src="${image}" class="img-aside" />
         </div>
         <h3 style="margin:20px 0 0 0;">${data.SongName}</h3>
-         <a  class="title-artist mb-3" href="" style="color:white;">${data.ArtistName}</a>
+         <a  class="title-artist mb-3" href="@Url.Action("ArtistDetails", "Spot")?artistname=${data.ArtistName}" style="color:white;">${data.ArtistName}</a>
 
          <div class="about-artist">
         <div class="aside-about-artist">
             <div class="aside-about-artist-img">
                 <h6>About the artist</h6>
-                  <img id="imgAsideAbout" src="${image}" class="img-aside-about" />
+                  <img id="imgAsideAbout" src="" class="img-aside-about" />
             </div>
             <div class="aside-about-artist-title">
 
@@ -1047,6 +1178,7 @@
                 dataType: "json",
                 success: function (result) {
 
+                    $('#imgAsideAbout').attr('src', result.Data[0].ArtistImagePath)
                     $('.aside-about-artist-title p').text(result.Data[0].ArtistBio);
                 },
 
@@ -1230,11 +1362,11 @@ $('.lib-sidebar').append(albumHtml);
         dataType: "json",
         global:false,
         success: function (result) {
-            $('#libSideBar').empty();
-            var Heart = `               <div class=""style="text-align:center;">
-       <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
-   </div>`
-            $('.lib-sidebar').append(Heart);
+            $('#contentLibSideBar').empty();
+   //         var Heart = `               <div class=""style="text-align:center;">
+   //    <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+   //</div>`
+   //         $('#contentLibSideBar').append(Heart);
             result.Data.forEach(function (sideData, index) {
 
                 var sideFavData = result.Data
@@ -1268,7 +1400,7 @@ $('.lib-sidebar').append(albumHtml);
                 }
 
                 //$(Html).hide().appendTo('.lib-sidebar').fadeIn();
-                $('.lib-sidebar').append(Html);
+                $('#contentLibSideBar').append(Html);
             });
             // Initialize tooltips after appending the content
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -1284,9 +1416,53 @@ $('.lib-sidebar').append(albumHtml);
 
         function toggleAsideDisplay() {
             $('#aside').toggle();
-            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+            $('.main-content').toggleClass('col-12');
+          //  $('.main-content').toggleClass('col-9 col-7 col-lg-12 col-12');
         }
 
+
+
+        function logOut() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Logout1", "Authen")',
+                dataType: "json",
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = "https://localhost:7166/Admin/LoginPage";
+                    }
+                    //bindingTableSongAlbum(result.Data);
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        function getProfileImage() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetProfileImage1", "Spot")',
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    var profileDataName = result.Data[0].Name
+                    $('.profile').attr('title', profileDataName)
+                    $('.profile')
+                        .tooltip('dispose') // Remove old tooltip instance
+                        .tooltip();
+
+                    $('#profileImage').attr('src', result.Data[0].ProfileImagePath);
+                    //bindingTableSongAlbum(result.Data);
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
     </script>
     @await RenderSectionAsync("Scripts", required: false)

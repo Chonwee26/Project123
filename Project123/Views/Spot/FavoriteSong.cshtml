@@ -52,7 +52,7 @@
 }
 
 <div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
+    <div class="content main-content col-9">
         <div>
             <div class="album-details d-flex">
                 <div class="dv-album-img">
@@ -104,7 +104,7 @@
             </table>
         </div>
     </div>
-    <div class="content aside col-lg-3 col-6" id="aside">      
+    <div class="content aside col-3" id="aside">      
     </div>
 </div>
 
@@ -115,6 +115,7 @@
         var AlbumName = '';
         var songData = [];
         var AlbumImage = '';
+        
           var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
         @*var ArtistName = @Model.ArtistName;*@
         $(document).ready(function () {
@@ -125,6 +126,7 @@
             //getAlbumContainer();
       /*      toggleAsideDisplay();*/
             searchSongs();
+           
 
             $('.img-music-content').on('click', function () {
 
@@ -254,6 +256,8 @@
             var tableAllIndex = table.rows().count() - 1;
             var currentIndex = table.row(this).index();
             var rowData = $('#tblDataTableSong').DataTable().row($(this).closest('tr')).data();
+                
+          
             if (rowDataAlbum) {
                 AlbumImage = rowDataAlbum.SongImagePath != null && rowDataAlbum.SongImagePath != "" ? rowDataAlbum.SongImagePath : rowDataAlbum.AlbumImagePath;
                 bindingMediaLayout(rowDataAlbum, AlbumImage, AlbumName);
@@ -461,15 +465,16 @@
         }
 
 
-        function toggleAsideDisplay() {
-            $('#aside').toggle();
-            $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
-        }
+        //function toggleAsideDisplay() {
+        //    $('#aside').toggle();
+        //    $('.main-content').toggleClass('col-lg-9 col-7 col-lg-12 col-12');
+        //}
 
 
 
 
         function bindingTableSong(songData) {
+        
             $('#dvTableAlbum').show();
             // Initialize DataTable
             dataTable = $('#tblDataTableSong').DataTable({

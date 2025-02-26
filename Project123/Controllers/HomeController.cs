@@ -3,6 +3,7 @@
 using Project123.Dto;
 using System.Diagnostics;
 using System.Security.Claims;
+using Xunit;
 
 namespace Project123.Controllers
 {
@@ -33,14 +34,10 @@ namespace Project123.Controllers
             {
                 return RedirectToAction("LoginPage", "Admin");
             }
-            string userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
-
-          
-         
+            string? userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
+                 
             ViewBag.UserId = Convert.ToInt32(userId);
-
-           
-
+         
             return View();
           
         }
@@ -94,7 +91,31 @@ namespace Project123.Controllers
             return View();
         }
 
+        public class Calculator
+        {
+            public int Add(int a, int b)
+            {
+                return a + b;
+            }
+        }
 
+        public class CalculatorTests
+        {
+            [Fact] // This attribute marks the method as a test
+            public void Add_ShouldReturnCorrectSum()
+            {
+                // Arrange
+                var calculator = new Calculator();
+                int num1 = 2;
+                int num2 = 3;
+
+                // Act
+                int result = calculator.Add(num1, num2);
+
+                // Assert
+                Assert.Equal(5, result); // Checks if the result matches the expected value
+            }
+        }
 
     }
 }

@@ -7,6 +7,7 @@ using Project123Api.Repositories;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using Project123Api.Services;
 
 namespace Project123Api.Controllers
 {
@@ -15,16 +16,21 @@ namespace Project123Api.Controllers
     public class AuthenController : ControllerBase
     {
         private readonly IAdminRepository _adminRepo;
+        private readonly IAuthenRepository _authenRepo;
+     
         private DataDbContext _dbContext;
         private IConfiguration _configuration;
         private readonly AuthService _auth;
+        
 
-        public AuthenController(DataDbContext dbContext, IConfiguration configuration, IAdminRepository adminRepository)
+        public AuthenController(DataDbContext dbContext, IConfiguration configuration, IAdminRepository adminRepository , IAuthenRepository authenRepository)
         {
             _configuration = configuration;
             _dbContext = dbContext;
             _auth = new AuthService(_configuration);
             _adminRepo = adminRepository;
+            _authenRepo = authenRepository;
+           
         }
 
         [HttpPost("Login")]
@@ -63,6 +69,13 @@ namespace Project123Api.Controllers
                     resp.Message = "Invalid email or password.";
                     return Ok(resp);
                 }
+
+                // Calculate ExpireDate based on RememberMe
+                DateTime expireDate = admin.RememberMe ? DateTime.UtcNow.AddDays(1) : DateTime.UtcNow.AddHours(1);
+                // Update ExpireDate in the database
+                adminEmail.ExpireDate = expireDate;
+                _dbContext.Tb_Admin.Update(adminEmail);
+                await _dbContext.SaveChangesAsync();
 
 
                 var claims = new[]
@@ -123,13 +136,75 @@ namespace Project123Api.Controllers
                 Name = admin.Name,
                 Email = admin.Email,
                 Password = SecurePasswordHasherHelper.Hash(admin.Password),
-                Role = admin.Role
+                Role = admin.Role,
+                Age = admin.Age
             };
 
             _dbContext.Tb_Admin.Add(adminObj);
             _dbContext.SaveChanges();
 
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<ResponseModel> ChangePassword(AdminModel userData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _authenRepo.ChangePassword(userData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+
+        [HttpPost("ChangePasswordByToken")]
+        public async Task<ResponseModel> ChangePasswordByToken(AdminModel userData, string token)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _authenRepo.ChangePasswordByToken(userData,token);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+        [HttpPost("ForgetPassword")]
+        public async Task<ResponseModel> ForgetPassword(AdminModel userData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _authenRepo.ForgetPassword(userData);
+                //response.Status = "S";
+                //response.Message = "User created successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
         }
 
         [HttpPost("Logout")]

@@ -647,8 +647,11 @@
         var BtnAlbumData;
         var saveArtistStatus;
         var saveGenreStatus;
-        var artistId;
-        var genreId;
+        // var artistId; change  to artistData
+        var artistData;
+       // var genreId; change to genreData
+        var genreData;
+      
         var genreList = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.GenreList))');
             /*    var rowDataEdit;*/
 
@@ -699,9 +702,10 @@
 
             $('#fileEditAlbumImage').click();
         });
-        //$('#btnCreateArtist').click(function () {
-
-        //});
+        $('#btnCreateArtist').click(function () {
+            artistData = "";
+            saveArtistStatus = "Create";
+        });
             //Edit section Start
                 $('#fileSongImageEdit').change(function () {
                     showPreview(this, '#songImagePreviewEdit', 'image');
@@ -786,7 +790,7 @@
 
 
             if (saveGenreStatus == "Update") {
-                createGenre(genreId);
+                createGenre(genreData);
             }
             else {
                 createGenre();
@@ -797,7 +801,7 @@
         $('#btnSaveArtistModal').click(function () {
 
             if (saveArtistStatus == "Update") {
-                createArtist(artistId);
+                createArtist(artistData);
             }
             else {
                 createArtist();
@@ -809,7 +813,8 @@
 
             saveArtistStatus = "Update";
             rowDataArtist = $('#tblDataTableArtist').DataTable().row($(this).closest('tr')).data();
-            artistId = rowDataArtist.ArtistId;
+            artistData = rowDataArtist;
+          //  artistId = rowDataArtist.ArtistId;
             $('#txtCreateArtistName').val(rowDataArtist.ArtistName);
             $('#txtCreateArtistBio').val(rowDataArtist.ArtistBio);
             $('#ddlCreateArtistGenres').val(rowDataArtist.ArtistGenres).change();
@@ -827,11 +832,18 @@
         });
 
 
+        $('#btnCreateGenre').click(function () {
+
+            saveGenreStatus = "Create";
+        });
+
         $('#tblDataTableGenre').on('click', '.btn-edit-genre', function () {
             
             saveGenreStatus = "Update";
             rowDataGenre = $('#tblDataTableGenre').DataTable().row($(this).closest('tr')).data();
-            genreId = rowDataGenre.GenreId;
+            genreData = rowDataGenre;
+             
+         //   genreId = rowDataGenre.GenreId;
             $('#txtCreateGenreName').val(rowDataGenre.GenreName);
 
             $('#headerArtist').text('Edit Genre');
@@ -879,6 +891,7 @@
                         processData: false,
                         data: formDataDelete,
                         success: function (result) {
+                            searchSong();
                             alert('Delete Song successfully');
 
                         },
@@ -981,9 +994,12 @@
          }
      });
         }
-
-           function createArtist(artistId) {
-       var artistId = artistId == null || artistId == "" ? "" : artistId;
+        
+        function createArtist(artistData) {
+         debugger
+            var artistData = artistData == null || artistData == undefined ? "" : artistData;
+            var artistId = artistData.ArtistId == null || artistData.ArtistId == undefined ? "" : artistData.ArtistId;
+            var artistImagePath = artistData.ArtistImagePath == null || artistData.ArtistImagePath == "" ? "" : artistData.ArtistImagePath;
 
        var formData = new FormData();
        formData.append("ArtistId", artistId);
@@ -991,6 +1007,7 @@
        formData.append("ArtistImage", $("#fileCreateArtistImage")[0].files[0]);
        formData.append("ArtistBio", $("#txtCreateArtistBio").val());
        formData.append("ArtistGenres", $('#ddlCreateArtistGenres').val());
+            formData.append("ArtistImagePath", artistImagePath);
 
        var urlArtist = '@Url.Action("CreateArtist1", "Spot")'
        if (saveArtistStatus == 'Update') {
@@ -1018,13 +1035,19 @@
        });
    }
 
-        function createGenre(genreId) {
+        function createGenre(genreData) {
+             
+            genreData = genreData == null || genreData == undefined ? "" : genreData;
+            var genreId = genreData.GenreId
+            var genreImagePath = genreData.GenreImagePath
              genreId = genreId == null || genreId == undefined ? "" : genreId;
+            genreImagePath = genreImagePath == null || genreImagePath == undefined ? "" : genreImagePath;
 
             var formData = new FormData();
             formData.append("GenreId", genreId);
             formData.append("GenreName", $("#txtCreateGenreName").val());
             formData.append("GenreImage", $("#fileCreateGenreImage")[0].files[0]);
+            formData.append("GenreImagePath", genreImagePath);
 
 
             var urlGenre = '@Url.Action("CreateGenre1", "Spot")'
@@ -1514,7 +1537,9 @@ $.ajax({
          $('#tblDataTableArtist').on('click', '.btn-delete', async function () {
      rowDataArtist = $('#tblDataTableArtist').DataTable().row($(this).closest('tr')).data();
      frmDelete = {
-         ArtistId: rowDataArtist.ArtistId
+         ArtistId: rowDataArtist.ArtistId,
+         ArtistName: rowDataArtist.ArtistName,
+         ArtistImagePath: rowDataArtist.ArtistImagePath
      }
 
      await $.ajax({
@@ -1536,8 +1561,10 @@ $.ajax({
                  $('#tblDataTableGenre').on('click', '.btn-delete', async function () {
                      rowDataGenre = $('#tblDataTableGenre').DataTable().row($(this).closest('tr')).data();
                      frmDelete = {
-                         GenreId: rowDataGenre.GenreId
-    }
+                         GenreId: rowDataGenre.GenreId,
+                         GenreName: rowDataGenre.GenreName,
+                         GenreImagePath: rowDataGenre.GenreImagePath
+                     }
 
     await $.ajax({
         type: 'POST',

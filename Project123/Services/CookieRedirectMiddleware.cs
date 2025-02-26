@@ -13,17 +13,6 @@ namespace Project123.Services
             _next = next;
         }
 
-        //public async Task InvokeAsync(HttpContext context)
-        //{
-        //    // Redirect to login if accessing protected pages without a UserToken cookie
-        //    if (context.Request.Path.StartsWithSegments("/home/index") &&
-        //        string.IsNullOrEmpty(context.Request.Cookies["UserToken"]))
-        //    {
-        //        context.Response.Redirect("/admin/login");
-        //        return;
-        //    }
-
-        //    await _next(context);
-        //}
+      
     }
 }

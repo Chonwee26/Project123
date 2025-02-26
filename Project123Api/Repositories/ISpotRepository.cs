@@ -31,6 +31,8 @@ namespace Project123Api.Repositories
         Task<ResponseModel>EditAlbum(AlbumModel AlbumData);
         Task<ResponseModel> UpdateArtist(ArtistModel artistData);
         Task<ResponseModel> UpdateGenre(GenreModel genreData);
+        Task<ResponseModel> DeleteProfile(AdminModel adminData);
+        Task<ResponseModel> UpdateProfile(AdminModel adminData);
         Task<ResponseModel> DeleteAlbum(AlbumModel AlbumData);
         Task<ResponseModel> DeleteArtist(ArtistModel artistData);
         Task<ResponseModel> DeleteGenre(GenreModel genreData);
@@ -39,6 +41,7 @@ namespace Project123Api.Repositories
         Task<IEnumerable<AlbumModel>>SearchAlbum(AlbumModel AlbumData);
         Task<IEnumerable<ArtistModel>>SearchArtist(ArtistModel artistData);
         Task<IEnumerable<GenreModel>>SearchGenre(GenreModel genreData);
+     
         Task<IEnumerable<AlbumModel>> SearchDataFromGenre(AlbumModel albumData);
         Task<IEnumerable<AlbumModel>>GetAlbum(AlbumModel AlbumData);
         Task<IEnumerable<SongModel>> GetFavoriteSongs(SongModel SongData);
@@ -47,6 +50,8 @@ namespace Project123Api.Repositories
         Task<IEnumerable<GenreModel>> GetGenre();
         Task<List<SongModel>> GetFavSongByUser(string userId);
         Task<List<SpotSidebarModel>> GetFavAlbumAndArtistByUser(string userId);
+
+           Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData);
         Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData);
         
     }
@@ -295,6 +300,272 @@ namespace Project123Api.Repositories
             return response;
         }
 
+        public async Task<ResponseModel> DeleteProfile(AdminModel adminData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            if (adminData.Id == 0)
+            {
+                response.Status = "E";
+                response.Message = "Invalid admin ID.";
+                return response;
+            }
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                try
+                {
+                    // Start a transaction to ensure atomicity
+                    SqlTransaction transaction = connection.BeginTransaction();
+
+                    // Step 1: Delete related records in UserSongs
+                    string deleteUserSongsSql = "DELETE FROM UserSongs WHERE UserId = @UserId";
+                    SqlCommand deleteUserSongsCommand = new SqlCommand(deleteUserSongsSql, connection, transaction);
+                    deleteUserSongsCommand.Parameters.Add(new SqlParameter("@UserId", adminData.Id));
+                    await deleteUserSongsCommand.ExecuteNonQueryAsync();
+
+                    // Step 2: Delete the admin record
+                    string deleteAdminSql = "DELETE FROM Tb_Admin WHERE Id = @Id";
+                    SqlCommand deleteAdminCommand = new SqlCommand(deleteAdminSql, connection, transaction);
+                    deleteAdminCommand.Parameters.Add(new SqlParameter("@Id", adminData.Id));
+                    await deleteAdminCommand.ExecuteNonQueryAsync();
+
+                    // Commit the transaction
+                    transaction.Commit();
+
+                    response.Status = "S";
+                    response.Message = "Profile deleted successfully.";
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    await connection.CloseAsync();
+                }
+            }
+
+            return response;
+        }
+
+        //public async Task<ResponseModel> DeleteProfile(AdminModel adminData)
+        //{
+        //    ResponseModel response = new ResponseModel();
+        //    List<string> updateFields = new List<string>();
+        //    List<SqlParameter> parameters = new List<SqlParameter>();
+
+        //    // Build dynamic SQL for non-null fields
+
+
+        //    if (!string.IsNullOrEmpty(adminData.Name))
+        //    {
+        //        updateFields.Add("Name = @Name");
+        //        parameters.Add(new SqlParameter("@Name", adminData.Name));
+        //    }
+
+
+        //    if (!string.IsNullOrEmpty(adminData.ProfileImagePath))
+        //    {
+        //        updateFields.Add("ProfileImage = @ProfileImagePath");
+        //        parameters.Add(new SqlParameter("@ProfileImagePath", adminData.ProfileImagePath));
+        //    }
+
+        //    //if (!string.IsNullOrEmpty(adminData.Password))
+        //    //{
+        //    //    updateFields.Add("Password = @Password");
+        //    //    parameters.Add(new SqlParameter("@Password", SecurePasswordHasherHelper.Hash(adminData.Password)));
+        //    //}
+
+        //    if (!string.IsNullOrEmpty(adminData.Age))
+        //    {
+        //        updateFields.Add("Age = @Age");
+        //        parameters.Add(new SqlParameter("@Age", adminData.Age));
+        //    }
+
+        //    if (!string.IsNullOrEmpty(adminData.Role))
+        //    {
+        //        updateFields.Add("Role = @Role");
+        //        parameters.Add(new SqlParameter("@Role", adminData.Role));
+        //    }
+
+
+        //    // If no fields are updated, return early
+        //    if (updateFields.Count == 0)
+        //    {
+        //        response.Status = "E";
+        //        response.Message = "No fields provided for update.";
+        //        return response;
+        //    }
+
+        //    // Build the final SQL query
+        //    //SecurePasswordHasherHelper.Hash(admin.Password),
+
+
+        //    string connectionString = _configuration.GetConnectionString("DefaultConnection");
+        //    using (SqlConnection connection = new SqlConnection(connectionString))
+        //    {
+        //        connection.Open();
+
+        //        try
+        //        {
+                           
+        //            string sqlUpdateArtist = $@"Delete From Tb_Admin
+        //                        WHERE Id = @Id";
+
+        //            parameters.Add(new SqlParameter("@Id", adminData.Id));
+
+        //            SqlCommand command = new SqlCommand(sqlUpdateArtist, connection);
+        //            command.Parameters.AddRange(parameters.ToArray());
+
+               
+        //            await command.ExecuteNonQueryAsync();
+
+        //            response.Status = "S";
+        //            response.Message = "Delete Profile successfully.";
+        //        }
+
+        //        catch (Exception ex)
+        //        {
+        //            response.Status = "E";
+        //            response.Message = ex.Message;
+        //        }
+        //        finally
+        //        {
+        //            connection.Close();
+        //        }
+        //    }
+
+        //    return response;
+        //}
+
+        public async Task<ResponseModel> UpdateProfile(AdminModel adminData)
+        {
+            ResponseModel response = new ResponseModel();
+            List<string> updateFields = new List<string>();
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            // Build dynamic SQL for non-null fields
+
+
+            if (!string.IsNullOrEmpty(adminData.Name))
+            {
+                updateFields.Add("Name = @Name");
+                parameters.Add(new SqlParameter("@Name", adminData.Name));
+            }
+
+
+            if (!string.IsNullOrEmpty(adminData.ProfileImagePath))
+            {
+                updateFields.Add("ProfileImage = @ProfileImagePath");
+                parameters.Add(new SqlParameter("@ProfileImagePath", adminData.ProfileImagePath));
+            }
+
+            //if (!string.IsNullOrEmpty(adminData.Password))
+            //{
+            //    updateFields.Add("Password = @Password");
+            //    parameters.Add(new SqlParameter("@Password", SecurePasswordHasherHelper.Hash(adminData.Password)));
+            //}
+
+            if (!string.IsNullOrEmpty(adminData.Age))
+            {
+                updateFields.Add("Age = @Age");
+                parameters.Add(new SqlParameter("@Age", adminData.Age));
+            }
+
+            if (!string.IsNullOrEmpty(adminData.Role))
+            {
+                updateFields.Add("Role = @Role");
+                parameters.Add(new SqlParameter("@Role", adminData.Role));
+            }
+
+
+            // If no fields are updated, return early
+            if (updateFields.Count == 0)
+            {
+                response.Status = "E";
+                response.Message = "No fields provided for update.";
+                return response;
+            }
+
+            // Build the final SQL query
+            //SecurePasswordHasherHelper.Hash(admin.Password),
+      
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    string sqlGetOldPassword = "SELECT Password FROM Tb_Admin WHERE Id = @Id";
+                    SqlCommand getOldPasswordCommand = new SqlCommand(sqlGetOldPassword, connection);
+                    getOldPasswordCommand.Parameters.Add(new SqlParameter("@Id", adminData.Id));
+
+                    string oldHashedPassword = (string)(await getOldPasswordCommand.ExecuteScalarAsync()?? string.Empty);
+
+                    if (!string.IsNullOrEmpty(adminData.Password))
+                    {
+                        if (SecurePasswordHasherHelper.Verify(adminData.Password, oldHashedPassword))
+                        {
+                            response.Status = "E";
+                            response.Message = "The new password cannot be the same as the old password.";
+                            return response;
+                        }
+
+                        // Add hashed password to parameters for update
+                        parameters.Add(new SqlParameter("@Password", SecurePasswordHasherHelper.Hash(adminData.Password)));
+
+
+
+
+                    }
+
+                    //var currentPassword = await command.ExecuteScalarAsync() as string;
+                    string sqlUpdateArtist = $@"UPDATE Tb_Admin SET {string.Join(", ", updateFields)} 
+                                WHERE Id = @Id";
+
+                    parameters.Add(new SqlParameter("@Id", adminData.Id));
+
+                    SqlCommand command = new SqlCommand(sqlUpdateArtist, connection);
+
+
+
+
+                    command.Parameters.AddRange(parameters.ToArray());
+
+                    //if (currentPassword == adminData.Password)
+                    //{
+                    //    response.Status = "E";
+                    //    response.Message = "The new password cannot be the same as the old password.";
+                    //    return response;
+                    //}
+                    await command.ExecuteNonQueryAsync();
+
+                    response.Status = "S";
+                    response.Message = "Edit Profile successfully.";
+                }
+
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+            return response;
+        }
+
 
         public async Task<ResponseModel> UpdateGenre(GenreModel genreData)
         {
@@ -340,6 +611,7 @@ namespace Project123Api.Repositories
 
                 try
                 {
+
                     SqlCommand command = new SqlCommand(sqlUpdateArtist, connection);
                     command.Parameters.AddRange(parameters.ToArray());
 
@@ -2112,6 +2384,69 @@ namespace Project123Api.Repositories
             }
 
             return genreList;
+        }
+        public async Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData)
+        {
+            ResponseModel response = new ResponseModel();
+
+            List<AdminModel> adminList = new List<AdminModel>();
+            string sqlSelect = @"SELECT a.Id, a.Name, a.Email,a.Password,a.Age,a.Role,a.ExpireDate,a.ProfileImage
+                     FROM dbo.Tb_Admin a
+                     WHERE a.Id = @Id";
+
+           
+
+       
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlCommand command = new SqlCommand(sqlSelect, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@Id", adminData.Id));
+                      
+
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                AdminModel admin = new AdminModel
+                                {
+                                    Id = reader.GetInt32("Id"),
+                                    Name = reader.GetString("Name"),
+                                    ProfileImagePath = reader["ProfileImage"] != DBNull.Value ? reader["ProfileImage"].ToString() : null // Handle null values
+
+                                };
+                                adminList.Add(admin);
+                            }
+                        }
+                    }
+                }
+
+                if (adminList.Count == 0)
+                {
+                    response.Status = "E";
+                    response.Message = "No data found";
+                }
+                else
+                {
+                    response.Status = "S";
+                    response.Message = "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                response.Status = "E";
+                response.Message = ex.Message;
+            }
+
+            return adminList;
         }
 
         public async Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData)

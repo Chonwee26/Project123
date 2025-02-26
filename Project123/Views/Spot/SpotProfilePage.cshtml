@@ -84,96 +84,333 @@
             .dv-content:active {
                 background-color: black;
             }
+        #userProfile {
+            /*background-image: linear-gradient(#762676a8, #0e0d0d);*/
+        }
+
+       /* .dv-icon-edit {
+            border-radius: 5%;
+            padding: 3px 3px 3px 6px;
+            background-color: dimgray;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            margin: 5px 5px 4px 3px !important;
+        }*/
+
+
+        .dv-icon-edit {
+            border-radius: 5%;
+            padding: 3px 3px 3px 6px;
+            background-color: dimgray;
+            position: absolute;
+            top: 34%;
+            left: 31%;
+            margin: 5px 5px 4px 3px !important;
+        }
+
+
+
+
+        #h1UserProfile, .profile-img-container{
+            cursor:pointer;
+        }
+
+        .icon-edit-profile {
+            font-size: 60px;
+          
+           
+        }
+      /*  .dv-icon-edit {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }*/
+
+    /*    #userEditImagePreview:hover .dv-icon-edit,
+        #createUserModalImagePreview:hover .dv-icon-edit {
+            opacity: 1;
+            visibility: visible;
+        }
+        */
+            
     </style>
 }
 
-<div class="d-flex container-fluid content">
-    <div class="content main-content col-lg-9 col-7">
-        <div>
-            <h1 style="color:white">Made for Chowii</h1>
-            <p>
-                Your Albums
-            </p>
-            <div class="main-content-music row">
+<div class="modal fade" id="userModal" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background-color: #2b2b2b; border-radius: 10px;">
 
-                @*  <div class="col-xxl-2 col-lg-4 col-6 dv-content">
-                        <div class=" music-content">
-                            <img id="music_pic1" src="~/picture/Spotify Image/music_pic6_yorushika.jpg" class="img-music-content" />
+            <div class="modal-body p-4">
+                <h1 class="headerArtist">Edit User</h1>
+
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>Name</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditUserName" placeholder="Display Name" value="@Model.Name">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <h6>Email</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditEmail" placeholder="Your Email" value="@Model.Email">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12">
+                                    <h6>Password</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditPassword" placeholder="Your Password">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <h6>Age</h6>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="txtEditAge" placeholder="Your Age" value="@Model.Age">
+                                    </div>
+                                </div>
+
+
+                            </div>
                         </div>
-                        <div class="music-content-title">
-                            <h6>Spice and Wolf</h6>
-                            <p>Kevin Penkin</p>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="album-art d-flex justify-content-center">
+                                        <div class="input-group" style=" max-width: 202px; max-height: 202px; position: relative;">
+                                            <input class="form-control" type="file" id="fileEditUserImage" placeholder="Image URL" style="width: 100%; height: 100%; position: absolute; opacity: 0; cursor: pointer;">
+                                            <img id="createUserModalImagePreview" src="/picture/music_note_icon.png" alt="User Image Preview" style="display: block; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); border-radius:50%;">
+                                            <div class="dv-icon-edit">
+                                                <i class="fa-solid fa-pen-to-square icon-edit-profile" style="color:white;"></i>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="btnDeleteProfile" class="btn-danger">Delete</button>
                         </div>
+                    </div>
+                </div>
 
-                    </div>*@
+                <div class="row">
+                </div>
 
-
-
+                <div class="col-12 mt-4">
+                    <div class="row">
+                        <div class="col-6 d-flex justify-content-center ">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+                        </div>
+                        <div class="col-6 d-flex justify-content-center ">
+                            <button type="button" class="btn w-100" id="btnSaveUserModal" style="background-color:#762676a8;color:white;" onclick="UpdateProfile()">Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class=" content aside col-lg-3 col-6" id="aside">
-        @*<div class="dv-aside">
-                <aside class="aside-content px-3">
-                    <button class="btn" id="btnCloseAside" style="color:white">Close</button>
-                    <p>”Spice and Wolf: MERCHANT MEETS THE WISE WOLF” Original Soundtrack (Vol.2)</p>
-                    <div class="img-aside-content">
-                        <img id="aside_pic" src="~/picture/Spotify Image/music_pic5.jpg" class="img-aside" />
-                    </div>
-                    <h3>17さいのうた。</h3>
-                    <h6>Yuika</h6>
+</div>
 
-                    <div class="aside-about-artist">
-                        <div class="aside-about-artist-img">
-                            <h6>About the artist</h6>
-                        </div>
-                        <div class="aside-about-artist-title">
-                            <h6>Yuika</h6>
-                            <p>19歳女性シンガーソングライター。 2021年にTikTokに投稿した「好きだから。」がティーンから絶大な共感を生み、...</p>
-                        </div>
+
+<div class="container-fluid content">
+    <div class="main-content col-9">
+        <div class="main-content-music row">
+            <div id="userProfile" class="d-flex align-items-center">
+                <div class="profile-img-container" style="margin-top: 30px; margin-bottom:20px;">
+                    <img id="userEditImagePreview" class="rounded-circle" style="width:180px;height:180px;" src="/picture/blank-profile-picture-973460_640.png" />
+                </div>
+                <div class="ms-5" style="margin-top: 48px;">
+                    <p>Profile</p>
+                    <h1 id="h1UserProfile">@Model.Name</h1>
+                </div>
+            </div>
+
+            @*<div id="user-content">
+                <div class="main-content-artist">
+                    <h1>Top Artist</h1>
+                    <div class="content-artist">
+
                     </div>
-                </aside>
+                </div>
+
+                <div class="main-content-song">
+                    <h1>Top Song</h1>
+                    <div class="content-song">
+
+                    </div>
+                </div>
+
+                <div class="main-content-following">
+                    <h1>Following</h1>
+                    <div class="content-following">
+
+                    </div>
+                </div>
             </div>*@
+         
+        </div>
+    </div>
+
+    <div class="aside col-3" id="aside">
+        <!-- You can add the aside content here if needed, using similar structure. -->
     </div>
 </div>
 
+
 @section Scripts{
     <script type="text/javascript">
+        var profileId = "@Model.Id"
+        var profileName = "@Model.Name"
+        var profileEmail = "@Model.Email"
+        var profileImage = "@Model.ProfileImagePath"
 
-        //$(document).ready(function () {
-        //    /*   getAlbum();*/
+        $(document).ready(function () {
+            console.log('profileImage', profileImage);
+            if (profileImage != null || profileImage != undefined) {
+                $('#userEditImagePreview').attr('src', profileImage);
+            }
 
-        //    getAlbumContainer();
+            //    /*   getAlbum();*/
 
-
-        //    $('.img-music-content').on('click', function () {
-
-        //        var imgSrc = $(this).attr('src');
-        //        $('#aside_pic').attr('src', imgSrc);
-        //        if ($('#aside').css('display') == 'none') {
-        //            /*      toggleAsideDisplay();*/
-        //        }
-        //    });
-        //    $(document).on('click', '.dv-content', function () {
-        //        ;
-        //        var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
-        //        $('#aside_pic').attr('src', imgSrc);
-        //        if ($('#aside').css('display') == 'none') {
-        //            toggleAsideDisplay();
-        //        }
-        //        console.log(count);
-        //    });
-        //    $(document).on('click', '#btnCloseAside', function () {
-        //        toggleAsideDisplay();
-        //    });
-        //    //$('#btnCloseAside').click(function () {
-
-        //    //});
-        //});
+            //    getAlbumContainer();
 
 
+            //    $('.img-music-content').on('click', function () {
+
+            //        var imgSrc = $(this).attr('src');
+            //        $('#aside_pic').attr('src', imgSrc);
+            //        if ($('#aside').css('display') == 'none') {
+            //            /*      toggleAsideDisplay();*/
+            //        }
+            //    });
+            //    $(document).on('click', '.dv-content', function () {
+            //        ;
+            //        var imgSrc = $(this).find('img').attr('src'); // Changed to find the image inside .dv-content
+            //        $('#aside_pic').attr('src', imgSrc);
+            //        if ($('#aside').css('display') == 'none') {
+            //            toggleAsideDisplay();
+            //        }
+            //        console.log(count);
+            //    });
+            //    $(document).on('click', '#btnCloseAside', function () {
+            //        toggleAsideDisplay();
+            //    });
+            //    //$('#btnCloseAside').click(function () {
+
+            //    //});
+        });
+
+        $('#btnDeleteProfile').click(function () {
+                 /* genreId = genreId == null || genreId == undefined ? "" : genreId;*/
+     if (profileId == null || profileId == undefined ){
+
+         return SweetAlert('error', "Id ไม่พบ");
+     }
+     //profileId = profileId == null || profileId == undefined ? return SweetAlert('error', "Id ไม่พบ"): profileId;
+     var formData = new FormData();
+     formData.append("Id", profileId);
+     formData.append("Name", $("#txtEditUserName").val());
+            formData.append("ProfileImagePath", profileImage);
+ 
+     var urlProfile = '@Url.Action("DeleteProfile1", "Spot")'
+
+     console.log('Delete Profile ', formData);
+
+     $.ajax({
+         type: 'POST',
+         url: urlProfile,
+         data: formData,
+         contentType: false,
+         processData: false,
+         success: function (result) {
+         //    searchGenre();
+             $('#userModal').modal('hide');
+             /* bindingTable(result.Data); */
+         },
+         error: function (request, status, error) {
+             console.log(error);
+         }
+     });
+
+        });
+
+        $('#h1UserProfile , .profile-img-container').click(function () {
+
+          $("#txtEditUserName").val();
+           $("#txtEditEmail").val();
+          $("#txtEditPassword").val();
+          $("#txtEditGenreName").val();
+          $("#fileEditUserImage")[0].files[0];
+
+            $('#userModal').modal('show');
+        });
+
+        $('#fileEditUserImage').change(function () {
+            showPreview(this, '#createUserModalImagePreview', 'image');
+            /* showPreview(this, '#albumEditImagePreview', 'image');*/
+        });
+
+        function showPreview(input, previewSelector, type) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    if (type === 'image') {
+                        $(previewSelector).attr('src', e.target.result);
+                        $(previewSelector).show();
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function UpdateProfile() {
+            /* genreId = genreId == null || genreId == undefined ? "" : genreId;*/
+            if (profileId == null || profileId == undefined ){
+
+                return SweetAlert('error', "Id ไม่พบ");
+            }
+            //profileId = profileId == null || profileId == undefined ? return SweetAlert('error', "Id ไม่พบ"): profileId;
+            var formData = new FormData();
+            formData.append("Id", profileId);
+            formData.append("Name", $("#txtEditUserName").val());
+            formData.append("Email", $("#txtEditEmail").val());
+            formData.append("Password", $("#txtEditPassword").val());
+            formData.append("Age", $("#txtEditAge").val());
+            formData.append("ProfileImage", $("#fileEditUserImage")[0].files[0]);
 
 
+
+            var urlProfile = '@Url.Action("UpdateProfile1", "Spot")'
+
+            console.log('update Profile ', formData);
+
+            $.ajax({
+                type: 'POST',
+                url: urlProfile,
+                data: formData,
+                contentType: false,
+                processData: false,
+
+                success: function (result) {
+
+
+                //    searchGenre();
+                    $('#userModal').modal('hide');
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
 
 
