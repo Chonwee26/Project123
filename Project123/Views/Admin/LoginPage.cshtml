@@ -121,11 +121,13 @@
                         url: "/Authen/Login1",
                         data: formData,
                         dataType: 'json',
+                     
                         success: function (result) {
-        
+                            
                             if (result.status == "S") {
                                 SweetAlert('success', userName);
                                 //localStorage.setItem('access_token', result.message);
+                                console.log('authToken', localStorage.getItem("authToken"));
                                 var token = localStorage.getItem('access_token');
                                 window.location.href = "https://localhost:7166/Home/MusicSpotPage";
 

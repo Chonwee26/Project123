@@ -47,25 +47,29 @@ namespace Project123.Controllers
                         string token = response.access_token;
                     if (UserData.RememberMe)
                     {
-                        HttpContext.Response.Cookies.Append("UserId", tokenUserId, new CookieOptions
+                        if (response.Success)
                         {
-                            Expires = DateTimeOffset.Now.AddDays(1),
-                            HttpOnly = true,
-                            IsEssential = true,
-                            SameSite = SameSiteMode.None, // Allows cross-site usage if needed
-                            Secure = true // Required if SameSite is None; ensures it's only sent over HTTPS
-                        });
+                            HttpContext.Response.Cookies.Append("UserId", tokenUserId, new CookieOptions
+                            {
+                                Expires = DateTimeOffset.Now.AddDays(1),
+                                HttpOnly = true,
+                                IsEssential = true,
+                                SameSite = SameSiteMode.None, // Allows cross-site usage if needed
+                                Secure = true // Required if SameSite is None; ensures it's only sent over HTTPS
+                            });
 
 
 
-                        // Issue a persistent cookie with a longer expiration
-                        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Lax,
-                            Expires = DateTime.UtcNow.AddDays(1) // Adjust expiration as needed
-                        });
+                            // Issue a persistent cookie with a longer expiration
+                            HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+                            {
+                                HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.Lax,
+                                Expires = DateTime.UtcNow.AddDays(1) // Adjust expiration as needed
+                            });
+                        }
+                       
                     }
                     else
                     {
@@ -75,20 +79,29 @@ namespace Project123.Controllers
                         //    HttpOnly = true,
                         //    Secure = true
                         //});
-                        HttpContext.Session.SetString("UserToken", token);
+                        if (response.Success)
+                        {
 
-                        HttpContext.Session.SetString("UserId", tokenUserId);
+                            HttpContext.Session.SetString("UserToken", token);
+
+                            HttpContext.Session.SetString("UserId", tokenUserId);
+                        }
+
                     }
+                    if (response.Success)
+                    {
                         HttpContext.Session.SetString("UserTokenInfo", tokenInfo);
 
+                    }
 
-                   
+
+
                     // STEP 1: Pass the JWT token in authorization header for subsequent requests
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
 
-                        response.Status = "S";
-                        response.Message = "Login successful.";
+                        //response.Status = "S";
+                        //response.Message = "Login successful.";
                     }
                     else
                     {

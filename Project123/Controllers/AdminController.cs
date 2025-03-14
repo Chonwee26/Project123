@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using static Project123.Services.IAuthenticationService;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using Azure;
 
 namespace Project123.Controllers
 {
@@ -51,8 +52,37 @@ namespace Project123.Controllers
 
         public IActionResult ForgetPasswordPage(string token)
         {
-            token = string.IsNullOrEmpty(token) ? "" : token;
-            ViewBag.Token = token;
+            ResponseModel resp = new ResponseModel();
+            var tokenPassword = string.IsNullOrEmpty(token) ? "" : token;
+           
+       
+            //ResponseModel response = new ResponseModel();
+
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                // Temporarily bypass SSL certificate validation (not for production use)
+                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://localhost:7061/");
+                    {
+                        HttpResponseMessage responseResult = client.GetAsync($"/api/authen/CheckPassToken1?passToken={token}").Result;
+                        //HttpResponseMessage responseResult = client.GetAsync($"api/authen/CheckPassToken1/{Uri.EscapeDataString(passToken)}").Result;
+
+
+
+                        if (responseResult.IsSuccessStatusCode)
+                        {
+                            resp =  responseResult.Content.ReadAsAsync<ResponseModel>().Result;
+                        }
+
+                    }
+                }
+            }
+            ViewBag.Token = tokenPassword;
+            ViewBag.CheckExpire = resp;
             return View();
         }
 

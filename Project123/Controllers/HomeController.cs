@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 //using Project123.Models;
 using Project123.Dto;
 using System.Diagnostics;
@@ -26,7 +27,7 @@ namespace Project123.Controllers
       
             return View();
         }
-
+  
         public IActionResult MusicSpotPage()
         {
 
@@ -35,7 +36,7 @@ namespace Project123.Controllers
                 return RedirectToAction("LoginPage", "Admin");
             }
             string? userId = HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
-                 
+        
             ViewBag.UserId = Convert.ToInt32(userId);
          
             return View();
@@ -46,8 +47,10 @@ namespace Project123.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // Do something with userId
-           
-            return Ok(userId);
+
+
+            var userId123 = User.FindFirst("UserId")?.Value;
+            return Ok(new { UserId = userId });
         }
 
         public IActionResult ExportExcel()

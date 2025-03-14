@@ -11,6 +11,7 @@ namespace Project123.Dto
 {
     public class SpotSidebarModel
     {
+        [Key]
         public int? UserId { get; set; }
         public int? AlbumId { get; set; }
         public string? AlbumName { get; set; }

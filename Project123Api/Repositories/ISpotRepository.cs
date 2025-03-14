@@ -2,15 +2,20 @@
 using AuthenticationPlugin;
 using Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Project123.Dto;
 using System.Data;
 using System.Data.SqlClient;
+using Dapper;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Project123Api.Hubs;
+using Newtonsoft.Json.Linq;
+using Project123Api.Services;
 
 namespace Project123Api.Repositories
 {
@@ -51,7 +56,7 @@ namespace Project123Api.Repositories
         Task<List<SongModel>> GetFavSongByUser(string userId);
         Task<List<SpotSidebarModel>> GetFavAlbumAndArtistByUser(string userId);
 
-           Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData);
+        Task<IEnumerable<AdminModel>> GetProfileImage(AdminModel adminData);
         Task<IEnumerable<SearchSpotModal>> SearchSpot(SearchSpotModal searchData);
         
     }
@@ -59,10 +64,15 @@ namespace Project123Api.Repositories
     public class SpotRepository : ISpotRepository
     {
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly NotificationService _notificationService;
 
-        public SpotRepository(IConfiguration configuration)
+
+        public SpotRepository(IConfiguration configuration,IHubContext<NotificationHub> hubContext,NotificationService notification)
         {
             _configuration = configuration;
+            _hubContext = hubContext;
+            _notificationService = notification;
         }
 
         //public async Task<ResponseModel> CreateSong(SongModel SongData)
@@ -182,7 +192,8 @@ namespace Project123Api.Repositories
         {
             ResponseModel response = new ResponseModel();
             string sqlCreateSong = @"INSERT INTO Albums (AlbumName, ArtistName, AlbumImage,AlbumGenre) 
-                             VALUES (@AlbumName, @ArtistName, @AlbumImage,@AlbumGenre)";
+                                     VALUES (@AlbumName, @ArtistName, @AlbumImage,@AlbumGenre)
+                                     SELECT SCOPE_IDENTITY();";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -195,12 +206,27 @@ namespace Project123Api.Repositories
                     command.Parameters.AddWithValue("@ArtistName", AlbumData.ArtistName ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@AlbumImage", AlbumData.AlbumImagePath ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@AlbumGenre", AlbumData.AlbumGenre ?? (object)DBNull.Value);
-                   
 
-                    await command.ExecuteNonQueryAsync();
+                    var albumId = Convert.ToInt32(await command.ExecuteScalarAsync());
+
+
+                    //await command.ExecuteNonQueryAsync();
 
                     response.Status = "S";
                     response.Message = "User created successfully.";
+
+                    //search artist with artist name
+                    string sqlSearchArtist = @"SELECT ArtistId FROM Artist WHERE ArtistName = @ArtistName";
+                    SqlCommand commandSearchArtist = new SqlCommand(sqlSearchArtist, connection);
+                    commandSearchArtist.Parameters.Add(new SqlParameter("@ArtistName", SqlDbType.NVarChar) { Value = AlbumData.ArtistName }); //แปลงเป็น unicode สำหรับภาษาต่างประเทศ
+                    var sqlArtistData = await connection.QueryFirstOrDefaultAsync<ArtistModel>(sqlSearchArtist, new { ArtistName = AlbumData.ArtistName });
+
+                    if (sqlArtistData != null && sqlArtistData.ArtistId > 0)
+                    {
+                        string notificationMessage = AlbumData.AlbumName;
+                        await _notificationService.NotifyUsers(albumId, sqlArtistData.ArtistId, notificationMessage);
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -263,6 +289,7 @@ namespace Project123Api.Repositories
             ResponseModel response = new ResponseModel();
             string sqlCreateSong = @"INSERT INTO Song (AlbumId, ArtistName, SongName, SongFile, SongGenres, SongImage,SongLength,FavoriteSong,CreateSongDate) 
                              VALUES (@AlbumId, @ArtistName, @SongName, @SongFile, @SongGenres, @SongImage, @SongLength,@FavoriteSong,@CreateSongDate)";
+
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -285,6 +312,41 @@ namespace Project123Api.Repositories
 
                     response.Status = "S";
                     response.Message = "User created successfully.";
+
+                    ////search artist with artist name
+                    //string sqlSearchArtist = @"SELECT ArtistId FROM Artist WHERE ArtistName = @ArtistName";
+                    //SqlCommand commandSearchArtist = new SqlCommand(sqlSearchArtist, connection);
+                    //commandSearchArtist.Parameters.Add(new SqlParameter("@ArtistName", SqlDbType.NVarChar) { Value = SongData.ArtistName}); //แปลงเป็น unicode สำหรับภาษาต่างประเทศ
+                    //var sqlArtistData = await connection.QueryFirstOrDefaultAsync<ArtistModel>(sqlSearchArtist, new { ArtistName = SongData.ArtistName });
+
+                    //if (sqlArtistData != null && sqlArtistData.ArtistId >0)
+                    //{
+                    //    string notificationMessage =  SongData.SongName;
+                    //    await _notificationService.NotifyUsers(sqlArtistData.ArtistId, notificationMessage);
+
+                    //}
+
+                    ////// Find followers of the artist
+                    //string sqlSearchUserFollow = @"SELECT UserArtistId,UserId,ArtistId,FavoriteArtist,FavoriteDate,CreatedAt FROM UserArtists WHERE UserArtistId = @UserArtistId";
+                    //SqlCommand commandSearchFollower = new SqlCommand(sqlSearchUserFollow, connection);
+                    //commandSearchFollower.Parameters.AddWithValue("@UserArtistId", sqlArtistData);
+                    ////var followers = await _dbContext.UserFollows
+                    ////    .Where(uf => uf.ArtistId == song.ArtistId)
+                    ////    .Select(uf => uf.UserId)
+                    ////    .ToListAsync();
+
+                    //var sqlFollowerData = await connection.QueryFirstOrDefaultAsync<AdminModel>(sqlSearchArtist, new { ArtistId = sqlArtistData });
+
+
+
+
+
+                    //// Send notifications
+                    //foreach (var userId in sqlFollowerData)
+                    //{
+                    //    await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", $"New song: {song.Title}");
+                    //}
+
                 }
                 catch (Exception ex)
                 {
@@ -298,6 +360,38 @@ namespace Project123Api.Repositories
             }
 
             return response;
+        }
+
+        public async Task NotifyUsers(int? artistId, string message)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Get all user IDs who follow the artist
+                string sqlSearchUserFollow = @"SELECT UserId FROM UserArtists WHERE ArtistId = @ArtistId";
+                var followers = (await connection.QueryAsync<int>(sqlSearchUserFollow, new { ArtistId = artistId })).ToList();
+                // Insert notifications for each user
+                string sqlInsertNotification = @"
+            INSERT INTO Notifications (UserId, NotiMessage, IsRead, CreateAt)
+            VALUES (@UserId, @NotiMessage, @IsRead, @CreateAt)";
+                foreach (var userId in followers)
+                {
+
+                    await connection.ExecuteAsync(sqlInsertNotification, new
+                    {
+                        UserId = userId,
+                        NotiMessage = message,
+                        IsRead = false, // Default to unread
+                        CreateAt = DateTime.Now // Set the current timestamp
+                    });
+                    //  Send notification to each user
+                    //await _hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", message);
+                    //await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+
+                }
+            }
         }
 
         public async Task<ResponseModel> DeleteProfile(AdminModel adminData)
@@ -931,12 +1025,23 @@ namespace Project123Api.Repositories
             ResponseModel response = new ResponseModel();
             string sqlDeleteSong = @"DELETE dbo.artist WHERE ArtistId = @ArtistId";
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            List<AlbumModel> albumList = new List<AlbumModel>();
+          
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
                 try
                 {
+
+                    AlbumModel searchCriteria = new AlbumModel
+                    {
+                        ArtistId = artistData.ArtistId // Searching albums by ArtistName
+                    };
+
+                    IEnumerable<AlbumModel> albums = await SearchAlbum(searchCriteria);
+
+
                     SqlCommand command = new SqlCommand(sqlDeleteSong, connection);
                     command.Parameters.AddWithValue("@ArtistId", artistData.ArtistId);
 

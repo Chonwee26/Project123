@@ -9,6 +9,9 @@ using System.Security.Claims;
 using static Project123.Services.IAuthenticationService;
 using static Project123.Services.CookieRedirectMiddleware;
 using Project123.Services;
+using Microsoft.AspNetCore.SignalR;
+
+using Project123Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +51,7 @@ builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 
 
 builder.Services.AddHttpClient();
+builder.Services.AddSignalR();
 //builder.Services.AddControllersWithViews();
 //builder.Services.AddControllers();
 
@@ -164,6 +168,7 @@ else
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 //app.UseCors("AllowAll");
+app.MapHub<NotificationHub>("/notificationHub");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();

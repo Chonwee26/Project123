@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href='https://fonts.googleapis.com/css?family=Noto Sans Thai' rel='stylesheet'>
-
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
 
         .dvflex {
@@ -43,30 +43,74 @@
 
 </head>
 <body>
-    <div class="dvflex" id="dvContent">
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
 
-        <div class="" id="dvImg">
-           
-            <img src="~/picture/box.png" style="width:80px;height:80px;"alt="logo" />
-
+    <div class="container">
+        <div class="row p-1">
+            <div class="col-1">User</div>
+            <div class="col-5"><input type="text" id="userInput" /></div>
         </div>
-        <h1>การขอเปลี่ยนรหัสผ่าน</h1>
-        <span style="margin-top:10px;">
-            เราได้รับคำขอเปลี่ยนรหัสผ่านสำหรับบัญชี <b>Project123</b> ของคุณแล้ว
-            ลิงก์นี้จะหมดอายุใน <b>24 ชั่วโมง</b> หากคุณไม่ได้ร้องขอการเปลี่ยนรหัสผ่าน โปรดละเว้นอีเมลฉบับนี้ บัญชีของคุณจะไม่มีการเปลี่ยนแปลงใดๆ ผู้เล่นคนอื่นอาจป้อนชื่อผู้ใช้ของคุณโดยไม่ได้ตั้งใจ
-        </span>
-
-        <div class="dvflex" id="dvCard">
-
-            <h1>hello</h1>
-
-            <a href="" target="_blank">https://localhost:7166/Admin/ResetPassword?token=7a9a7152-4c9a-45e6-a906-dba40665ebef</a>
-
-
-
+        <div class="row p-1">
+            <div class="col-1">Message</div>
+            <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
         </div>
+        <div class="row p-1">
+            <div class="col-6 text-end">
+                <input type="button" id="sendButton" value="Send Message" />
+            </div>
         </div>
-    
-       
+        <div class="row p-1">
+            <div class="col-6">
+                <hr />
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-6">
+                <ul id="messagesList"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.11/signalr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+        // Disable the send button until connection is established.
+        $("#sendButton").prop("disabled", true);
+
+
+
+        // We can assign user-supplied strings to an element's textContent because it
+        // is not interpreted as markup. If you're assigning in any other way, you
+        // should be aware of possible script injection concerns.
+        connection.on("ReceiveNotification", function (user, message) {
+            debugger
+            var li = $("<li>").text(`${user} says ${message}`);
+            $("#messagesList").append(li);
+        });
+
+        connection.start().then(function () {
+            $("#sendButton").prop("disabled", false);
+        }).catch(function (err) {
+            console.error(err.toString());
+        });
+
+        $("#sendButton").on("click", function (event) {
+            
+            var user = $("#userInput").val();
+            var message = $("#messageInput").val();
+            connection.invoke("SendNotification", user, message).catch(function (err) {
+                console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+
+    </script>
 </body>
 </html>

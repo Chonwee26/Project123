@@ -21,6 +21,8 @@ namespace Project123Api.Repositories
         Task<ResponseModel> ChangePassword(AdminModel userData);
         Task<ResponseModel> ChangePasswordByToken(AdminModel userData, string token);
 
+        Task<ResponseModel> CheckPassToken(string passToken);
+
         Task<ResponseModel> ForgetPassword(AdminModel userData);
         Task<ResponseModel> Register(AdminModel userData);
         Task<ResponseModel> Login(AdminModel userData);
@@ -134,7 +136,57 @@ namespace Project123Api.Repositories
             return response;
         }
 
+        public async Task<ResponseModel> CheckPassToken( string passToken)
+        {
+            ResponseModel response = new ResponseModel();
+            string sqlSearchUser = @"SELECT * FROM TB_Admin WHERE TokenResetPassword = @TokenResetPassword";
+            string sqlCurrentPassword = @"UPDATE Tb_Admin SET Password = @Password WHERE Email = @Email";
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
+            if (string.IsNullOrEmpty(passToken) )
+            {
+                response.Status = "E";
+                response.Message = "Token are required.";
+                return response;
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                try
+                {
+                    SqlCommand commandUser = new SqlCommand(sqlSearchUser, connection);
+                    commandUser.Parameters.AddWithValue("@TokenResetPassword", passToken);
+
+                    var sqlUserData = await connection.QueryFirstOrDefaultAsync<AdminModel>(sqlSearchUser, new { TokenResetPassword = passToken });
+                    //var sqlUserEmail= await commandUser.ExecuteScalarAsync();
+
+
+                    if (sqlUserData == null || sqlUserData.TokenResetExpireDate < DateTime.UtcNow)
+                    {
+                        response.Status = "E";
+                        response.Message = "User token expired.";
+                        return response;
+                    }
+
+                    response.Status = "S";
+                    response.Message = "Token not expire.";
+
+
+                    //await SendEmailAsync(user.Email, "Reset Your Password", $"Click <a href='{resetLink}'>here</a> to reset your password.");
+
+                }
+                catch (Exception ex)
+                {
+                    response.Status = "E";
+                    response.Message = ex.Message;
+                }
+            }
+
+            return response;
+
+        }
 
         public async Task<ResponseModel> ChangePassword(AdminModel userData)
         {
@@ -294,7 +346,7 @@ namespace Project123Api.Repositories
                     // Generate a secure token
                     string resetToken = Guid.NewGuid().ToString();
                     userData.TokenResetPassword = resetToken;
-                    userData.TokenResetExpireDate = DateTime.UtcNow.AddMinutes(30);
+                    userData.TokenResetExpireDate = DateTime.UtcNow.AddDays(1);
                 
                         SqlCommand command = new SqlCommand(sqlCurrentPassword, connection);
                         command.Parameters.AddWithValue("@Email", userData.Email);
@@ -318,7 +370,7 @@ namespace Project123Api.Repositories
     <title>Reset Your Password</title>
 </head>
 <body style='margin: 0; padding: 0; background-color: #f4f4f4;'>
-    <table role='presentation' style='width: 100%; max-width: 600px; height:80%; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif;'>
+    <table role='presentation' style='width: 100%; max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif;'>
         <tr>
             <td align='center' style='padding: 20px 0;'>
                 <img src='https://i.ibb.co/0j7LcsLY/music-note-icon-1.png' alt='Logo' style='width: 80px; height: 80px;'>
@@ -331,7 +383,7 @@ namespace Project123Api.Repositories
         </tr>
         <tr>
             <td style='padding: 15px; text-align: center; font-size: 16px; color: #555;'>
-                เราได้รับคำขอเปลี่ยนรหัสผ่านสำหรับเว็บไซต์ <b>Project123</b> ของคุณแล้ว <br>
+                เราได้รับคำขอเปลี่ยนรหัสผ่านสำหรับบัญชี <b>Project123</b> ของคุณแล้ว <br>
                 ลิงก์นี้จะหมดอายุใน <b>24 ชั่วโมง</b> หากคุณไม่ได้ร้องขอการเปลี่ยนรหัสผ่าน โปรดละเว้นอีเมลฉบับนี้ บัญชีของคุณจะไม่มีการเปลี่ยนแปลงใดๆ
             </td>
         </tr>

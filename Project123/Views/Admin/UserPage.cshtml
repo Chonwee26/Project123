@@ -363,7 +363,6 @@
 
           submitHandler: function (form) {
 
-
               var userName = $('#txtCreateName').val();
 
               Swal.fire({
@@ -425,7 +424,6 @@
 
         $('#tblDataTable').on('click', '.btn-delete', function () {
             var rowData = $('#tblDataTable').DataTable().row($(this).closest('tr')).data();
-
             Swal.fire({
                 icon: "question",
                 title: "ยืนยันลบUser",
@@ -460,19 +458,12 @@
                                 else {
                                     SweetAlert('error', 'กรุณาใส่ข้อมูลให้ถูกต้อง');
                                 }
-
-
-
                             },
                             error: function (request, status, error) {
                                 SweetAlert('error', error);
                             }
                         });
-
-
-
                 }
-
             });
 
             $(".swal2-confirm").addClass('btn-swal-danger');

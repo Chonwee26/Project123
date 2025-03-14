@@ -83,7 +83,9 @@ namespace Project123Api.Controllers
                     new Claim(JwtRegisteredClaimNames.Email, admin.Email),
                     new Claim(ClaimTypes.Email, admin.Email),
                     new Claim(ClaimTypes.Role, adminEmail.Role),
-                    new Claim("UserId", adminEmail.Id.ToString())
+                    new Claim("UserId", adminEmail.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, adminEmail.Id.ToString())
+
                 };
                 foreach (var claim in User.Claims)
                 {
@@ -117,18 +119,54 @@ namespace Project123Api.Controllers
             }
         }
 
+        //[HttpPost("Register")]
+        //public IActionResult Register1([FromBody] AdminModel admin)
+        //{
+        //    if (_dbContext == null || _dbContext.Tb_Admin == null)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+        //    }
+
+        //    var adminWithEmail = _dbContext.Tb_Admin.SingleOrDefault(a => a.Email == admin.Email);
+        //    if (adminWithEmail != null)
+        //    {
+        //        return BadRequest("User with the same email already exists");
+        //    }
+
+        //    var adminObj = new AdminModel
+        //    {
+        //        Name = admin.Name,
+        //        Email = admin.Email,
+        //        Password = SecurePasswordHasherHelper.Hash(admin.Password),
+        //        Role = admin.Role,
+        //        Age = admin.Age
+        //    };
+
+        //    _dbContext.Tb_Admin.Add(adminObj);
+        //    _dbContext.SaveChanges();
+
+        //    return StatusCode(StatusCodes.Status201Created);
+        //}
+
         [HttpPost("Register")]
         public IActionResult Register1([FromBody] AdminModel admin)
         {
+            ResponseModel resp = new ResponseModel();
             if (_dbContext == null || _dbContext.Tb_Admin == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+                //return StatusCode(StatusCodes.Status500InternalServerError, "Database context is not available.");
+                resp.Status = "E";
+                resp.Message = "Database context is not available.";
+                return Ok(resp);
             }
-
+            
             var adminWithEmail = _dbContext.Tb_Admin.SingleOrDefault(a => a.Email == admin.Email);
             if (adminWithEmail != null)
             {
-                return BadRequest("User with the same email already exists");
+                resp.Status = "E";
+                resp.Message = "User with the same email already exists.";
+                return Ok(resp);
+                //return BadRequest("User with the same email already exists");
             }
 
             var adminObj = new AdminModel
@@ -143,7 +181,11 @@ namespace Project123Api.Controllers
             _dbContext.Tb_Admin.Add(adminObj);
             _dbContext.SaveChanges();
 
-            return StatusCode(StatusCodes.Status201Created);
+            resp.Status = "S";
+            resp.Message = "Register User Sucess.";
+            return Ok(resp);
+
+            //return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPost("ChangePassword")]
@@ -206,6 +248,47 @@ namespace Project123Api.Controllers
 
             return response;
         }
+
+        //[HttpGet("CheckPassToken1")]
+        //public async Task<ResponseModel> CheckPassToken(string passToken)
+        //{
+        //    ResponseModel response = new ResponseModel();
+
+        //    try
+        //    {
+        //        response = await _authenRepo.CheckPassToken(passToken);
+        //        //response.Status = "S";
+        //        //response.Message = "User created successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.Status = "E";
+        //    }
+
+        //    return response;
+        //}
+
+        [HttpGet("CheckPassToken1")]
+        public async Task<ResponseModel> CheckPassToken([FromQuery] string passToken)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                response = await _authenRepo.CheckPassToken(passToken);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = "E";
+            }
+
+            return response;
+        }
+
+
+
 
         [HttpPost("Logout")]
         public IActionResult Logout()

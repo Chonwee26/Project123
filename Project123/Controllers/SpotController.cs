@@ -13,6 +13,8 @@ using Xunit;
 using Moq;
 using Moq.Protected;
 using System.Net;
+using Microsoft.AspNetCore.SignalR;
+//using Project123Api.Hubs;
 
 
 namespace Project123.Controllers
@@ -26,15 +28,17 @@ namespace Project123.Controllers
         private readonly MyService _myService;
         private readonly ApiHelper _apiHelper;
         private readonly ILogger<SpotController> _logger;
+        //private readonly IHubContext<NotificationHub> _hubContext;
 
 
-        public SpotController(ApiHelper apiHelper, MyService myService, IHttpClientFactory httpClientFactory, ILogger<SpotController> logger, DataDbContext db):base(httpClientFactory)
+        public SpotController(ApiHelper apiHelper, MyService myService, IHttpClientFactory httpClientFactory/*, IHubContext<NotificationHub> hubContext*/, ILogger<SpotController> logger, DataDbContext db):base(httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
              _myService = myService;  // Inject MyService
             _apiHelper = apiHelper;
             _logger = logger;
             _db = db;
+            //_hubContext = hubContext;
         }
       
         public IActionResult Index()
@@ -43,6 +47,8 @@ namespace Project123.Controllers
         }
         public async Task<IActionResult> SpotAdminPage()
         {
+            string? userId = UserId;
+
             List<GenreModel> genreList = new List<GenreModel>();
             using (HttpClientHandler handler = new HttpClientHandler())
             {
@@ -67,6 +73,8 @@ namespace Project123.Controllers
                 }
             }
             ViewBag.GenreList = genreList;
+            ViewBag.UserId = Convert.ToInt32(userId);
+
             return View();                    
         }
 
@@ -1642,6 +1650,11 @@ namespace Project123.Controllers
                     {
                         this.response.Status = "E";
                         this.response.Message = $"Error: {responseResult.StatusCode}";
+                    }
+                    if (this.response.Message.Contains("The DELETE statement conflicted with the REFERENCE constraint"))
+                    {
+                        this.response.Message = "Please delete the album in this artist  first.";
+                        
                     }
                 }
 

@@ -99,5 +99,13 @@ namespace Project123.Controllers
                 }
             }
         }
+
+        public string? UserId
+        {
+            get
+            {
+                return HttpContext.Session.GetString("UserId") ?? Request.Cookies["UserId"];
+            }
+        }
     }
 }

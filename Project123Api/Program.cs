@@ -24,7 +24,11 @@ using Microsoft.Extensions.Logging;
 using Project123Api.Middlewares;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+
+
 using Project123Api.Services;
+using Project123Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +76,9 @@ builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 builder.Services.AddScoped<ISpotRepository, SpotRepository>();
 builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>(); // Register user ID provider
+builder.Services.AddSignalR();
 
 //var key = builder.Configuration.GetValue<string>("Tokens:Key");
 
@@ -197,6 +204,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllers();
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Project123</title>
+    <title>  Project123 @(string.IsNullOrEmpty(ViewData["Title"] as string) || ViewData["Title"].ToString() == "Index" ? "" : " - " + ViewData["Title"])</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/lib/datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -246,7 +246,7 @@
             border-radius: 5px;
         }
 
-        .lib-sidebar {
+        .lib-sidebar{
             background-color: #262626;
             padding-top: 12px;
             border-radius: 5px;
@@ -362,6 +362,7 @@
         #sidebarHome a:hover,
         #sidebarSearch a:hover,
         #sidebarAdmin a:hover,
+        #sidebarNoti:hover,
         .iconlove:hover,
         .imgArtist:hover {
             background-color: gray; /* or any color you prefer */
@@ -487,6 +488,52 @@
             max-height: 200px; /* Set a max-height for the dropdown */
             overflow-y: auto; /* Allow vertical scrolling */
         }
+        #dvNotification {
+            top: 60px !important;
+            left: 82px !important;
+            z-index: 1000;
+            background-color: black;
+            color: #fff;
+            /*border: 1px solid #ddd;*/
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-left: 30px;
+            /*display: none;
+            max-height: 200px;*/ /* Set a max-height for the dropdown */
+            display: flex;
+            flex-direction: column;
+            max-height: 450px;
+            min-width: 300px;
+            min-height:200px;
+            max-width: 400px;
+            overflow-y: auto; /* Allow vertical scrolling */
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: black gray;
+        }
+        #sidebarNoti {
+            font-size: 18px;
+            padding: 8px 16px;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+          
+        }
+
+        .dv-content-noti{
+            cursor:pointer;
+        }
+
+        .dv-content-noti:hover {
+           background-color:gray!important;
+        }
+        .icon-noti-bell-active {
+            position: absolute;
+            background: red;
+            border-radius: 50%;
+            padding: 3px;
+            font-size: 9px;
+        }
+        
 
         .dropdown-item {
             color: white;
@@ -510,13 +557,25 @@
                 <a class="dropdown-item" id="logoutBtn" onclick="logOut()" href="#">Log Out</a>
             </div>
 
+
+            <!-- Notification -->
+            <div class="dv-noti" id="dvNotification" style="display: none; position: absolute;">
+              @*<img class="imgArtist" id="imgArtistNoti" />
+                <div class="noti-title">
+                    <h3>Song Name</h3>
+                    <h4>yanagi nagi</h4>
+                </div>*@
+
+                
+            </div>
+
             <nav class="sidebar">
                 <div class="search-sidebar" id="">
 
                     <!--<div class="profile imgArtist circle"  data-album-id="0" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="" data-bs-original-title="
-                    LiSA"<br>
-                               <span>Artist</span>
-                           ">-->
+            LiSA"<br>
+                       <span>Artist</span>
+                   ">-->
                     @* <a href="/Spot/ArtistDetails?artistname=LiSA">*@
                     <!--<img style="border-radius:50%;" id="profileImage" src="/uploads/LiSA/LiSA/lalisa.jpg">-->
                     @*</a>*@
@@ -527,7 +586,10 @@
                         <img style="border-radius:50%;" id="profileImage" src="/picture/blank-profile-picture-973460_640.png" alt="profile image">
                     </div>
 
-
+                    <div id="sidebarNoti">
+                        @*   <a href="/home/MusicSpotpage" class="btn active-icon nav-link" id="btnHome"><i class="fa-solid fa-house" id="iconHome"></i></a>*@
+                        <i class="fa-solid fa-bell gray-text" id="iconNotiBell"><label id="lblNotiBell"></label></i>
+                    </div>
 
                     <div id="sidebarHome">
                         @*   <a href="/home/MusicSpotpage" class="btn active-icon nav-link" id="btnHome"><i class="fa-solid fa-house" id="iconHome"></i></a>*@
@@ -558,8 +620,8 @@
 
                     </div>
                     @*<div class="imgArtist">
-                            <img src="~/picture/shipment_pic3.jpg" />
-                        </div>*@
+                    <img src="~/picture/shipment_pic3.jpg" />
+                </div>*@
 
                 </div>
             </nav>
@@ -705,6 +767,7 @@
     @*script wavesufer*@
     <script src="https://unpkg.com/wavesurfer.js@7"></script>
     <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
     <script>
 
@@ -723,8 +786,56 @@
         var audioVolume = $('#btnVolumeBar');
         var volume;
         var progressBar = $('#progressBar');
-
+        var notiData;
+        var connection
+        var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
         $(document).ready(function () {
+
+            ////var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
+
+             connection = new signalR.HubConnectionBuilder()
+                //.withUrl("/notificationHub")
+                .withUrl("/notificationHub?userId=" + userId+"")
+                .configureLogging(signalR.LogLevel.Information) // Enable debug logs
+                .withAutomaticReconnect()// Make sure this matches your mapped path
+                .build();
+
+            connection.start().then(function () {
+                console.log("connected");
+            });
+            connection.on("ReceiveNotification", (message) => {
+                try {
+                    alert("New song uploaded: " + message);
+                    console.log("New song uploaded: " + message);
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+
+            // **Listen for Unread Notifications**
+            connection.on("ReceiveUnreadNotifications", (notifications) => {
+                console.log(`Received unread notification for user ${userId}`);
+                notiData = notifications;
+                if (notiData.length > 0) {
+                    $('#lblNotiBell').addClass('icon-noti-bell-active');
+                }
+                notifications.forEach((notification) => {
+
+
+                    //showNotification(notification.notiMessage);
+                    console.log(notification.notiMessage);
+
+                });
+                console.log('notiData', notiData);
+            })
+            connection.onclose(() => {
+                console.log("Disconnected, attempting to reconnect...");
+                setTimeout(() => connection.start(), 5000); // Reconnect after 5 seconds
+            });
+
+
+
+
 
 
             // Set the title attribute dynamically
@@ -732,14 +843,14 @@
 
             // Dispose of any old tooltip instance and reinitialize
 
-            getProfileImage()
+                getProfileImage();
             $(audioVolume).val(localStorage.getItem("playerVolume"));
             console.log(localStorage.getItem("playerVolume"));
             $(".profile").on("click", function (e) {
 
                 e.stopPropagation();
                 const $dropdown = $("#profileDropdown");
-
+                $("#dvNotification").hide();
                 // Position the dropdown near the clicked element
                 const offset = $(this).offset();
                 $dropdown.css({
@@ -762,6 +873,52 @@
                     $dropdown.hide();
                     //$(".sidebar, .main-content").css("overflow", "auto");
                 });
+            });
+
+            // Prevent closing the dropdown when clicking inside it
+            $("#profileDropdown").on("click", function (e) {
+                e.stopPropagation();
+            });
+
+
+            $("#sidebarNoti").on("click", function (e) {
+                $("#profileDropdown").hide();
+
+                //e.stopPropagation();
+                const $noti = $("#dvNotification");
+
+                // Position the dropdown near the clicked element
+                const offset = $(this).offset();
+                $noti.css({
+                    top: offset.top + $(this).outerHeight(),
+                    left: offset.left,
+                });
+                console.log(notiData);
+                // Toggle the dropdown visibility
+                bindingNotiMessage(notiData);
+                $noti.toggle();
+
+                // Stop event propagation to prevent immediate closing
+                e.stopPropagation();
+                //if ($dropdown.is(":visible")) {
+                //    $(".sidebar, .main-content").css("overflow", "hidden");  // Disable scrolling on html and body
+                //}
+                //else {
+                //    $(".sidebar, .main-content").css("overflow", "auto");
+                //}
+
+                // Close the dropdown when clicking outside
+                //$(document).on("click", function () {
+                //    //$dropdown.hide();
+                //    $noti.hide();
+                    //$(".sidebar, .main-content").css("overflow", "auto");
+                //});
+            });
+            // Close the dropdown when clicking outside
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest("#dvNotification, #sidebarNoti").length) {
+                    $("#dvNotification").hide();
+                }
             });
 
             // Prevent closing the dropdown when clicking inside it
@@ -999,7 +1156,7 @@
             //    minWidth: 420,
             //    maxWidth: 1400,
             //    resize: function (event, ui) {
-            //        debugger
+            //
             //       // $('#main').css('margin-right', ui.size.width + 'px');
             //        $('#main').css('margin-right', 100 + 'px');
             //    }
@@ -1097,9 +1254,14 @@
                 }
             });
         }
+        $('#sidebarNoti').on('click', function () {
+            //changeIconClass('#iconNotiBell', '#iconHome, #iconSearch, #iconLove, #iconAdmin');
+            $('#iconNotiBell').toggleClass('active-icon');
+
+        });
 
         //$('.icon-button').on('click', function () {
-        //    debugger
+        //
         //    const activeIcon = $(this).data('target'); // The icon related to this button
         //    const inactiveIcons = $('.icon').not(activeIcon); // All other icons
 
@@ -1273,21 +1435,21 @@
             });
         }
 
-            function getAlbum() {
-         $.ajax({
-             type: 'POST',
-             url: '@Url.Action("GetAlbum1", "Spot")',
-             dataType: "json",
-             success: function (result) {
+        function getAlbum() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetAlbum1", "Spot")',
+                dataType: "json",
+                success: function (result) {
 
-                 //bindingTableSongAlbum(result.Data);
-                 /* bindingTable(result.Data); */
-             },
-             error: function (request, status, error) {
-                 console.log(error);
-             }
-         });
-     }
+                    //bindingTableSongAlbum(result.Data);
+                    /* bindingTable(result.Data); */
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
              @*function getAlbumSideLayout() {
     $.ajax({
         type: 'POST',
@@ -1321,58 +1483,58 @@
         }*@
 
         function getAlbumSideLayout1() {
-    $.ajax({
-        type: 'POST',
-        url: '@Url.Action("GetAlbum1", "Spot")',
-        dataType: "json",
-        success: function (result) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetAlbum1", "Spot")',
+                dataType: "json",
+                success: function (result) {
 
-            result.Data.forEach(function (album, index) {
+                    result.Data.forEach(function (album, index) {
 
-              var albumHtml = `
-    <div class="imgArtist" data-album-id="${album.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
-         title="
-                   ${album.AlbumName}<br>
-                  ${album.ArtistName}
-             ">
-  <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${album.AlbumId}">
-     <img src="${album.AlbumImagePath}" />
- </a>
+                        var albumHtml = `
+                                            <div class="imgArtist" data-album-id="${album.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
+                                                 title="
+                                                           ${album.AlbumName}<br>
+                                                          ${album.ArtistName}
+                                                     ">
+                                          <a href="@Url.Action("AlbumDetails", "Spot")?albumId=${album.AlbumId}">
+                                             <img src="${album.AlbumImagePath}" />
+                                         </a>
 
-    </div>`;
+                                            </div>`;
 
-$('.lib-sidebar').append(albumHtml);
+                        $('.lib-sidebar').append(albumHtml);
+                    });
+                    // Initialize tooltips after appending the content
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl)
+                    });
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
             });
-            // Initialize tooltips after appending the content
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            });
-        },
-        error: function (request, status, error) {
-            console.log(error);
-        }
-    });
         }
 
                 function getAlbumSideLayout() {
-    $.ajax({
-        type: 'POST',
-        url: '@Url.Action("GetFavAlbumAndArtistByUser1", "Spot")',
-        dataType: "json",
-        global:false,
-        success: function (result) {
-            $('#contentLibSideBar').empty();
-   //         var Heart = `               <div class=""style="text-align:center;">
-   //    <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
-   //</div>`
-   //         $('#contentLibSideBar').append(Heart);
-            result.Data.forEach(function (sideData, index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetFavAlbumAndArtistByUser1", "Spot")',
+                        dataType: "json",
+                        global: false,
+                        success: function (result) {
+                            $('#contentLibSideBar').empty();
+                            //         var Heart = `               <div class=""style="text-align:center;">
+                            //    <a href="/Spot/FavoriteSong"class="btn iconlove nav-link" id="btnLove"><i class="fa-regular fa-heart" id="iconLove" style="color: #bfbfbf"></i></a>
+                            //</div>`
+                            //         $('#contentLibSideBar').append(Heart);
+                            result.Data.forEach(function (sideData, index) {
 
-                var sideFavData = result.Data
-                if (sideFavData[index].FavoriteArtist) {
+                                var sideFavData = result.Data
+                                if (sideFavData[index].FavoriteArtist) {
 
-                    var Html = `
+                                    var Html = `
 
 
                        <div class="imgArtist circle" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
@@ -1385,9 +1547,9 @@ $('.lib-sidebar').append(albumHtml);
                         <img src="${sideData.ArtistImagePath}" />
                     </a>
                        </div>`;
-                }
-                else {
-                    var Html = `
+                                }
+                                else {
+                                    var Html = `
                     <div class="imgArtist" data-album-id="${sideData.AlbumId}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
                          title="
                                    ${sideData.AlbumName}<br>
@@ -1397,21 +1559,21 @@ $('.lib-sidebar').append(albumHtml);
                      <img src="${sideData.AlbumImagePath}" />
                  </a>
                     </div>`;
-                }
+                                }
 
-                //$(Html).hide().appendTo('.lib-sidebar').fadeIn();
-                $('#contentLibSideBar').append(Html);
-            });
-            // Initialize tooltips after appending the content
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            });
-        },
-        error: function (request, status, error) {
-            console.log(error);
-        }
-    });
+                                //$(Html).hide().appendTo('.lib-sidebar').fadeIn();
+                                $('#contentLibSideBar').append(Html);
+                            });
+                            // Initialize tooltips after appending the content
+                            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl)
+                            });
+                        },
+                        error: function (request, status, error) {
+                            console.log(error);
+                        }
+                    });
 }
 
         function toggleAsideDisplay() {
@@ -1447,7 +1609,7 @@ $('.lib-sidebar').append(albumHtml);
                 url: '@Url.Action("GetProfileImage1", "Spot")',
                 dataType: "json",
                 success: function (result) {
-                    debugger;
+                    ;
                     var profileDataName = result.Data[0].Name
                     $('.profile').attr('title', profileDataName)
                     $('.profile')
@@ -1464,6 +1626,82 @@ $('.lib-sidebar').append(albumHtml);
             });
         }
 
+        function bindingNotiMessage(notificationData) {
+
+            if (!notificationData) {
+                notificationData = [];
+            }
+            $('#dvNotification').html('');
+
+            var solidHtml = `  <h5>What's New</h5>`
+            $('#dvNotification').append(solidHtml);
+
+            if (notificationData.length > 0) {
+
+                for (var i = 0; i < notificationData.length; i++) {
+
+                    var html = `
+                                <div class="dv-content-noti mt-3" id="dvContentNoti${i + 1}" style="display:inherit;background-color:#262626;border-radius:15px;" data-noti-id="${notificationData[i].notificationId}" data-album-id="${notificationData[i].albumId}">
+
+                                 <img class="imgArtist" id="imgArtistNoti${i + 1}" style="margin:25px;" src="${notificationData[i].songImage ? notificationData[i].songImage : notificationData[i].albumImage}"/>
+                                 <div class="noti-title" style="margin-top:15px;">
+                                    <h5 id="lblNotiSongName${i + 1}">${notificationData[i].notiMessage}</h5>
+                                    <h6 class="gray-text" id='lblNotiArtistName${i + 1}'>${notificationData[i].artistName}</h6>
+                               </div>
+                               `
+                    $('#dvNotification').append(html);
+                }
+            }
+            else
+
+            {
+                var html = `
+                            <div class="dv-content-noti" id="dvContentNoti" style="display:inherit;background-color:#262626;border-radius:15px;">
+                                <div class="noti-title"style="margin-top:15px;">
+                                    <div class="noti-title" style="margin:15px;">
+                                         <h5 id="lblNotiSongName">No Notification Message.</h5>
+
+                                    </div>
+                                </div>
+                            </div>`
+                $('#dvNotification').append(html);
+
+            }
+
+        }
+
+        $(document).on('click', '.dv-content-noti',function () {
+            var notiId = $(this).attr('data-noti-id');
+
+            var albumId = $(this).attr('data-album-id');
+
+
+
+
+
+         $.ajax({
+       type: 'POST',
+             url: '@Url.Action("NotificationRead1", "Spot")',
+             data: {
+                 NotificationId = notiId
+             },
+       dataType: "json",
+             success: function (response) {
+                 if (response.success) {
+      window.location.href = '@Url.Action("AlbumDetails", "Spot")?albumId=' + albumId
+
+                 }
+
+           //bindingTableSongAlbum(result.Data);
+           /* bindingTable(result.Data); */
+       },
+       error: function (request, status, error) {
+           console.log(error);
+       }
+   });
+
+
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -55,6 +55,8 @@ namespace Project123Api.Repositories
         public DbSet<ArtistModel>? Artist { get; set; }
         public DbSet<SongModel>? Song { get; set; }
         public DbSet<GenreModel>? Genre { get; set; }
+
+        public DbSet<SpotSidebarModel>? UserArtists { get; set; }
     
       
         public DbSet<ShipmentModel>? Shipment { get; set; }

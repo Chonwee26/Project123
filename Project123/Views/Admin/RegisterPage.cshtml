@@ -73,6 +73,9 @@
                     Name: {
                     required: true
                 },
+                    Age: {
+                    required:true
+                },
 
                 Email: {
                     required:true
@@ -112,7 +115,8 @@
                             Email: $('#txtEmail').val(),
                             Password: $('#txtPassword').val(),
                             Name: $('#txtName').val(),
-                            Role: $('#txtRole').val()
+                            Role: $('#txtRole').val(),
+                            Age: $('#txtAge').val()
                         };
                         $.ajax
                             ({

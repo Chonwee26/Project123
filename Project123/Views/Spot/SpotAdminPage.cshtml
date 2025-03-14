@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_SpotLayout.cshtml";
+    ViewData["Title"] = "SpotAdminPage";
 }
 @section Styles{
     <style type="text/css">
@@ -1144,6 +1145,7 @@ $.ajax({
         }
 
         function createAlbum() {
+            console.log('userId',userId);  // Add this to check if userId is correctly se
             var formData = new FormData();
             formData.append("AlbumName", $("#txtAlbumName").val());
             formData.append("ArtistName", $("#txtAlbumArtist").val());
@@ -1158,6 +1160,16 @@ $.ajax({
                 data: formData,
                 success: function (result) {
                     alert('Album saved successfully');
+                    if (connection.state === signalR.HubConnectionState.Connected) {
+                        connection.invoke("SendUnreadNotifications", userId).catch(function (err) {
+                            console.error(err.toString());
+                        });
+                    }
+                    else {
+                        console.error("SignalR connection is not established.");
+                    }
+
+                    //event.preventDefault();
                 },
                 error: function (error) {
                     console.error(error);
@@ -1525,6 +1537,7 @@ $.ajax({
                 data: frmDelete,
                 dataType: "json",
                 success: function (result) {
+                    searchAlbum();
                     alert("Delete Album Success")
                     /* bindingTable(result.Data); */
                 },
@@ -1548,7 +1561,13 @@ $.ajax({
          data: frmDelete,
          dataType: "json",
          success: function (result) {
-             alert("Delete Artist Success")
+             if (result.success) {
+                 alert("Delete Artist Success")
+
+             }
+             else {
+                 alert(result.message);
+             }
              /* bindingTable(result.Data); */
              searchArtist();
          },

@@ -141,15 +141,18 @@
 
 @section Scripts{
     <script type="text/javascript">
-           var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
+        var userId = JSON.parse('@Html.Raw(Json.Serialize(ViewBag.UserId))');
+
         document.addEventListener('DOMContentLoaded', function () {
-            
+
+
             /*   getAlbum();*/
             console.log('userId', userId);
             getAlbumContainer();
 
-                changeIconClass('#iconHome', '#iconSearch, #iconLove, #iconAdmin');
-         
+            changeIconClass('#iconHome', '#iconSearch, #iconLove, #iconAdmin');
+
+
 
 
             //$('#btnCloseAside').click(function () {
@@ -188,13 +191,14 @@
 
 
         //    if ($('#aside').css('display') == 'none') {
-        //        
+        //
         //        $('.main-content').removeClass('col-lg-9 col-7').addClass('col-lg-12 col-12');
         //    }
         //    else {
         //        $('.main-content').removeClass('col-lg-12 col-12').addClass('col-lg-9 col-7');
         //    }
         //});
-        
+
+
     </script>
 }
